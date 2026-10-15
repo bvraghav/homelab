@@ -107,8 +107,10 @@ as `admin`, with the password copied, not shown:
 sops decrypt --extract '["grafana"]["adminPassword"]' secrets/grafana.sops.yaml | wl-copy -n -o
 ```
 
-**Dashboards → Kubernetes / Compute Resources / Cluster** shows the three
-nodes.
+**Dashboards → Node Exporter / Nodes** has one entry per node in its
+*instance* list: three. **Kubernetes / Compute Resources / Cluster**
+breaks usage down by namespace: `cert-manager`, `kube-system` and
+`monitoring`, so far.
 
 ## What can go wrong
 
@@ -140,7 +142,7 @@ nodes.
 - [ ] `lab-wildcard` certificate `READY: True`, from Let's Encrypt
 - [ ] A pod resolves `proxmox.lab.<domain>`
 - [ ] `https://grafana.lab.<domain>` with no warning; admin login works
-- [ ] Grafana shows the three nodes
+- [ ] Grafana: three nodes in *Node Exporter / Nodes*
 
 ## See also
 
