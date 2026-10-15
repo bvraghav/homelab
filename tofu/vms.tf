@@ -7,7 +7,7 @@ locals {
   # 6 cores and 15 GiB, and 130 GiB of thin-provisioned local-lvm.
   vms = {
     pihole      = { id = 101, cores = 1, memory = 512, disk = 8, data_disk = 0 }
-    vaultwarden = { id = 102, cores = 1, memory = 1024, disk = 8, data_disk = 4 }
+    vaultwarden = { id = 102, cores = 1, memory = 2048, disk = 8, data_disk = 4 }
     k3s-server  = { id = 201, cores = 2, memory = 4096, disk = 32, data_disk = 0 }
     k3s-agent1  = { id = 202, cores = 2, memory = 3072, disk = 32, data_disk = 0 }
     k3s-agent2  = { id = 203, cores = 2, memory = 3072, disk = 32, data_disk = 0 }

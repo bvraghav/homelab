@@ -25,7 +25,8 @@ scripts/push-secrets.sh --help
   in `secrets/network.sops.yaml`, where its address comes from.
 
 `--apply`
-: Push each of the VM's secret files, and restart the matching service.
+: Push each of the VM's secret files, then restart the services that
+  read them.
 
 `VM_USER` (environment)
 : The user to log in as. Default: `debian`, the user cloud-init creates.
@@ -37,9 +38,10 @@ scripts/push-secrets.sh --help
 
 ## How it works
 
-- `PUSH` maps each VM to its secret files: `pihole` gets
-  `secrets/pihole.sops.yaml` and `secrets/tailscale.sops.yaml`. A
-  service's step adds its line. Every file listed must exist.
+- `PUSH` maps each VM to its secret files: `pihole` gets `pihole` and
+  `tailscale`, `vaultwarden` gets `cloudflare` and `restic`, each
+  `secrets/<name>.sops.yaml`. A service's step adds its line. Every file
+  listed must exist.
 - Without `--apply`, it prints each file, where it would go, and its key
   names, read from the encrypted file without decrypting it.
 - With `--apply`, it waits for cloud-init to finish on the VM, so the
@@ -48,9 +50,10 @@ scripts/push-secrets.sh --help
      pipe to `ssh`;
   2. on the VM, `sudo` writes them under a root-only umask to
      `/etc/homelab/<name>.env.tmp`, then moves it into place;
-  3. if `<name>.service` is enabled, it's restarted. A service that waits
-     for its secret has `ConditionPathExists=/etc/homelab/<name>.env`, so
-     this is also its first start.
+  3. once all files are pushed, each enabled `<name>.service` is
+     restarted, then the VM's own `<vm>.service`, each once. A service
+     that waits for its secrets has `ConditionPathExists=` lines for them,
+     so this is also its first start.
 - Services read the file as an `EnvironmentFile=` or a compose `env_file`.
 
 ## Safety

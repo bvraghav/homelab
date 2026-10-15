@@ -49,7 +49,7 @@ flowchart LR
 ## The rebuild, step by step
 
 One post per step of the rebuild from a blank box, in order. The steps
-after 7 follow as they're done.
+after 8 follow as they're done.
 
 1. [Tools on the laptop](tutorials/laptop-tools.md)
 2. [Secrets with SOPS and age](tutorials/sops-age.md)
@@ -58,6 +58,7 @@ after 7 follow as they're done.
 5. [The VMs, with OpenTofu](tutorials/opentofu-vms.md)
 6. [Pi-hole](tutorials/pihole.md)
 7. [Tailscale](tutorials/tailscale.md)
+8. [Vaultwarden](tutorials/vaultwarden.md)
 
 ## All posts
 
@@ -93,6 +94,7 @@ after 7 follow as they're done.
 | [Rebuild step 5: the VMs, with OpenTofu](tutorials/opentofu-vms.md) | Five Debian VMs and an R2 backup bucket from one command; encrypted state in git, addresses in SOPS | 2026-10-15 |
 | [Rebuild step 6: Pi-hole](tutorials/pihole.md) | The lab's names from a VM that's all code, a pinned image, and a password pushed over SSH | 2026-10-15 |
 | [Rebuild step 7: Tailscale](tutorials/tailscale.md) | The lab from anywhere with no open ports: a tagged subnet router on the Pi-hole VM, and split DNS | 2026-10-15 |
+| [Rebuild step 8: Vaultwarden](tutorials/vaultwarden.md) | The vault behind Caddy and a wildcard certificate, backed up nightly to R2, restored by itself on a rebuild | 2026-10-15 |
 
 ## By tag
 
@@ -109,7 +111,7 @@ after 7 follow as they're done.
 : [Certificates and DNS](tutorials/certs-and-dns.md) · [DNS to Cloudflare](tutorials/dns-to-cloudflare.md) · [Step 6: Pi-hole](tutorials/pihole.md) · [Step 7: Tailscale](tutorials/tailscale.md)
 
 `rebuild`
-: [Step 1: tools](tutorials/laptop-tools.md) · [Step 2: SOPS and age](tutorials/sops-age.md) · [Step 3: DNS to Cloudflare](tutorials/dns-to-cloudflare.md) · [Step 4: Proxmox VE](tutorials/proxmox-install.md) · [Step 5: VMs with OpenTofu](tutorials/opentofu-vms.md) · [Step 6: Pi-hole](tutorials/pihole.md) · [Step 7: Tailscale](tutorials/tailscale.md)
+: [Step 1: tools](tutorials/laptop-tools.md) · [Step 2: SOPS and age](tutorials/sops-age.md) · [Step 3: DNS to Cloudflare](tutorials/dns-to-cloudflare.md) · [Step 4: Proxmox VE](tutorials/proxmox-install.md) · [Step 5: VMs with OpenTofu](tutorials/opentofu-vms.md) · [Step 6: Pi-hole](tutorials/pihole.md) · [Step 7: Tailscale](tutorials/tailscale.md) · [Step 8: Vaultwarden](tutorials/vaultwarden.md)
 
 `releases`
 : [Releases from tags](tools/release-workflow.md)

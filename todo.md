@@ -37,6 +37,9 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done, `[-]` dropped.
       with `scripts/push-secrets.sh`; DHCP and Proxmox use it
 - [x] Rebuild step 7: Tailscale subnet router `lab-router` on the Pi-hole
       VM, tagged, with split DNS for `lab.<domain>`
+- [x] Rebuild step 8: Vaultwarden behind Caddy with a wildcard
+      certificate; nightly restic backups to R2; restore test passed
+      (2026-10-15)
 
 ## 1. Network setup
 
@@ -129,15 +132,17 @@ the VM.
 
 - [x] Pi-hole: Docker, pinned image, settings as `FTLCONF_*` variables;
       web password pushed; no backup needed, it's all code
-- [ ] Vaultwarden VM: Docker, compose file, Caddyfile; Caddy built with
+- [x] Vaultwarden VM: Docker, compose file, Caddyfile; Caddy built with
       the DNS provider's plugin, for the wildcard cert through DNS-01
+      (`tofu/vaultwarden.tf`); data on its own disk; no admin page
 - [ ] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
       join with the token from SOPS
 - [x] qemu-guest-agent on all VMs
-- [ ] Backup timers (`restic` to R2; repository password and key pushed
+- [~] Backup timers (`restic` to R2; repository password and key pushed
       from SOPS): Vaultwarden (SQLite `.backup`, `attachments/`,
-      `rsa_key*`), k3s (datastore snapshot), no Pi-hole (all code);
-      `OnFailure=` notice
+      `rsa_key*`) written; k3s (datastore snapshot) to do; no Pi-hole (all
+      code)
+- [ ] A notice when a backup fails (`OnFailure=`); needs a way to send it
 - [x] `scripts/push-secrets.sh <vm>`: each SOPS secret for that VM, piped
       over SSH into a root-only file; lists what it would push without
       `--apply`
@@ -159,7 +164,8 @@ the VM.
 
 ## 7. Verification and operations
 
-- [ ] Restore test: rebuild the Vaultwarden VM, `restic restore` its data
+- [x] Restore test: rebuild the Vaultwarden VM; it restores the latest
+      backup by itself (`vaultwarden-restore`)
 - [ ] Restore test: rebuild k3s, restore its snapshot and Forgejo
 - [ ] Timed rebuild from scratch; record time-to-build here
 - [ ] HTTPS for Grafana, Forgejo, Woodpecker

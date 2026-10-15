@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # push-secrets.sh: push a VM's secrets from SOPS to the VM, over SSH. Each
 # secret file becomes /etc/homelab/<name>.env on the VM, readable by root
-# only, and the VM's <name>.service, if it has one, is restarted to read
-# it. Without --apply, lists what it would push: file and key names, never
-# values. Values never reach a command line, the screen or the laptop's disk.
+# only. Then each <name>.service, and the VM's own <vm>.service, is
+# restarted to read them, if the VM has it. Without --apply, lists what it
+# would push: file and key names, never values. Values never reach a
+# command line, the screen or the laptop's disk.
 #
 # Usage:
 #   push-secrets.sh VM            what would be pushed
@@ -11,7 +12,8 @@
 #
 #   VM        a VM's name, e.g. pihole: an entry in PUSH below, and under
 #             hosts in secrets/network.sops.yaml
-#   --apply   push the files, and restart each <name>.service that's enabled
+#   --apply   push the files, then restart each enabled <name>.service
+#             and <vm>.service
 #
 # Logs in as $VM_USER (default: debian), with sudo. Run it from anywhere
 # inside the repository.
@@ -22,6 +24,7 @@ set -euo pipefail
 # Which secret files go to which VM: secrets/<name>.sops.yaml for each name.
 declare -A PUSH=(
   [pihole]="pihole tailscale"
+  [vaultwarden]="cloudflare restic"
 )
 
 user=${VM_USER:-debian}
@@ -89,8 +92,16 @@ for name in ${PUSH[$vm]}; do
         && sudo sh -c 'umask 077; cat >/etc/homelab/$name.env.tmp \
         && mv /etc/homelab/$name.env.tmp /etc/homelab/$name.env'"
   echo "pushed:    /etc/homelab/$name.env"
-  if on_vm "systemctl is-enabled --quiet $name.service 2>/dev/null"; then
-    on_vm "sudo systemctl restart $name.service"
-    echo "restarted: $name.service"
+done
+
+# Each file's service, then the VM's own, each once: the VM's service may
+# need several files.
+declare -A done_units=()
+for unit in ${PUSH[$vm]} "$vm"; do
+  [[ -v done_units[$unit] ]] && continue
+  done_units[$unit]=1
+  if on_vm "systemctl is-enabled --quiet $unit.service 2>/dev/null"; then
+    echo "restarting: $unit.service"
+    on_vm "sudo systemctl restart $unit.service"
   fi
 done
