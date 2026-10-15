@@ -30,6 +30,9 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done, `[-]` dropped.
 - [x] Rebuild step 4: Proxmox VE 9.2.2 on the blank box, updates from the
       no-subscription repository, TOTP, SSH by key only, OpenTofu's token
       in `secrets/proxmox.sops.yaml`, Let's Encrypt certificate for the UI
+- [x] Rebuild step 5: OpenTofu (`tofu/`) creates the Debian 13 image, five
+      VMs with cloud-init, and the R2 backup bucket; state encrypted in
+      git; network plan, R2 token and restic's key in SOPS
 
 ## 1. Network setup
 
@@ -96,19 +99,19 @@ Set up:
 
 ## 4. OpenTofu: infrastructure
 
-- [~] `tofu/`: providers (`bpg/proxmox`, `sops`, `cloudflare`) pinned;
+- [x] `tofu/`: providers (`bpg/proxmox`, `sops`, `cloudflare`) pinned;
       state local and committed to git; secrets and addresses from SOPS
-- [~] State encryption, enforced; passphrase in `secrets/tofu.sops.yaml`
-- [~] R2 bucket for backups (`cloudflare` provider, its own token in
+- [x] State encryption, enforced; passphrase in `secrets/tofu.sops.yaml`
+- [x] R2 bucket for backups (`cloudflare` provider, its own token in
       `secrets/r2.sops.yaml`); restic's key, limited to the bucket, and
       its password in `secrets/restic.sops.yaml`
-- [~] Debian 13 cloud image, pinned by checksum, imported into each VM;
+- [x] Debian 13 cloud image, pinned by checksum, imported into each VM;
       no template
-- [~] Cloud-init: user, SSH key, static IP, nameserver, search domain
-- [~] VM: Pi-hole
-- [~] VM: Vaultwarden (from the cloud image, not ISO), with its data on a
+- [x] Cloud-init: user, SSH key, static IP, nameserver, search domain
+- [x] VM: Pi-hole
+- [x] VM: Vaultwarden (from the cloud image, not ISO), with its data on a
       separate disk, so the VM can be recreated without losing the vault
-- [~] VMs: k3s server + 2 agents (unique hostnames!)
+- [x] VMs: k3s server + 2 agents (unique hostnames!)
 - [ ] k3s join token generated up front and kept in SOPS, so agents never
       read it off the server
 
@@ -123,7 +126,7 @@ the VM.
       the DNS provider's plugin, for the wildcard cert through DNS-01
 - [ ] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
       join with the token from SOPS
-- [~] qemu-guest-agent on all VMs
+- [x] qemu-guest-agent on all VMs
 - [ ] Backup timers (`restic` to R2; repository password and key pushed
       from SOPS): Vaultwarden (SQLite `.backup`, `attachments/`,
       `rsa_key*`), k3s (datastore snapshot), Pi-hole if not in the repo;

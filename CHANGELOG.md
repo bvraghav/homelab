@@ -24,8 +24,10 @@ For a readable summary of each release, see
 - `secrets/network.sops.yaml`: the IP plan, addresses and router notes,
   converted from the git-ignored `private/network.md`, which it replaces.
 - `secrets/tofu.sops.yaml` (state passphrase) and
-  `secrets/restic.sops.yaml` (restic's password), both generated straight
-  into SOPS.
+  `secrets/restic.sops.yaml` (restic's password, generated straight into
+  SOPS, and R2 key limited to the bucket); `secrets/r2.sops.yaml`
+  (OpenTofu's R2 token and the account ID).
+- `tofu/terraform.tfstate`: the five VMs and the bucket, encrypted.
 - Post: *Rebuild step 5: the VMs, with OpenTofu*.
 
 ### Changed
@@ -33,8 +35,7 @@ For a readable summary of each release, see
 - `proxmox-tofu-token.sh`: the role gets `VM.GuestAgent.Audit`, so
   OpenTofu can read VM addresses from the guest agent.
 - `.gitignore`: `tofu/terraform.tfstate` is committed; it's encrypted.
-- `todo.md`: Pi-hole runs as a VM; no template VM; the step 5 items in
-  progress. `MANIFEST.md`: the new VMs, the host's disks, and the new
+- `todo.md`: Pi-hole runs as a VM; no template VM; rebuild step 5 done. `MANIFEST.md`: the new VMs, the host's disks, and the new
   secret files.
 
 ## [0.2.0] - 2026-10-15 - Bare Metal
