@@ -21,15 +21,38 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [x] Fix a published release's notes without moving its tag (manual run)
 - [x] Write up the release workflow in `docs/blog/`
 
-## 1. Decisions before rebuilding
+## 1. Network setup
 
-- [ ] Local domain: `home.arpa`, or a subdomain of a real domain
+Decide:
+
+- [ ] Local domain: `home.arpa`, or a subdomain of a real domain (not
+      `.local`, and not an unreserved name like the test run's)
 - [ ] Certificates: real domain + Let's Encrypt DNS-01, or a local CA
-- [ ] Remote access: Tailscale / WireGuard / none
-- [ ] IP plan: static ranges outside DHCP for hosts and VMs
+      (phones struggled to trust the test run's local CA)
+- [ ] Remote access: Tailscale / WireGuard / none; never port-forward the
+      Proxmox UI (8006) or SSH
+- [ ] IP plan: subnet, DHCP range, static ranges for hosts, VMs and k3s
+      nodes, and room for k3s LoadBalancer IPs
+- [ ] Where Pi-hole runs: its own device, or a VM on Proxmox (then all
+      local names depend on the Proxmox host being up)
+
+Set up:
+
+- [ ] Router: DHCP range per the IP plan; reservations for anything that
+      isn't statically configured
+- [ ] Router DHCP hands out Pi-hole as the DNS server
+- [ ] Pi-hole: static IP, start on boot, upstream DNS, local records (an A
+      record for the ingress, CNAMEs for each app)
+- [ ] Remote access, if chosen
+- [ ] Verify name resolution: laptop, phone (Android Private DNS off or
+      automatic); nodes and pods once they exist
+- [ ] Record the network in `MANIFEST.md`; document the plan in `docs/`
+
+## 2. Decisions before rebuilding
+
 - [ ] Secrets: SOPS + age now; OpenBao + External Secrets later?
 
-## 2. Proxmox host (manual, documented)
+## 3. Proxmox host (manual, documented)
 
 - [ ] Destroy the test-run VMs (k3s nodes, Vaultwarden, template); no
       secrets from the test run carry over
@@ -39,25 +62,25 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [ ] API token for OpenTofu (dedicated user + role)
 - [ ] Backup storage and backup job
 
-## 3. OpenTofu: infrastructure
+## 4. OpenTofu: infrastructure
 
 - [ ] `tofu/` skeleton: providers (`bpg/proxmox`), versions, backend
 - [ ] Enable state encryption
 - [ ] Debian 13 cloud image download + template
 - [ ] Cloud-init: user, SSH key, static IP, nameserver, search domain
-- [ ] VM: Pi-hole
+- [ ] VM: Pi-hole, if it runs on Proxmox (see section 1)
 - [ ] VM: Vaultwarden (from template, not ISO)
 - [ ] VMs: k3s server + 2 agents (unique hostnames!)
 - [ ] Import or recreate existing VMs
 
-## 4. In-VM configuration (cloud-init / Ansible)
+## 5. In-VM configuration (cloud-init / Ansible)
 
-- [ ] Pi-hole install + local DNS records
+- [ ] Pi-hole install, if it runs on Proxmox; records per section 1
 - [ ] Vaultwarden VM: Docker, compose file, Caddyfile
 - [ ] k3s server install; agents join with token
 - [ ] qemu-guest-agent on all VMs
 
-## 5. k3s workloads
+## 6. k3s workloads
 
 - [ ] helmfile (or tofu helm provider) with pinned chart versions
 - [ ] CoreDNS: forward local domain to Pi-hole (`coredns-custom`)
@@ -67,7 +90,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [ ] Woodpecker (Forgejo OAuth, kubernetes backend)
 - [ ] Secrets via SOPS, no `--from-literal` in shell
 
-## 6. Verification and operations
+## 7. Verification and operations
 
 - [ ] Restore test: Vaultwarden VM from backup
 - [ ] Restore test: a k3s node from backup
