@@ -13,3 +13,5 @@ code, quickly and repeatably.
 
 - **[Blog](blog/README.md):** write-ups from the manual test run, and the
   tools chosen for the rebuild: Helm, helmfile, OpenTofu and secrets.
+- **[Scripts](scripts/README.md):** helper scripts, one page each, e.g.
+  scrubbing secrets from shell history.
