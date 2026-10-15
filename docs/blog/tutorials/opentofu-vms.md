@@ -197,6 +197,12 @@ Each service's step pushes this file to its VM, and backs up to
 
 ## What can go wrong
 
+**`ssh-add`: "Could not open a connection to your authentication agent"**
+: No ssh-agent is running. For this shell, `eval "$(ssh-agent -s)"`. For
+  every session, on Arch: `systemctl --user enable --now ssh-agent`, and
+  `export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"` in the shell's
+  startup file.
+
 **`apply` stops on the snippets with an SSH error**
 : ssh-agent has no key, or not the one `root@proxmox` accepts. `ssh-add`,
   then `ssh root@<proxmox-ip> true`.
