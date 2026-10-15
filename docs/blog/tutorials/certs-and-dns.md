@@ -172,6 +172,9 @@ TXT record through Pi-hole would never see it.
 
 ## 6. Tailscale: subnet router and split DNS
 
+In this lab, [rebuild step 7](tailscale.md) does this from code, with a
+tagged auth key.
+
 Pick a lab machine that's always on; the Pi-hole host is a good fit.
 
 ```sh

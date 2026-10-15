@@ -40,6 +40,7 @@ OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
 | Service      | URL                       | Runs on     | Chart / image                       | Version |
 |--------------|---------------------------|-------------|-------------------------------------|---------|
 | Pi-hole      | `http://pihole.lab.<domain>/admin` | pihole | `pihole/pihole`            | 2026.09.0 |
+| Tailscale subnet router | `lab-router` in the tailnet | pihole | `tailscale` (Debian package) | 1.104.1 |
 | Vaultwarden  | `https://vault.212bn`     | vaultwarden | `vaultwarden/server`                |         |
 | Caddy        | —                         | vaultwarden | `caddy:2`                           |         |
 | k3s          | `https://192.168.10.61:6443` | k3s VMs  | —                                   | v1.36.5+k3s1 |
@@ -84,6 +85,7 @@ OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
 | Cloudflare R2 token (OpenTofu), account ID | `secrets/r2.sops.yaml` |
 | restic password, R2 key for restic | `secrets/restic.sops.yaml`  |
 | Pi-hole web password           | `secrets/pihole.sops.yaml`; on the VM, `/etc/homelab/pihole.env` |
+| Tailscale auth key (reusable, `tag:lab`, 90 days) | `secrets/tailscale.sops.yaml`; on the VM, `/etc/homelab/tailscale.env` |
 | Proxmox API token, `tofu@pve!provider` | `secrets/proxmox.sops.yaml` |
 | Proxmox ACME account key, Cloudflare plugin data | Proxmox host, `/etc/pve/priv/` |
 

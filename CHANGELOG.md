@@ -23,6 +23,11 @@ For a readable summary of each release, see
 - `secrets/pihole.sops.yaml`: Pi-hole's web password, generated straight
   into SOPS.
 - Post: *Rebuild step 6: Pi-hole*.
+- `tofu/tailscale.tf`: the Pi-hole VM is also the tailnet's subnet router,
+  `lab-router`, tagged `tag:lab`, with Tailscale 1.104.1 pinned. It joins
+  with an auth key from `secrets/tailscale.sops.yaml`, read from a file,
+  never an argument.
+- Post: *Rebuild step 7: Tailscale*.
 
 - `tofu/`: OpenTofu for rebuild step 5. A pinned Debian 13 cloud image,
   five VMs (Pi-hole, Vaultwarden with a data disk, a k3s server and two
@@ -42,6 +47,8 @@ For a readable summary of each release, see
 
 ### Changed
 
+- `tofu/cloud-init.tf`: a VM can have several roles; the Pi-hole VM has
+  Pi-hole and Tailscale. `push-secrets.sh` pushes both its secrets.
 - `tofu/cloud-init.tf`: cloud-init is built as data, a base plus each
   role's packages, files and commands, instead of a template. VMs keep
   their SSH host keys if cloud-init runs again.

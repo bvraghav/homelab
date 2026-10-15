@@ -38,7 +38,8 @@ scripts/push-secrets.sh --help
 ## How it works
 
 - `PUSH` maps each VM to its secret files: `pihole` gets
-  `secrets/pihole.sops.yaml`. A service's step adds its line.
+  `secrets/pihole.sops.yaml` and `secrets/tailscale.sops.yaml`. A
+  service's step adds its line. Every file listed must exist.
 - Without `--apply`, it prints each file, where it would go, and its key
   names, read from the encrypted file without decrypting it.
 - With `--apply`, it waits for cloud-init to finish on the VM, so the

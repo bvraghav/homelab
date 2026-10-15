@@ -21,7 +21,7 @@ set -euo pipefail
 
 # Which secret files go to which VM: secrets/<name>.sops.yaml for each name.
 declare -A PUSH=(
-  [pihole]="pihole"
+  [pihole]="pihole tailscale"
 )
 
 user=${VM_USER:-debian}

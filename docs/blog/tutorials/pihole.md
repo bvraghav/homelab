@@ -164,6 +164,12 @@ in their own steps.
   with `/etc/systemd/resolved.conf.d/no-stub.conf`; check it's there,
   then `sudo systemctl restart systemd-resolved pihole`.
 
+**Devices still use other DNS servers**
+: The DHCP server hands out something else. On a Linux laptop,
+  `nmcli -g DHCP4.OPTION device show <device> | tr '|' '\n' | grep domain_name_servers`
+  shows what it got. Check Router2's *DHCP* (LAN) settings, not its
+  WAN or internet DNS settings, which some routers show nearby.
+
 **Lab names work on the laptop but not on the phone**
 : Android's *Private DNS* set to a provider bypasses Pi-hole; set it to
   *Automatic* or *Off*.
@@ -189,6 +195,7 @@ in their own steps.
 ## See also
 
 - [Rebuild step 5: the VMs, with OpenTofu](opentofu-vms.md)
+- [Rebuild step 7: Tailscale](tailscale.md)
 - [Certificates and DNS for the homelab](certs-and-dns.md)
 - [`push-secrets.sh`](../../../scripts/push-secrets.md)
 - [Back to the blog](../MANIFEST.md)

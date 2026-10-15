@@ -6,10 +6,18 @@
 locals {
   ssh_key = trimspace(file(pathexpand(var.ssh_public_key_file)))
 
-  # Each role's additions: packages, write_files and runcmd, appended to
-  # the base's. A VM without a role gets the base only.
+  # Each VM's roles: their packages, write_files and runcmd are appended
+  # to the base's, in order. A VM without roles gets the base only.
+  vm_roles = {
+    pihole = [local.pihole_cloud_init, local.tailscale_cloud_init]
+  }
+
   roles = {
-    pihole = local.pihole_cloud_init
+    for name, parts in local.vm_roles : name => {
+      packages    = flatten([for p in parts : p.packages])
+      write_files = flatten([for p in parts : p.write_files])
+      runcmd      = flatten([for p in parts : p.runcmd])
+    }
   }
 
   user_data = {

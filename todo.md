@@ -57,15 +57,17 @@ Decide:
 Set up:
 
 - [x] Second router in AP mode with DHCP; first router's DHCP off
-- [x] DHCP hands out Pi-hole as the DNS server, the gateway second
+- [~] DHCP hands out Pi-hole as the DNS server, the gateway second
+      (Router2 still hands out `1.1.1.1` and `1.0.0.1`)
 - [x] Move the domain's DNS to a provider with an API (nameservers only;
       the registrar can stay)
 - [x] DNS API token scoped to editing that zone; stored per section 2
 - [x] Pi-hole: static IP, start on boot, upstream DNS, local records for
       `lab.<domain>` (an A record for the ingress, CNAMEs for each app),
       generated from `secrets/network.sops.yaml` (`tofu/pihole.tf`)
-- [ ] Tailscale: a subnet router on a lab node advertising the LAN; split
-      DNS for `lab.<domain>` to Pi-hole
+- [~] Tailscale: a subnet router on the Pi-hole VM advertising the LAN,
+      tagged `tag:lab`, route auto-approved; split DNS for `lab.<domain>`
+      to Pi-hole (`tofu/tailscale.tf`, auth key in SOPS)
 - [ ] Verify name resolution: laptop, phone (Android Private DNS off or
       automatic), at home and over Tailscale; nodes and pods once they
       exist
