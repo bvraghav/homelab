@@ -9,6 +9,8 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [x] Fill in identity placeholders in `LICENCE.md`
 - [ ] Push repo to a remote (Forgejo after rebuild; elsewhere until then)
 - [x] Write up the manual test run in `docs/blog/`
+- [x] Publish `docs/` to GitHub Pages (workflow + Makefile)
+- [ ] Enable Pages (Source: GitHub Actions) once the remote exists
 - [ ] Clean secrets out of shell history (`grep from-literal ~/.zsh_history`)
 
 ## 1. Decisions before rebuilding

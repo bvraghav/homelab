@@ -81,17 +81,18 @@ flowchart LR
 
 ## Building the blog
 
-The blog is a plain folder of Markdown, rendered with
-[md-preview](https://bvraghav.github.io/md-preview/):
+The blog is a plain folder of Markdown inside `docs/`, rendered with
+[md-preview](https://bvraghav.github.io/md-preview/). From the repository
+root:
 
 ```sh
-md-preview docs/blog                                  # live preview with a file tree
-md-preview build docs/blog -o public/blog \
-  --base-url https://<your-site>/blog                 # static site + sitemap.xml
+md-preview docs/blog          # live preview of the blog, with a file tree
+make serve                    # build all of docs/ and serve it at localhost:8000
 ```
 
-With `--base-url`, md-preview writes `sitemap.xml` for search engines, dated
-from each post's last git commit.
+GitHub Actions builds the site on every push to `develop` and publishes it
+to GitHub Pages from `master`, with a `sitemap.xml` dated from each post's
+last git commit.
 
 ## Adding a post
 

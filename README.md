@@ -16,9 +16,10 @@ whole lab can be torn down and rebuilt quickly and repeatably.
 | Path          | Purpose                                          |
 |---------------|--------------------------------------------------|
 | `tofu/`       | OpenTofu code for VMs, cloud-init and releases   |
-| `docs/`       | Documentation; `docs/blog/` for write-ups        |
+| `docs/`       | Documentation, published to GitHub Pages; `docs/blog/` for write-ups |
 | `todo.md`     | Task list and rebuild progress                   |
 | `MANIFEST.md` | Inventory of hosts, services and versions        |
+| `Makefile`    | `make site` builds the docs with md-preview      |
 
 ## Secrets
 
