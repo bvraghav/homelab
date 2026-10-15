@@ -12,6 +12,10 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-15 - First Tenants
+
+*Rebuild steps 5 to 8: VMs from code, the lab's names, remote access, and the vault, with a tested restore.*
+
 ### Added
 
 - `tofu/pihole.tf`: Pi-hole on its VM, with Docker and a pinned image
@@ -274,7 +278,8 @@ For a readable summary of each release, see
   self-hosted KaTeX and mermaid; `sitemap.xml` from git history.
 - `CHANGELOG.md` and `RELEASE_NOTES.md`.
 
-[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/bvraghav/homelab/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/bvraghav/homelab/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/bvraghav/homelab/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/bvraghav/homelab/compare/v0.0.4...v0.1.0
