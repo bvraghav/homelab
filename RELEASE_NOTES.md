@@ -3,6 +3,31 @@
 The full list of changes is in [`CHANGELOG.md`](CHANGELOG.md). Each release
 has a short title and a one-line subtitle, the same in both files.
 
+## 0.2.0: Bare Metal (2026-10-15)
+
+*Rebuild steps 1 to 4 done: tools, secrets, DNS, and a hardened Proxmox host.*
+
+The first four steps of the rebuild are done for real, on the blank box.
+The laptop has its tools, secrets have a home, DNS answers to an API, and
+Proxmox is installed, locked down and ready for OpenTofu.
+
+### Highlights
+
+- **Steps 1 to 4, done.** Every tool pinned in the manifest; SOPS with a
+  laptop key and an offline backup key; `<domain>`'s DNS at Cloudflare,
+  with a DNS-01 dry run passed; Proxmox VE 9.2.2 with two-factor login,
+  SSH by key only, and a Let's Encrypt certificate on its web UI.
+- **Secrets in the repository, encrypted.** The Cloudflare token and
+  OpenTofu's Proxmox token live in `secrets/`, encrypted to both age
+  keys. The Proxmox token went from the host into SOPS without ever being
+  shown.
+- **Backups of data, not VMs.** The VMs are rebuilt from code, so each
+  service dumps its own data on a timer and `restic` sends it, encrypted,
+  to an S3 bucket. Proxmox's backup job is gone from the plan.
+- **Fixes along the way.** `sops-setup.sh` explains why it couldn't make
+  a key, `sops edit` works on a fresh clone, and the Proxmox post says
+  where the ACME menu hides.
+
 ## 0.1.1: Blank Box (2026-10-15)
 
 *The network decided, and the first four steps of the rebuild written up and scripted.*
