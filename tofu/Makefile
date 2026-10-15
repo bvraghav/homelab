@@ -5,6 +5,11 @@
 #   make -C tofu apply    apply the saved plan, then stage the state for git
 #   make -C tofu check    fail unless the state file is encrypted
 #
+# To pass options to plan, use OpenTofu's TF_CLI_ARGS_plan, e.g. to
+# rebuild a VM from scratch:
+#   TF_CLI_ARGS_plan='-replace=proxmox_virtual_environment_vm.vm[\"pihole\"]' make -C tofu plan
+# (OpenTofu splits it like a shell would, so the inner quotes are escaped.)
+#
 # The state (terraform.tfstate) is committed, encrypted. After an apply,
 # commit it: git commit -m "..." tofu/terraform.tfstate
 # Uploading snippets needs SSH to the host as root, with the key loaded in

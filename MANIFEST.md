@@ -10,8 +10,8 @@ and are expected to change in the rebuild.
 |---------------|-------------------------------|-------------------------------|
 | LAN subnet    | `192.168.10.0/24` (test run)  |                               |
 | Local domain  | `212bn` (test run)            | consider `home.arpa` or a real domain |
-| DNS           | Pi-hole `<ip>`                |                               |
-| DHCP          | router                        | hands out Pi-hole as DNS      |
+| DNS           | Pi-hole (VM 101), gateway as fallback | records from `secrets/network.sops.yaml` |
+| DHCP          | Router2                       | hands out Pi-hole, then the gateway |
 
 ## Hosts and VMs
 
@@ -39,6 +39,7 @@ OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
 
 | Service      | URL                       | Runs on     | Chart / image                       | Version |
 |--------------|---------------------------|-------------|-------------------------------------|---------|
+| Pi-hole      | `http://pihole.lab.<domain>/admin` | pihole | `pihole/pihole`            | 2026.09.0 |
 | Vaultwarden  | `https://vault.212bn`     | vaultwarden | `vaultwarden/server`                |         |
 | Caddy        | —                         | vaultwarden | `caddy:2`                           |         |
 | k3s          | `https://192.168.10.61:6443` | k3s VMs  | —                                   | v1.36.5+k3s1 |
@@ -82,6 +83,7 @@ OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
 | OpenTofu state passphrase      | `secrets/tofu.sops.yaml`          |
 | Cloudflare R2 token (OpenTofu), account ID | `secrets/r2.sops.yaml` |
 | restic password, R2 key for restic | `secrets/restic.sops.yaml`  |
+| Pi-hole web password           | `secrets/pihole.sops.yaml`; on the VM, `/etc/homelab/pihole.env` |
 | Proxmox API token, `tofu@pve!provider` | `secrets/proxmox.sops.yaml` |
 | Proxmox ACME account key, Cloudflare plugin data | Proxmox host, `/etc/pve/priv/` |
 

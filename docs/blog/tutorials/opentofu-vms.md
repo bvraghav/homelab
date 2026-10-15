@@ -63,7 +63,11 @@ them the same way every time.
 **cloud-init runs once**
 : It sets up a VM on its first boot only. The VMs ignore later changes to
   the image or the user-data; to apply them, recreate the VM:
-  `tofu apply -replace='proxmox_virtual_environment_vm.vm["pihole"]'`.
+
+  ```sh
+  TF_CLI_ARGS_plan='-replace=proxmox_virtual_environment_vm.vm[\"pihole\"]' make -C tofu plan
+  make -C tofu apply
+  ```
 
 **No secrets in cloud-init**
 : The user-data has a user, an SSH key and a package. Secrets reach the
@@ -240,6 +244,7 @@ Each service's step pushes this file to its VM, and backs up to
 ## See also
 
 - [Rebuild step 4: installing Proxmox VE](proxmox-install.md)
+- [Rebuild step 6: Pi-hole](pihole.md)
 - [TF: good and bad use cases](../tools/tofu-use-cases.md)
 - [`proxmox-tofu-token.sh`](../../../scripts/proxmox-tofu-token.md)
 - [Back to the blog](../MANIFEST.md)
