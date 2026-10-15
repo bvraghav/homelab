@@ -9,8 +9,9 @@
 #   sops-setup.sh --backup-key FILE --apply    create what's missing, then check
 #
 #   --backup-key FILE   the offline backup key, e.g. on a mounted USB stick
-#   --apply             create the laptop key, the backup key and .sops.yaml
-#                       if they don't exist; never overwrites one that does
+#   --apply             create the laptop key, the backup key, .sops.yaml and
+#                       the secrets/ folder if they don't exist; never
+#                       overwrites one that does
 #
 # The laptop key is $SOPS_AGE_KEY_FILE, or ~/.config/sops/age/keys.txt.
 # Run it from anywhere inside the repository.
@@ -84,6 +85,18 @@ EOF
   else
     echo "missing:  $config (--apply creates it)"
     exit 1
+  fi
+fi
+
+# Where secret files go; sops edit doesn't create folders.
+if [[ ! -d secrets ]]; then
+  if ((apply)); then
+    mkdir secrets
+    touch secrets/.gitkeep
+    echo "created:  secrets/"
+  else
+    echo "missing:  secrets/ (--apply creates it)"
+    problems=1
   fi
 fi
 

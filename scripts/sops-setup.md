@@ -26,8 +26,8 @@ scripts/sops-setup.sh --help
   not just once.
 
 `--apply`
-: Create the laptop key, the backup key and `.sops.yaml`, each only if it
-  doesn't exist yet.
+: Create the laptop key, the backup key, `.sops.yaml` and the `secrets/`
+  folder, each only if it doesn't exist yet.
 
 ## Before you run it
 
@@ -44,6 +44,8 @@ scripts/sops-setup.sh --help
 - `.sops.yaml` gets one rule: files named `*.sops.yaml`, `*.sops.json` or
   `*.sops.env` are encrypted to both public keys.
 - An existing `.sops.yaml` must list both public keys, or the script stops.
+- `secrets/` is where secret files go. `sops edit` doesn't create folders,
+  so the script does, with a `.gitkeep` so the folder is committed.
 - The round trip encrypts a throwaway value through that rule, then
   decrypts it twice, with `SOPS_AGE_KEY_FILE` set to each key alone. Both
   must succeed.

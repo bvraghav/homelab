@@ -32,6 +32,9 @@ For a readable summary of each release, see
 
 - `sops-setup.sh`: when a key couldn't be created, the script stopped
   without a word; it now shows `age-keygen`'s error and says which key.
+- `sops edit secrets/<name>.sops.yaml` failed on a fresh clone: there was
+  no `secrets/` folder. It's now in the repository, and `sops-setup.sh`
+  creates it if it's missing.
 
 ## [0.1.1] - 2026-10-15 - Blank Box
 
