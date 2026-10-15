@@ -152,8 +152,9 @@ For a readable summary of each release, see
 ### Fixed
 
 - Woodpecker refused the first login of any Forgejo user but
-  `forgejo-admin` (`registration_closed`): the lab's own user is now one
-  of its admins.
+  `forgejo-admin` (`registration_closed`). Its sign-ups are now open:
+  Forgejo's are off, so only accounts made there can log in.
+  `forgejo-admin` stays its only admin.
 - `make -C helmfile apply` failed on a new cluster: diffing `lab-certs`
   and kube-prometheus-stack needed CRDs that the same apply installs.
   Their first diff now skips that check (`disableValidationOnInstall`).

@@ -119,10 +119,9 @@ make -C helmfile apply
 
 The diff now adds `woodpecker-forgejo` (the Secret) and `woodpecker`.
 Open `https://ci.lab.<domain>`, **Login**, and authorize Woodpecker in
-Forgejo. Woodpecker's sign-ups are closed: only the Forgejo users in
-`WOODPECKER_ADMIN`, in `values/woodpecker.yaml.gotmpl`, can log in for the
-first time. Put your own Forgejo username there, next to
-`forgejo-admin`.
+Forgejo. Any Forgejo user can log in (`WOODPECKER_OPEN`): Forgejo's
+sign-ups are off, so only accounts you created exist. `forgejo-admin` is
+Woodpecker's admin (`WOODPECKER_ADMIN`).
 
 ## 4. Check it
 
@@ -172,8 +171,9 @@ whole procedure is tested in step 12, with the rest of the cluster.
 : The SOPS file is there, but a key is misnamed or empty.
 
 **Woodpecker login ends at `/login?error=registration_closed`**
-: You logged in to Forgejo as a user who isn't in `WOODPECKER_ADMIN`:
-  add the username, and apply again.
+: Woodpecker's sign-ups are closed: then only the users in
+  `WOODPECKER_ADMIN` can log in for the first time. Check that
+  `WOODPECKER_OPEN` is `"true"`, and apply again.
 
 **Woodpecker login: "redirect_uri mismatch"**
 : The OAuth app's redirect URI isn't exactly
