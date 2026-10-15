@@ -12,6 +12,16 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+### Changed
+
+- `release` workflow: a manual run reads `RELEASE_NOTES.md` from the branch
+  it's started on, so a release's notes can be fixed without moving its tag.
+
+### Fixed
+
+- 0.0.3 release notes: "come from this file" read oddly on GitHub; they now
+  name `RELEASE_NOTES.md`.
+
 ## [0.0.3] - 2026-10-15 - Autopilot
 
 *GitHub releases are created automatically from version tags.*

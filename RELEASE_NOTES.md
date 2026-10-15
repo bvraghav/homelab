@@ -8,8 +8,8 @@ has a short title and a one-line subtitle, the same in both files.
 *GitHub releases are created automatically from version tags.*
 
 Until now, each GitHub release was written by hand after pushing a tag.
-From this release on, pushing a version tag is enough: the release, its
-title and its notes all come from this file.
+From this release on, pushing a version tag is enough: the release's title
+and notes come from `RELEASE_NOTES.md` in the repository.
 
 ### Highlights
 
