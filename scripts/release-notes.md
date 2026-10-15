@@ -68,4 +68,6 @@ scripts/release-notes.sh --help
 ## See also
 
 - `.github/workflows/release.yml`, which uses it to create each release.
+- [Releases from tags](../docs/blog/tools/release-workflow.md), the write-up:
+  the release cycle, and fixing a published release's notes.
 - [All scripts](MANIFEST.md)

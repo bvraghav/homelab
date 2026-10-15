@@ -12,6 +12,20 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+### Added
+
+- Blog post *Releases from tags*: the release cycle with git flow and the
+  `release` workflow, fixing a published release's notes without touching
+  its tag, and what tripped us up.
+
+### Changed
+
+- `site/site.lua`: links from any docs page that leave `docs/` are mapped to
+  their published page or to the repository, so posts can link to
+  `scripts/` the way that works on GitHub.
+- `todo.md`: releases 0.0.2 to 0.0.4 and the release workflow ticked off;
+  two more lessons.
+
 ## [0.0.4] - 2026-10-15 - Paper Trail
 
 *The changelog, release notes and licence, published with the docs.*

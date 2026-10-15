@@ -30,6 +30,7 @@ flowchart LR
   T1 --> T3[TF use cases]
   T3 --> S[Secrets]
   S --> SH[Scrub history]
+  M --> RW[Releases from tags]
   HF --> S
 ```
 
@@ -41,6 +42,7 @@ flowchart LR
 6. [TF: good and bad use cases](tools/tofu-use-cases.md)
 7. [A secret store for the homelab](tools/secrets.md)
 8. [How to scrub shell history to clean secrets](tutorials/scrub-history.md)
+9. [Releases from tags](tools/release-workflow.md)
 
 ## All posts
 
@@ -60,6 +62,7 @@ flowchart LR
 | [OpenTofu for cloud in general](tools/tofu-for-cloud-in-general.md) | OpenTofu versus Terraform on AWS and other clouds | 2026-10-15 |
 | [TF: good and bad use cases](tools/tofu-use-cases.md) | Which parts of the homelab OpenTofu should and should not describe | 2026-10-15 |
 | [A secret store for the homelab](tools/secrets.md) | An SSM SecureString equivalent: SOPS + age, OpenBao, Infisical | 2026-10-15 |
+| [Releases from tags](tools/release-workflow.md) | git flow, a VERSION file and one workflow; and fixing a published release's notes without touching its tag, for free | 2026-10-15 |
 
 ### Tutorials
 
@@ -78,6 +81,9 @@ flowchart LR
 
 `secrets`
 : [Motivation](misc/motivation.md) · [Secrets](tools/secrets.md) · [Scrub shell history](tutorials/scrub-history.md)
+
+`releases`
+: [Releases from tags](tools/release-workflow.md)
 
 `kubernetes`
 : [Helm as a tool](tools/helm.md) · [Helm tutorial](tutorials/helm.md) · [Helmfile](tools/helmfile.md) · [Secrets](tools/secrets.md)
