@@ -12,6 +12,14 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+### Added
+
+- `scripts/scrub-history.sh`: list shell history entries that look like
+  secrets, values masked; `--apply` removes whole entries after a private
+  backup.
+- Tutorial `docs/blog/tutorials/scrub-history.md`, linked from the blog index
+  and the secrets post.
+
 ## [0.0.1] - 2026-10-15 - Groundwork
 
 *Repository skeleton, test-run write-ups and a published docs site.*
