@@ -68,7 +68,11 @@ For a readable summary of each release, see
   gateway.
 - `todo.md`: rebuild step 6, Pi-hole, done; DHCP hands it out, and
   Proxmox uses it.
-- `todo.md`: rebuild step 7, Tailscale, done.
+- `todo.md`: rebuild step 7, Tailscale, done. Rebuild step 8,
+  Vaultwarden, done, and its restore test passed: a rebuilt VM restored
+  the latest backup by itself.
+- Vaultwarden's backup and restore give restic a cache directory, which
+  it had none of without `$HOME`.
 - `tofu/Makefile`: options for `plan` go in `TF_CLI_ARGS_plan`; the step 5
   post's `-replace` example uses it, and escapes the quotes it needs.
 - `proxmox-tofu-token.sh`: the role gets `VM.GuestAgent.Audit`, so

@@ -97,7 +97,7 @@ with `restic`, encrypted.
 
 | What                | How                                   | Schedule | Retention        | Last restore test |
 |---------------------|---------------------------------------|----------|------------------|-------------------|
-| Vaultwarden         | SQLite `.backup`, attachments, keys; restored by itself on a rebuild | daily 02:30 | 7 d, 4 w, 3 m | |
+| Vaultwarden         | SQLite `.backup`, attachments, keys; restored by itself on a rebuild | daily 02:30 | 7 d, 4 w, 3 m | 2026-10-15: VM rebuilt, snapshot restored by itself |
 | k3s                 | datastore snapshot                    | daily    | 7 d, 4 w, 3 m    |                   |
 | Forgejo             | `forgejo dump`                        | daily    | 7 d, 4 w, 3 m    |                   |
 | Vaultwarden export  | encrypted JSON, off-site              | manual   |                  |                   |

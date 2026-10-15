@@ -136,10 +136,17 @@ scripts/push-secrets.sh vaultwarden --apply
 Then:
 
 ```sh
-ssh debian@<vault-ip> 'sudo journalctl -u vaultwarden-restore -o cat | tail -3'
+ssh debian@<vault-ip> 'sudo journalctl -u vaultwarden-restore -o cat | grep -E "restor|empty|read"'
 ```
 
-It says "restored the latest backup". Log in at `https://vault.lab.<domain>`:
+It names the snapshot it restored, and ends "restored the latest backup".
+To check the contents too, count what's in the vault:
+
+```sh
+ssh debian@<vault-ip> 'sudo sqlite3 /srv/vaultwarden/data/db.sqlite3 "select count(*) from users; select count(*) from ciphers;"'
+```
+
+Users, then items: the same as before the rebuild. Log in at `https://vault.lab.<domain>`:
 your vault, your 2FA. On the login page, **Create account** now fails:
 sign-ups are off. Record the date in the manifest's backups table, as the
 last restore test.

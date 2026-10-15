@@ -37,6 +37,9 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done, `[-]` dropped.
       with `scripts/push-secrets.sh`; DHCP and Proxmox use it
 - [x] Rebuild step 7: Tailscale subnet router `lab-router` on the Pi-hole
       VM, tagged, with split DNS for `lab.<domain>`
+- [x] Rebuild step 8: Vaultwarden behind Caddy with a wildcard
+      certificate; nightly restic backups to R2; restore test passed
+      (2026-10-15)
 
 ## 1. Network setup
 
@@ -129,7 +132,7 @@ the VM.
 
 - [x] Pi-hole: Docker, pinned image, settings as `FTLCONF_*` variables;
       web password pushed; no backup needed, it's all code
-- [~] Vaultwarden VM: Docker, compose file, Caddyfile; Caddy built with
+- [x] Vaultwarden VM: Docker, compose file, Caddyfile; Caddy built with
       the DNS provider's plugin, for the wildcard cert through DNS-01
       (`tofu/vaultwarden.tf`); data on its own disk; no admin page
 - [ ] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
@@ -161,7 +164,7 @@ the VM.
 
 ## 7. Verification and operations
 
-- [~] Restore test: rebuild the Vaultwarden VM; it restores the latest
+- [x] Restore test: rebuild the Vaultwarden VM; it restores the latest
       backup by itself (`vaultwarden-restore`)
 - [ ] Restore test: rebuild k3s, restore its snapshot and Forgejo
 - [ ] Timed rebuild from scratch; record time-to-build here

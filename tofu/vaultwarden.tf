@@ -171,6 +171,7 @@ locals {
           Type=oneshot
           EnvironmentFile=/etc/homelab/restic.env
           Environment=RESTIC_REPOSITORY=${local.vaultwarden_restic}
+          Environment=RESTIC_CACHE_DIR=/var/cache/restic
           ExecStart=/usr/local/sbin/vaultwarden-restore
         EOT
       },
@@ -210,6 +211,7 @@ locals {
           Type=oneshot
           EnvironmentFile=/etc/homelab/restic.env
           Environment=RESTIC_REPOSITORY=${local.vaultwarden_restic}
+          Environment=RESTIC_CACHE_DIR=/var/cache/restic
           ExecStart=/usr/local/sbin/vaultwarden-backup
         EOT
       },
