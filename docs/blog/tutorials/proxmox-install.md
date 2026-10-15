@@ -204,7 +204,8 @@ service's step adds its timer. Nothing to do here.
 ## 8. A trusted certificate for the web UI
 
 Proxmox has an ACME client built in, and it can use the Cloudflare token
-from [step 3](dns-to-cloudflare.md):
+from [step 3](dns-to-cloudflare.md). Log in as `root@pam` for this:
+the ACME settings are hidden from every other user, `admin@pve` included.
 
 1. **Datacenter → ACME → Accounts → Add**: Let's Encrypt V2, `<email>`.
 2. **Datacenter → ACME → Challenge Plugins → Add**: DNS API *Cloudflare
