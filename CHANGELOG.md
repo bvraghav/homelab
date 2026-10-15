@@ -20,6 +20,11 @@ For a readable summary of each release, see
   their secrets arrive.
 - `MANIFEST.md`: the remaining tool versions, and the Helm plugins.
 
+### Fixed
+
+- `sops-setup.sh`: when a key couldn't be created, the script stopped
+  without a word; it now shows `age-keygen`'s error and says which key.
+
 ## [0.1.1] - 2026-10-15 - Blank Box
 
 *The network decided, and the first four steps of the rebuild written up and scripted.*
