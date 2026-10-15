@@ -16,6 +16,8 @@ For a readable summary of each release, see
 
 - `.sops.yaml`: files named `*.sops.yaml`, `*.sops.json` or `*.sops.env`
   are encrypted to the laptop's and the offline backup's age keys.
+- `secrets/cloudflare.sops.yaml`: the Cloudflare DNS API token, scoped to
+  `<domain>`'s zone, and the Zone ID, encrypted.
 
 ### Changed
 
@@ -26,12 +28,16 @@ For a readable summary of each release, see
 - `MANIFEST.md`: the remaining tool versions, and the Helm plugins; where
   the two age keys are kept.
 - `todo.md`: rebuild step 2, SOPS + age, done; SOPS + age ticked off as
-  the secrets decision.
+  the secrets decision. Rebuild step 3 done: `<domain>`'s DNS at
+  Cloudflare, its token stored, and a DNS-01 dry run passed.
 
 ### Fixed
 
 - `sops-setup.sh`: when a key couldn't be created, the script stopped
   without a word; it now shows `age-keygen`'s error and says which key.
+- `sops edit secrets/<name>.sops.yaml` failed on a fresh clone: there was
+  no `secrets/` folder. It's now in the repository, and `sops-setup.sh`
+  creates it if it's missing.
 
 ## [0.1.1] - 2026-10-15 - Blank Box
 

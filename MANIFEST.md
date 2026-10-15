@@ -67,6 +67,7 @@ and are expected to change in the rebuild.
 | Woodpecker OAuth client        | k8s secret `woodpecker/woodpecker-forgejo` |
 | age key (SOPS), daily          | laptop `~/.config/sops/age/keys.txt` |
 | age key (SOPS), backup         | offline USB stick + paper copy    |
+| Cloudflare DNS API token, Zone ID | `secrets/cloudflare.sops.yaml` |
 
 ## Backups
 

@@ -24,6 +24,9 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
       versions in `MANIFEST.md`
 - [x] Rebuild step 2: SOPS + age, a laptop key and an offline backup key
       (`scripts/sops-setup.sh`); `.sops.yaml` committed
+- [x] Rebuild step 3: `<domain>`'s DNS at Cloudflare, a one-zone API token
+      in `secrets/cloudflare.sops.yaml`, DNS-01 dry run passed
+      (`scripts/dns01-test.sh`)
 
 ## 1. Network setup
 
@@ -47,9 +50,9 @@ Set up:
 
 - [x] Second router in AP mode with DHCP; first router's DHCP off
 - [ ] DHCP hands out Pi-hole as the DNS server
-- [ ] Move the domain's DNS to a provider with an API (nameservers only;
+- [x] Move the domain's DNS to a provider with an API (nameservers only;
       the registrar can stay)
-- [ ] DNS API token scoped to editing that zone; stored per section 2
+- [x] DNS API token scoped to editing that zone; stored per section 2
 - [ ] Pi-hole: static IP, start on boot, upstream DNS, local records for
       `lab.<domain>` (an A record for the ingress, CNAMEs for each app)
 - [ ] Tailscale: a subnet router on a lab node advertising the LAN; split
