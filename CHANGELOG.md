@@ -12,6 +12,13 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+### Added
+
+- The changelog, release notes and licence are published with the docs,
+  through symlinks under `docs/`, and linked from the landing page under
+  *Project*.
+- The version in every page's footer links to the release notes.
+
 ### Changed
 
 - `release` workflow: a manual run reads `RELEASE_NOTES.md` from the branch

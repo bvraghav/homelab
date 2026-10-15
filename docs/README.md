@@ -15,3 +15,9 @@ code, quickly and repeatably.
   tools chosen for the rebuild: Helm, helmfile, OpenTofu and secrets.
 - **[Scripts](scripts/README.md):** helper scripts, one page each, e.g.
   scrubbing secrets from shell history.
+
+## Project
+
+- **[What's new](RELEASE_NOTES.md):** release notes, newest first.
+- **[Changelog](CHANGELOG.md):** every change, version by version.
+- **[Licence](LICENCE.md):** MIT.
