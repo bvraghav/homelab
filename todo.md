@@ -7,12 +7,14 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 
 - [x] Create repo skeleton (README, LICENCE, .gitignore, MANIFEST, todo)
 - [x] Fill in identity placeholders in `LICENCE.md`
-- [ ] Push repo to a remote (Forgejo after rebuild; elsewhere until then)
+- [x] Push repo to a remote: GitHub `bvraghav/homelab`
+- [ ] Mirror or move the repo to Forgejo after the rebuild
 - [x] Write up the manual test run in `docs/blog/`
 - [x] Publish `docs/` to GitHub Pages (workflow + Makefile)
-- [ ] Enable Pages (Source: GitHub Actions) once the remote exists
-- [ ] Allow version tags to deploy: github-pages environment, tag rule `*.*.*`
-- [ ] Clean secrets out of shell history (`grep from-literal ~/.zsh_history`)
+- [x] Enable Pages (Source: GitHub Actions)
+- [x] Allow version tags to deploy: github-pages environment, tag rule `v*.*.*`
+- [x] Release 0.0.1, *Groundwork*: docs site deployed from tag `v0.0.1`
+- [~] Clean secrets out of shell history (`grep from-literal ~/.zsh_history`)
 
 ## 1. Decisions before rebuilding
 
@@ -76,3 +78,6 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - Traefik owns ports 80/443 on k3s nodes; use Ingress, not LoadBalancer.
 - Forgejo chart init container is still named `configure-gitea`.
 - `helm install` on an existing release fails; use `helm upgrade --install`.
+- GitHub environment deployment rules take globs (`v*.*.*`), not regexes.
+- Releasing through a pull request skips git flow's back-merge; merge `master`
+  into `develop` by hand.
