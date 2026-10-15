@@ -55,12 +55,13 @@ Decide:
 Set up:
 
 - [x] Second router in AP mode with DHCP; first router's DHCP off
-- [ ] DHCP hands out Pi-hole as the DNS server
+- [ ] DHCP hands out Pi-hole as the DNS server, the gateway second
 - [x] Move the domain's DNS to a provider with an API (nameservers only;
       the registrar can stay)
 - [x] DNS API token scoped to editing that zone; stored per section 2
-- [ ] Pi-hole: static IP, start on boot, upstream DNS, local records for
-      `lab.<domain>` (an A record for the ingress, CNAMEs for each app)
+- [~] Pi-hole: static IP, start on boot, upstream DNS, local records for
+      `lab.<domain>` (an A record for the ingress, CNAMEs for each app),
+      generated from `secrets/network.sops.yaml` (`tofu/pihole.tf`)
 - [ ] Tailscale: a subnet router on a lab node advertising the LAN; split
       DNS for `lab.<domain>` to Pi-hole
 - [ ] Verify name resolution: laptop, phone (Android Private DNS off or
@@ -121,7 +122,8 @@ cloud-init runs only on a VM's first boot; changing it means recreating
 the VM.
 
 
-- [ ] Pi-hole install, if it runs on Proxmox; records per section 1
+- [~] Pi-hole: Docker, pinned image, settings as `FTLCONF_*` variables;
+      web password pushed; no backup needed, it's all code
 - [ ] Vaultwarden VM: Docker, compose file, Caddyfile; Caddy built with
       the DNS provider's plugin, for the wildcard cert through DNS-01
 - [ ] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
@@ -129,9 +131,9 @@ the VM.
 - [x] qemu-guest-agent on all VMs
 - [ ] Backup timers (`restic` to R2; repository password and key pushed
       from SOPS): Vaultwarden (SQLite `.backup`, `attachments/`,
-      `rsa_key*`), k3s (datastore snapshot), Pi-hole if not in the repo;
+      `rsa_key*`), k3s (datastore snapshot), no Pi-hole (all code);
       `OnFailure=` notice
-- [ ] `scripts/push-secrets.sh <vm>`: each SOPS secret for that VM, piped
+- [x] `scripts/push-secrets.sh <vm>`: each SOPS secret for that VM, piped
       over SSH into a root-only file; lists what it would push without
       `--apply`
 - [ ] cloud-init installs services without their secrets; k3s with

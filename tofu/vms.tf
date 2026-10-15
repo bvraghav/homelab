@@ -1,5 +1,5 @@
 # The VMs. Each one's disk starts from the Debian cloud image; cloud-init
-# sets the user, SSH key, address and the guest agent on first boot.
+# (cloud-init.tf) sets it up on first boot.
 # Addresses come from secrets/network.sops.yaml, under hosts.<name>.
 
 locals {
@@ -13,7 +13,15 @@ locals {
     k3s-agent2  = { id = 203, cores = 2, memory = 3072, disk = 32, data_disk = 0 }
   }
 
-  dns_servers = try(local.net.dns, [local.net.gateway])
+  # Pi-hole for every VM, the gateway as a fallback while it's down. Pi-hole
+  # itself uses the gateway: it pulls its image before it can answer.
+  dns_servers = {
+    for name in keys(local.vms) : name => (
+      name == "pihole"
+      ? [local.net.gateway]
+      : [local.net.hosts["pihole"].address, local.net.gateway]
+    )
+  }
 }
 
 # Debian 13, pinned to one build and its checksum. To upgrade, change both
@@ -26,24 +34,6 @@ resource "proxmox_download_file" "debian13" {
   file_name          = "debian-13-genericcloud-amd64-20261001-2618.qcow2"
   checksum           = "f46f0671a6e5bdec5291ab8972bae2f10e5408c2f64a74078f11efc2f06a436a9d0313ed50e0472542eeabf780e9f7c792ac0a314c6c20507fcd9fd81b468c3d"
   checksum_algorithm = "sha512"
-}
-
-resource "proxmox_virtual_environment_file" "user_data" {
-  for_each = local.vms
-
-  node_name    = var.node
-  datastore_id = var.file_datastore
-  content_type = "snippets"
-
-  source_raw {
-    file_name = "${each.key}-user-data.yaml"
-    data = templatefile("${path.module}/user-data.yaml.tftpl", {
-      hostname = each.key
-      fqdn     = "${each.key}.${local.domain}"
-      user     = var.vm_user
-      ssh_key  = trimspace(file(pathexpand(var.ssh_public_key_file)))
-    })
-  }
 }
 
 resource "proxmox_virtual_environment_vm" "vm" {
@@ -105,7 +95,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
 
     dns {
       domain  = local.domain
-      servers = local.dns_servers
+      servers = local.dns_servers[each.key]
     }
 
     ip_config {

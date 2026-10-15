@@ -14,6 +14,16 @@ For a readable summary of each release, see
 
 ### Added
 
+- `tofu/pihole.tf`: Pi-hole on its VM, with Docker and a pinned image
+  (`pihole/pihole:2026.09.0`). Settings are `FTLCONF_*` variables; an A
+  record per host and CNAMEs per app are generated from the network file.
+- `scripts/push-secrets.sh`: pushes a VM's secrets from SOPS to root-only
+  files in `/etc/homelab/`, over SSH, and restarts the services that read
+  them.
+- `secrets/pihole.sops.yaml`: Pi-hole's web password, generated straight
+  into SOPS.
+- Post: *Rebuild step 6: Pi-hole*.
+
 - `tofu/`: OpenTofu for rebuild step 5. A pinned Debian 13 cloud image,
   five VMs (Pi-hole, Vaultwarden with a data disk, a k3s server and two
   agents), first-boot cloud-init with a user, an SSH key and the guest
@@ -32,6 +42,13 @@ For a readable summary of each release, see
 
 ### Changed
 
+- `tofu/cloud-init.tf`: cloud-init is built as data, a base plus each
+  role's packages, files and commands, instead of a template. VMs keep
+  their SSH host keys if cloud-init runs again.
+- VMs use Pi-hole for DNS, then the gateway; Pi-hole itself uses the
+  gateway.
+- `tofu/Makefile`: options for `plan` go in `TF_CLI_ARGS_plan`; the step 5
+  post's `-replace` example uses it, and escapes the quotes it needs.
 - `proxmox-tofu-token.sh`: the role gets `VM.GuestAgent.Audit`, so
   OpenTofu can read VM addresses from the guest agent.
 - `.gitignore`: `tofu/terraform.tfstate` is committed; it's encrypted.
