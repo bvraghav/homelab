@@ -4,14 +4,17 @@ All notable changes to this repository are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/). Each version is a git tag
 without a prefix (e.g. `0.0.1`), created by `git flow release finish`; the
-tag must match the `VERSION` file.
+tag must match the `VERSION` file. Each version has a short title and a
+one-line subtitle, which `RELEASE_NOTES.md` uses too.
 
 For a readable summary of each release, see
 [`RELEASE_NOTES.md`](RELEASE_NOTES.md).
 
 ## [Unreleased]
 
-## [0.0.1] - 2026-10-15
+## [0.0.1] - 2026-10-15 - Groundwork
+
+*Repository skeleton, test-run write-ups and a published docs site.*
 
 ### Added
 

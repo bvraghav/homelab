@@ -1,8 +1,11 @@
 # Release notes
 
-The full list of changes is in [`CHANGELOG.md`](CHANGELOG.md).
+The full list of changes is in [`CHANGELOG.md`](CHANGELOG.md). Each release
+has a short title and a one-line subtitle, the same in both files.
 
-## 0.0.1 (2026-10-15)
+## 0.0.1: Groundwork (2026-10-15)
+
+*Repository skeleton, test-run write-ups and a published docs site.*
 
 The first release. The homelab was built once by hand, as a test run:
 Vaultwarden on Proxmox, a three-node k3s cluster with Prometheus, Grafana,
