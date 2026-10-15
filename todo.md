@@ -20,6 +20,8 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [x] Publish changelog, release notes and licence with the docs (0.0.4)
 - [x] Fix a published release's notes without moving its tag (manual run)
 - [x] Write up the release workflow in `docs/blog/`
+- [x] Rebuild step 1: tools on the laptop (`scripts/laptop-tools.sh`);
+      versions in `MANIFEST.md`
 
 ## 1. Network setup
 
@@ -63,9 +65,10 @@ Set up:
       them, up to "k3s is running"; helmfile installs everything inside
       k3s. Vaultwarden stays on its own VM (Docker, no Helm), so it works
       when the cluster doesn't
-- [ ] Secrets into VMs: through cloud-init (plain text on Proxmox's
-      snippets storage and in tofu state), or pushed over SSH after the
-      first boot. Decide before the first VM in tofu
+- [x] Secrets into VMs: pushed over SSH after the first boot, from SOPS
+      on the laptop, not through cloud-init. Keeps them off Proxmox's
+      snippets storage and out of tofu state, and a secret can be rotated
+      without recreating the VM
 
 ## 3. Proxmox host (manual, documented)
 
@@ -103,6 +106,11 @@ the VM.
 - [ ] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
       join with the token from SOPS
 - [ ] qemu-guest-agent on all VMs
+- [ ] `scripts/push-secrets.sh <vm>`: each SOPS secret for that VM, piped
+      over SSH into a root-only file; lists what it would push without
+      `--apply`
+- [ ] cloud-init installs services without their secrets; k3s with
+      `INSTALL_K3S_SKIP_START`, started once the token is pushed
 
 ## 6. k3s workloads
 

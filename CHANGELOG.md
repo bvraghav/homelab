@@ -12,6 +12,14 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+### Changed
+
+- `todo.md`: rebuild step 1, tools on the laptop, done. Decided: secrets
+  reach the VMs over SSH after the first boot, not through cloud-init; new
+  tasks for `scripts/push-secrets.sh` and for services that start once
+  their secrets arrive.
+- `MANIFEST.md`: the remaining tool versions, and the Helm plugins.
+
 ## [0.1.1] - 2026-10-15 - Blank Box
 
 *The network decided, and the first four steps of the rebuild written up and scripted.*

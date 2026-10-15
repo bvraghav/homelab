@@ -46,10 +46,12 @@ and are expected to change in the rebuild.
 | Helm       | `helm`                   | 4.3.0   |
 | helmfile   | `helmfile`               | 1.8.0   |
 | kubectl    | `kubectl`                | 1.37.1  |
-| certbot    | `certbot`, `certbot-dns-cloudflare` |  |
-| Tailscale  | `tailscale`              |         |
+| certbot    | `certbot`, `certbot-dns-cloudflare` | 5.8.0 |
+| Tailscale  | `tailscale`              | 1.102.4 |
 | jq         | `jq`                     | 1.8.2 |
 | ShellCheck | `shellcheck`             | 0.11.0  |
+| helm-diff  | Helm plugin, `helmfile init` | 3.15.13 |
+| helm-secrets | Helm plugin, `helmfile init` | 4.7.4 |
 
 ## Secrets (locations only, never values)
 
