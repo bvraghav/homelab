@@ -44,6 +44,22 @@ decrypted only where they're used.
   stays in Git's history: if a private key leaks, rotate the secrets, not
   just the key.
 
+## The short way: the script
+
+With the backup USB stick mounted,
+[`sops-setup.sh`](../../../scripts/sops-setup.md) does sections 1 to 4
+below: it creates whichever key is missing and `.sops.yaml`, then checks
+that each key decrypts on its own.
+
+```sh
+scripts/sops-setup.sh --backup-key <usb-mount>/homelab-backup.agekey --apply
+git add .sops.yaml
+git commit -m "Encrypt secrets to the laptop and backup age keys"
+```
+
+Run it without `--apply` any time later to check the setup, the backup
+key included. The rest of this post is what it does, by hand.
+
 ## 1. The laptop's key
 
 SOPS looks for age keys in `~/.config/sops/age/keys.txt`:

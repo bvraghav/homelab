@@ -142,7 +142,20 @@ sshd -t && systemctl reload ssh
 ## 7. An API token for OpenTofu
 
 OpenTofu (the `bpg/proxmox` provider) logs in with an API token of its
-own user, whose role has only the privileges it needs. On the host:
+own user, whose role has only the privileges it needs.
+
+[`proxmox-tofu-token.sh`](../../../scripts/proxmox-tofu-token.md) does all
+of this from the laptop over SSH, using the key from step 6, and pipes the
+token straight into SOPS, so it's never even shown:
+
+```sh
+scripts/proxmox-tofu-token.sh <proxmox-ip>           # what exists
+scripts/proxmox-tofu-token.sh --apply <proxmox-ip>   # create, store
+git add secrets/proxmox.sops.yaml
+git commit -m "Add OpenTofu's Proxmox token"
+```
+
+By hand, on the host:
 
 ```sh
 pveum role add TofuProvision -privs "Datastore.Allocate Datastore.AllocateSpace \

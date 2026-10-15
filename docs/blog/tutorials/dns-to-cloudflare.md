@@ -104,8 +104,16 @@ certbot with the Cloudflare plugin asks Let's Encrypt's **staging** server
 for the wildcard. Staging certificates aren't trusted, but staging has
 generous rate limits, so mistakes cost nothing.
 
-certbot reads the token from a file. Write it to `$XDG_RUNTIME_DIR`, a
-private tmpfs that's gone at logout, straight from SOPS:
+[`dns01-test.sh`](../../../scripts/dns01-test.md) does it in one go:
+
+```sh
+scripts/dns01-test.sh <domain>
+```
+
+It worked if it ends with *DNS-01 works*. By hand, it's this: certbot
+reads the token from a file, so write it to `$XDG_RUNTIME_DIR`, a private
+tmpfs that's gone at logout, straight from SOPS, then do a dry run, which
+keeps no certificate:
 
 ```sh
 f="$XDG_RUNTIME_DIR/cloudflare.ini"
@@ -114,16 +122,11 @@ f="$XDG_RUNTIME_DIR/cloudflare.ini"
    "$(sops decrypt --extract '["api_token"]' secrets/cloudflare.sops.yaml)" > "$f")
 
 d="$XDG_RUNTIME_DIR/le-test"
-certbot certonly --test-cert \
+certbot certonly --dry-run \
   --dns-cloudflare --dns-cloudflare-credentials "$f" \
   -d 'lab.<domain>' -d '*.lab.<domain>' \
   --config-dir "$d" --work-dir "$d" --logs-dir "$d"
-```
 
-It worked if certbot says *Successfully received certificate*. Then clean
-up; the real certificates are issued in the lab:
-
-```sh
 rm -rf "$f" "$d"
 ```
 

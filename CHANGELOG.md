@@ -25,6 +25,12 @@ For a readable summary of each release, see
   laptop*, *Secrets with SOPS and age*, *Moving DNS to Cloudflare* and
   *Installing Proxmox VE*, listed in order in the blog index.
 - `MANIFEST.md`: a *Tools* table with the laptop's tool versions.
+- Scripts for rebuild steps 1 to 4, each with its page, and used by the
+  step posts: `laptop-tools.sh` (check and install the tools, print their
+  versions), `sops-setup.sh` (age keys and `.sops.yaml`, with a decrypt
+  test per key), `dns01-test.sh` (a staging dry run of the wildcard
+  through DNS-01) and `proxmox-tofu-token.sh` (OpenTofu's Proxmox user,
+  role and token, piped straight into SOPS).
 
 ### Changed
 

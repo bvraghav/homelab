@@ -48,6 +48,7 @@ and are expected to change in the rebuild.
 | kubectl    | `kubectl`                | 1.37.1  |
 | certbot    | `certbot`, `certbot-dns-cloudflare` |  |
 | Tailscale  | `tailscale`              |         |
+| jq         | `jq`                     | 1.8.2 |
 | ShellCheck | `shellcheck`             | 0.11.0  |
 
 ## Secrets (locations only, never values)

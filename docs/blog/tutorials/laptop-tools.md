@@ -32,6 +32,19 @@ can be recorded once, next to everything else in the manifest.
 | `certbot` | `certbot`, `certbot-dns-cloudflare` | Testing a DNS-01 certificate | [Step 3](dns-to-cloudflare.md) |
 | `tailscale` | `tailscale` | Reaching the lab from anywhere | Step 7 |
 | `shellcheck` | `shellcheck` | Checking `scripts/` | Any time |
+| `jq` | `jq` | Reading Proxmox's JSON in scripts | Step 4 |
+
+## The short way: the script
+
+[`laptop-tools.sh`](../../../scripts/laptop-tools.md) does sections 1 to 3
+below, and prints the versions for section 4:
+
+```sh
+scripts/laptop-tools.sh            # what's there, what's missing, versions
+scripts/laptop-tools.sh --apply    # install what's missing, then the same
+```
+
+The rest of this post is what it does, by hand.
 
 ## 1. Install
 
@@ -39,7 +52,7 @@ All of them are in Arch's official repositories:
 
 ```sh
 sudo pacman -S --needed opentofu sops age helm helmfile kubectl \
-  certbot certbot-dns-cloudflare tailscale shellcheck
+  certbot certbot-dns-cloudflare tailscale shellcheck jq
 ```
 
 `--needed` skips what's already up to date. The OpenTofu package is
