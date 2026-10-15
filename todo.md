@@ -1,7 +1,7 @@
 # TODO
 
 Goal: rebuild the whole homelab from this repo with minimal manual steps.
-Status: `[ ]` open, `[~]` in progress, `[x]` done.
+Status: `[ ]` open, `[~]` in progress, `[x]` done, `[-]` dropped.
 
 ## 0. Repo and groundwork
 
@@ -27,6 +27,9 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [x] Rebuild step 3: `<domain>`'s DNS at Cloudflare, a one-zone API token
       in `secrets/cloudflare.sops.yaml`, DNS-01 dry run passed
       (`scripts/dns01-test.sh`)
+- [x] Rebuild step 4: Proxmox VE 9.2.2 on the blank box, updates from the
+      no-subscription repository, TOTP, SSH by key only, OpenTofu's token
+      in `secrets/proxmox.sops.yaml`, Let's Encrypt certificate for the UI
 
 ## 1. Network setup
 
@@ -74,22 +77,29 @@ Set up:
       on the laptop, not through cloud-init. Keeps them off Proxmox's
       snippets storage and out of tofu state, and a secret can be rotated
       without recreating the VM
+- [x] Backups: data, not VM images. A systemd timer on each VM dumps its
+      service's data, and `restic` sends it, encrypted, to an S3 bucket
+      (Cloudflare R2); retention 7 daily, 4 weekly, 3 monthly. No
+      Proxmox backup job: the VMs are rebuilt from code
 
 ## 3. Proxmox host (manual, documented)
 
-- [ ] Destroy the test-run VMs (k3s nodes, Vaultwarden, template); no
+- [x] Destroy the test-run VMs (k3s nodes, Vaultwarden, template); no
       secrets from the test run carry over
-- [ ] Install Proxmox VE; record version in MANIFEST
-- [ ] 2FA for `root@pam`; create `admin@pve`
-- [ ] SSH keys only for root (`PermitRootLogin prohibit-password`)
-- [ ] API token for OpenTofu (dedicated user + role):
+- [x] Install Proxmox VE; record version in MANIFEST
+- [x] 2FA for `root@pam`; create `admin@pve`
+- [x] SSH keys only for root (`PermitRootLogin prohibit-password`)
+- [x] API token for OpenTofu (dedicated user + role):
       `scripts/proxmox-tofu-token.sh`
-- [ ] Backup storage and backup job
+- [-] ~~Backup storage and backup job~~: replaced by per-service data
+      backups to S3 (section 2)
 
 ## 4. OpenTofu: infrastructure
 
 - [ ] `tofu/` skeleton: providers (`bpg/proxmox`), versions, backend
 - [ ] Enable state encryption
+- [ ] R2 bucket for backups, and an access key limited to it, in SOPS
+      (`cloudflare` provider; its own token, not the DNS one)
 - [ ] Debian 13 cloud image download + template
 - [ ] Cloud-init: user, SSH key, static IP, nameserver, search domain
 - [ ] VM: Pi-hole, if it runs on Proxmox (see section 1)
@@ -111,6 +121,10 @@ the VM.
 - [ ] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
       join with the token from SOPS
 - [ ] qemu-guest-agent on all VMs
+- [ ] Backup timers (`restic` to R2; repository password and key pushed
+      from SOPS): Vaultwarden (SQLite `.backup`, `attachments/`,
+      `rsa_key*`), k3s (datastore snapshot), Pi-hole if not in the repo;
+      `OnFailure=` notice
 - [ ] `scripts/push-secrets.sh <vm>`: each SOPS secret for that VM, piped
       over SSH into a root-only file; lists what it would push without
       `--apply`
@@ -127,12 +141,13 @@ the VM.
 - [ ] Forgejo (SQLite, SSH on 2222, webhook ALLOWED_HOST_LIST)
 - [ ] Mirror or move this repo to the rebuilt Forgejo (needs the item above)
 - [ ] Woodpecker (Forgejo OAuth, kubernetes backend)
+- [ ] Forgejo backup: `forgejo dump` on a schedule, to R2 with `restic`
 - [ ] Secrets via SOPS, no `--from-literal` in shell
 
 ## 7. Verification and operations
 
-- [ ] Restore test: Vaultwarden VM from backup
-- [ ] Restore test: a k3s node from backup
+- [ ] Restore test: rebuild the Vaultwarden VM, `restic restore` its data
+- [ ] Restore test: rebuild k3s, restore its snapshot and Forgejo
 - [ ] Timed rebuild from scratch; record time-to-build here
 - [ ] HTTPS for Grafana, Forgejo, Woodpecker
 - [ ] Phone access to Vaultwarden
