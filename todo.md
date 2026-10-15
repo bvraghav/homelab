@@ -21,53 +21,102 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [x] Fix a published release's notes without moving its tag (manual run)
 - [x] Write up the release workflow in `docs/blog/`
 
-## 1. Decisions before rebuilding
+## 1. Network setup
 
-- [ ] Local domain: `home.arpa`, or a subdomain of a real domain
-- [ ] Certificates: real domain + Let's Encrypt DNS-01, or a local CA
-- [ ] Remote access: Tailscale / WireGuard / none
-- [ ] IP plan: static ranges outside DHCP for hosts and VMs
+Decide:
+
+- [x] Local domain: a subdomain of a real domain (`lab.<domain>`), answered
+      by Pi-hole on the LAN; only DNS-01 TXT records are public
+- [x] Certificates: Let's Encrypt wildcard (`*.lab.<domain>`) through
+      DNS-01 at a DNS provider with an API; no local CA, no DDNS, nothing
+      listening on the internet. A wildcard keeps app names out of the
+      public Certificate Transparency logs
+- [x] Remote access: Tailscale; no DDNS and no port forwards (never the
+      Proxmox UI on 8006, or SSH)
+- [x] IP plan: one LAN; the second router in AP mode runs DHCP, the first
+      (modem, gateway, WiFi) has its DHCP off. Addresses are kept out of
+      the repo, in `private/network.md` (git-ignored)
+- [ ] Where Pi-hole runs: its own device, or a VM on Proxmox (then local
+      names depend on the Proxmox host being up; hand out a fallback DNS)
+
+Set up:
+
+- [x] Second router in AP mode with DHCP; first router's DHCP off
+- [ ] DHCP hands out Pi-hole as the DNS server
+- [ ] Move the domain's DNS to a provider with an API (nameservers only;
+      the registrar can stay)
+- [ ] DNS API token scoped to editing that zone; stored per section 2
+- [ ] Pi-hole: static IP, start on boot, upstream DNS, local records for
+      `lab.<domain>` (an A record for the ingress, CNAMEs for each app)
+- [ ] Tailscale: a subnet router on a lab node advertising the LAN; split
+      DNS for `lab.<domain>` to Pi-hole
+- [ ] Verify name resolution: laptop, phone (Android Private DNS off or
+      automatic), at home and over Tailscale; nodes and pods once they
+      exist
+- [ ] Record the network in `MANIFEST.md` without addresses; document the
+      plan in `docs/`
+
+## 2. Decisions before rebuilding
+
 - [ ] Secrets: SOPS + age now; OpenBao + External Secrets later?
+- [x] Who builds what: OpenTofu creates the VMs; cloud-init configures
+      them, up to "k3s is running"; helmfile installs everything inside
+      k3s. Vaultwarden stays on its own VM (Docker, no Helm), so it works
+      when the cluster doesn't
+- [ ] Secrets into VMs: through cloud-init (plain text on Proxmox's
+      snippets storage and in tofu state), or pushed over SSH after the
+      first boot. Decide before the first VM in tofu
 
-## 2. Proxmox host (manual, documented)
+## 3. Proxmox host (manual, documented)
 
 - [ ] Destroy the test-run VMs (k3s nodes, Vaultwarden, template); no
       secrets from the test run carry over
 - [ ] Install Proxmox VE; record version in MANIFEST
 - [ ] 2FA for `root@pam`; create `admin@pve`
 - [ ] SSH keys only for root (`PermitRootLogin prohibit-password`)
-- [ ] API token for OpenTofu (dedicated user + role)
+- [ ] API token for OpenTofu (dedicated user + role):
+      `scripts/proxmox-tofu-token.sh`
 - [ ] Backup storage and backup job
 
-## 3. OpenTofu: infrastructure
+## 4. OpenTofu: infrastructure
 
 - [ ] `tofu/` skeleton: providers (`bpg/proxmox`), versions, backend
 - [ ] Enable state encryption
 - [ ] Debian 13 cloud image download + template
 - [ ] Cloud-init: user, SSH key, static IP, nameserver, search domain
-- [ ] VM: Pi-hole
-- [ ] VM: Vaultwarden (from template, not ISO)
+- [ ] VM: Pi-hole, if it runs on Proxmox (see section 1)
+- [ ] VM: Vaultwarden (from template, not ISO), with its data on a
+      separate disk, so the VM can be recreated without losing the vault
 - [ ] VMs: k3s server + 2 agents (unique hostnames!)
-- [ ] Import or recreate existing VMs
+- [ ] k3s join token generated up front and kept in SOPS, so agents never
+      read it off the server
 
-## 4. In-VM configuration (cloud-init / Ansible)
+## 5. In-VM configuration (cloud-init)
 
-- [ ] Pi-hole install + local DNS records
-- [ ] Vaultwarden VM: Docker, compose file, Caddyfile
-- [ ] k3s server install; agents join with token
+cloud-init runs only on a VM's first boot; changing it means recreating
+the VM.
+
+
+- [ ] Pi-hole install, if it runs on Proxmox; records per section 1
+- [ ] Vaultwarden VM: Docker, compose file, Caddyfile; Caddy built with
+      the DNS provider's plugin, for the wildcard cert through DNS-01
+- [ ] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
+      join with the token from SOPS
 - [ ] qemu-guest-agent on all VMs
 
-## 5. k3s workloads
+## 6. k3s workloads
 
 - [ ] helmfile (or tofu helm provider) with pinned chart versions
 - [ ] CoreDNS: forward local domain to Pi-hole (`coredns-custom`)
+- [ ] cert-manager: wildcard cert for `*.lab.<domain>` through DNS-01,
+      used by Traefik's ingresses
 - [ ] kube-prometheus-stack (Grafana + Prometheus)
 - [ ] Forgejo (SQLite, SSH on 2222, webhook ALLOWED_HOST_LIST)
 - [ ] Mirror or move this repo to the rebuilt Forgejo (needs the item above)
 - [ ] Woodpecker (Forgejo OAuth, kubernetes backend)
 - [ ] Secrets via SOPS, no `--from-literal` in shell
 
-## 6. Verification and operations
+## 7. Verification and operations
 
 - [ ] Restore test: Vaultwarden VM from backup
 - [ ] Restore test: a k3s node from backup

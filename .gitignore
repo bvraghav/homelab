@@ -32,6 +32,8 @@ keys.txt
 *.dec.yaml
 *.dec.json
 *.decrypted.*
+# local-only notes (network plan, addresses); never committed
+private/
 
 # --- Kubernetes ---
 kubeconfig

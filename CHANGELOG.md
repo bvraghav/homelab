@@ -12,6 +12,44 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-15 - Blank Box
+
+*The network decided, and the first four steps of the rebuild written up and scripted.*
+
+### Added
+
+- `.gitignore`: `private/`, for local-only notes such as the network
+  address plan.
+- Tutorial *Certificates and DNS for the homelab, from a blank box*: lab
+  names in Pi-hole, a Tailscale subnet router with split DNS, Caddy and
+  cert-manager with a Let's Encrypt wildcard through DNS-01, in build
+  order; the DNS move and Proxmox's own certificate are in the step posts
+  below.
+- The rebuild, step by step: posts for steps 1 to 4, *Tools on the
+  laptop*, *Secrets with SOPS and age*, *Moving DNS to Cloudflare* and
+  *Installing Proxmox VE*, listed in order in the blog index.
+- `MANIFEST.md`: a *Tools* table with the laptop's tool versions.
+- Scripts for rebuild steps 1 to 4, each with its page, and used by the
+  step posts: `laptop-tools.sh` (check and install the tools, print their
+  versions), `sops-setup.sh` (age keys and `.sops.yaml`, with a decrypt
+  test per key), `dns01-test.sh` (a staging dry run of the wildcard
+  through DNS-01) and `proxmox-tofu-token.sh` (OpenTofu's Proxmox user,
+  role and token, piped straight into SOPS).
+
+### Changed
+
+- `todo.md`: network setup is the first task section, split into
+  decisions and setup. Decided: a `lab.<domain>` subdomain, a Let's
+  Encrypt wildcard through DNS-01, Tailscale for remote access (no DDNS,
+  no port forwards), and one LAN with DHCP on the second router in AP
+  mode. New tasks for the DNS provider, its API token, the Tailscale
+  subnet router and split DNS, Caddy's DNS plugin and cert-manager.
+  Also decided: OpenTofu builds the VMs, cloud-init configures them up to
+  a running k3s, helmfile installs what runs in it, and Vaultwarden stays
+  on its own VM. New tasks: how secrets reach the VMs, Vaultwarden's
+  separate data disk, a k3s join token generated up front in SOPS, and a
+  pinned k3s version; importing the test-run VMs is dropped.
+
 ## [0.1.0] - 2026-10-15 - Release Train
 
 *The release workflow, written up, and fixing notes after the fact for free.*
@@ -119,7 +157,8 @@ For a readable summary of each release, see
   self-hosted KaTeX and mermaid; `sitemap.xml` from git history.
 - `CHANGELOG.md` and `RELEASE_NOTES.md`.
 
-[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/bvraghav/homelab/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/bvraghav/homelab/compare/v0.0.4...v0.1.0
 [0.0.4]: https://github.com/bvraghav/homelab/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/bvraghav/homelab/compare/v0.0.2...v0.0.3

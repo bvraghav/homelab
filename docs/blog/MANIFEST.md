@@ -32,6 +32,7 @@ flowchart LR
   S --> SH[Scrub history]
   M --> RW[Releases from tags]
   HF --> S
+  S --> CD[Certificates and DNS]
 ```
 
 1. [Why this repo exists](misc/motivation.md)
@@ -43,6 +44,17 @@ flowchart LR
 7. [A secret store for the homelab](tools/secrets.md)
 8. [How to scrub shell history to clean secrets](tutorials/scrub-history.md)
 9. [Releases from tags](tools/release-workflow.md)
+10. [Certificates and DNS, from a blank box](tutorials/certs-and-dns.md)
+
+## The rebuild, step by step
+
+One post per step of the rebuild from a blank box, in order. The steps
+after 4 follow as they're done.
+
+1. [Tools on the laptop](tutorials/laptop-tools.md)
+2. [Secrets with SOPS and age](tutorials/sops-age.md)
+3. [Moving DNS to Cloudflare](tutorials/dns-to-cloudflare.md)
+4. [Installing Proxmox VE](tutorials/proxmox-install.md)
 
 ## All posts
 
@@ -70,6 +82,11 @@ flowchart LR
 |------|---------|------|
 | [Pinning Helm chart versions](tutorials/helm.md) | Step by step: find versions, a deploy script, upgrades and rollbacks | 2026-10-15 |
 | [How to scrub shell history to clean secrets](tutorials/scrub-history.md) | Find secrets in shell history without printing them, remove whole entries, rotate, and prevent it with a zsh hook | 2026-10-15 |
+| [Certificates and DNS, from a blank box](tutorials/certs-and-dns.md) | Private `lab.<domain>` names in Pi-hole, a Let's Encrypt wildcard through DNS-01, and Tailscale for access from anywhere | 2026-10-15 |
+| [Rebuild step 1: tools on the laptop](tutorials/laptop-tools.md) | OpenTofu, SOPS, age, Helm, helmfile, kubectl, certbot and Tailscale, installed and checked | 2026-10-15 |
+| [Rebuild step 2: secrets with SOPS and age](tutorials/sops-age.md) | A laptop key, an offline backup key, `.sops.yaml`, and using secrets without typing them | 2026-10-15 |
+| [Rebuild step 3: moving DNS to Cloudflare](tutorials/dns-to-cloudflare.md) | DNS hosting moved without breaking the website or email, a one-zone API token, and a staging certificate | 2026-10-15 |
+| [Rebuild step 4: installing Proxmox VE](tutorials/proxmox-install.md) | Install, free repository, 2FA, SSH keys, an OpenTofu token, backups and a Let's Encrypt certificate | 2026-10-15 |
 
 ## By tag
 
@@ -80,7 +97,13 @@ flowchart LR
 : [Motivation](misc/motivation.md) · [TF for homelab](tools/tofu-for-homelab.md) · [TF for cloud](tools/tofu-for-cloud-in-general.md) · [TF use cases](tools/tofu-use-cases.md)
 
 `secrets`
-: [Motivation](misc/motivation.md) · [Secrets](tools/secrets.md) · [Scrub shell history](tutorials/scrub-history.md)
+: [Motivation](misc/motivation.md) · [Secrets](tools/secrets.md) · [Scrub shell history](tutorials/scrub-history.md) · [SOPS and age](tutorials/sops-age.md)
+
+`networking`
+: [Certificates and DNS](tutorials/certs-and-dns.md) · [DNS to Cloudflare](tutorials/dns-to-cloudflare.md)
+
+`rebuild`
+: [Step 1: tools](tutorials/laptop-tools.md) · [Step 2: SOPS and age](tutorials/sops-age.md) · [Step 3: DNS to Cloudflare](tutorials/dns-to-cloudflare.md) · [Step 4: Proxmox VE](tutorials/proxmox-install.md)
 
 `releases`
 : [Releases from tags](tools/release-workflow.md)
