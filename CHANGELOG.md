@@ -56,6 +56,7 @@ For a readable summary of each release, see
   gateway.
 - `todo.md`: rebuild step 6, Pi-hole, done; DHCP hands it out, and
   Proxmox uses it.
+- `todo.md`: rebuild step 7, Tailscale, done.
 - `tofu/Makefile`: options for `plan` go in `TF_CLI_ARGS_plan`; the step 5
   post's `-replace` example uses it, and escapes the quotes it needs.
 - `proxmox-tofu-token.sh`: the role gets `VM.GuestAgent.Audit`, so
@@ -100,6 +101,10 @@ For a readable summary of each release, see
 
 ### Fixed
 
+- Rebuilding the Pi-hole VM failed halfway: the laptop found Proxmox
+  through Pi-hole, and lost it when Pi-hole's VM shut down. The posts no
+  longer say to remove `proxmox.lab.<domain>` from the laptop's
+  `/etc/hosts`; it stays.
 - `sops-setup.sh`: when a key couldn't be created, the script stopped
   without a word; it now shows `age-keygen`'s error and says which key.
 - `sops edit secrets/<name>.sops.yaml` failed on a fresh clone: there was

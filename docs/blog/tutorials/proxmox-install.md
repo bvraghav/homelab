@@ -224,15 +224,16 @@ The certificate names `proxmox.lab.<domain>`, so that name appears in the
 public Certificate Transparency logs;
 [Certificates and DNS](certs-and-dns.md) explains the alternative.
 
-Until Pi-hole knows the name (step 6), `https://<proxmox-ip>:8006` still
-warns, because the certificate doesn't match the address. To use the name
-already, add a line to the laptop's `/etc/hosts`:
+`https://<proxmox-ip>:8006` still warns, because the certificate doesn't
+match the address. Add the name to the laptop's `/etc/hosts`:
 
 ```
 <proxmox-ip>  proxmox.lab.<domain>
 ```
 
-and remove it once Pi-hole is up.
+Keep it, even once Pi-hole knows the name (step 6). Pi-hole runs on
+Proxmox: while its VM is down or being rebuilt, the laptop must still
+reach Proxmox, or OpenTofu loses it halfway through.
 
 ## Checklist
 

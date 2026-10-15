@@ -35,6 +35,8 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done, `[-]` dropped.
       git; network plan, R2 token and restic's key in SOPS
 - [x] Rebuild step 6: Pi-hole on VM 101, all code; web password pushed
       with `scripts/push-secrets.sh`; DHCP and Proxmox use it
+- [x] Rebuild step 7: Tailscale subnet router `lab-router` on the Pi-hole
+      VM, tagged, with split DNS for `lab.<domain>`
 
 ## 1. Network setup
 
@@ -57,15 +59,14 @@ Decide:
 Set up:
 
 - [x] Second router in AP mode with DHCP; first router's DHCP off
-- [~] DHCP hands out Pi-hole as the DNS server, the gateway second
-      (Router2 still hands out `1.1.1.1` and `1.0.0.1`)
+- [x] DHCP hands out Pi-hole as the DNS server, a public one second
 - [x] Move the domain's DNS to a provider with an API (nameservers only;
       the registrar can stay)
 - [x] DNS API token scoped to editing that zone; stored per section 2
 - [x] Pi-hole: static IP, start on boot, upstream DNS, local records for
       `lab.<domain>` (an A record for the ingress, CNAMEs for each app),
       generated from `secrets/network.sops.yaml` (`tofu/pihole.tf`)
-- [~] Tailscale: a subnet router on the Pi-hole VM advertising the LAN,
+- [x] Tailscale: a subnet router on the Pi-hole VM advertising the LAN,
       tagged `tag:lab`, route auto-approved; split DNS for `lab.<domain>`
       to Pi-hole (`tofu/tailscale.tf`, auth key in SOPS)
 - [ ] Verify name resolution: laptop, phone (Android Private DNS off or
