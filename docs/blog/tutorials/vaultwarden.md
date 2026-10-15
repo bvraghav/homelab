@@ -191,6 +191,7 @@ Tailscale (step 7).
 ## See also
 
 - [Rebuild step 7: Tailscale](tailscale.md)
+- [Rebuild step 9: k3s](k3s.md)
 - [Certificates and DNS for the homelab](certs-and-dns.md)
 - [Rebuild step 4: backups, not there](proxmox-install.md#backups-not-here)
 - [`push-secrets.sh`](../../../scripts/push-secrets.md)

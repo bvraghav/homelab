@@ -40,6 +40,8 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done, `[-]` dropped.
 - [x] Rebuild step 8: Vaultwarden behind Caddy with a wildcard
       certificate; nightly restic backups to R2; restore test passed
       (2026-10-15)
+- [x] Rebuild step 9: k3s on three VMs, token from SOPS, Secrets
+      encrypted, nightly etcd snapshots in R2
 
 ## 1. Network setup
 
@@ -121,7 +123,7 @@ Set up:
 - [x] VM: Vaultwarden (from the cloud image, not ISO), with its data on a
       separate disk, so the VM can be recreated without losing the vault
 - [x] VMs: k3s server + 2 agents (unique hostnames!)
-- [ ] k3s join token generated up front and kept in SOPS, so agents never
+- [x] k3s join token generated up front and kept in SOPS, so agents never
       read it off the server
 
 ## 5. In-VM configuration (cloud-init)
@@ -135,38 +137,41 @@ the VM.
 - [x] Vaultwarden VM: Docker, compose file, Caddyfile; Caddy built with
       the DNS provider's plugin, for the wildcard cert through DNS-01
       (`tofu/vaultwarden.tf`); data on its own disk; no admin page
-- [ ] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
+- [x] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
       join with the token from SOPS
 - [x] qemu-guest-agent on all VMs
 - [~] Backup timers (`restic` to R2; repository password and key pushed
       from SOPS): Vaultwarden (SQLite `.backup`, `attachments/`,
-      `rsa_key*`) written; k3s (datastore snapshot) to do; no Pi-hole (all
+      `rsa_key*`) written; k3s: etcd snapshots to R2 by k3s itself; no Pi-hole (all
       code)
 - [ ] A notice when a backup fails (`OnFailure=`); needs a way to send it
 - [x] `scripts/push-secrets.sh <vm>`: each SOPS secret for that VM, piped
       over SSH into a root-only file; lists what it would push without
       `--apply`
-- [ ] cloud-init installs services without their secrets; k3s with
+- [x] cloud-init installs services without their secrets; k3s with
       `INSTALL_K3S_SKIP_START`, started once the token is pushed
 
 ## 6. k3s workloads
 
-- [ ] helmfile (or tofu helm provider) with pinned chart versions
-- [ ] CoreDNS: forward local domain to Pi-hole (`coredns-custom`)
-- [ ] cert-manager: wildcard cert for `*.lab.<domain>` through DNS-01,
+- [x] helmfile with pinned chart versions (`helmfile/`)
+- [x] CoreDNS: forward local domain to Pi-hole (`coredns-custom`)
+- [x] cert-manager: wildcard cert for `*.lab.<domain>` through DNS-01,
       used by Traefik's ingresses
-- [ ] kube-prometheus-stack (Grafana + Prometheus)
-- [ ] Forgejo (SQLite, SSH on 2222, webhook ALLOWED_HOST_LIST)
+- [x] kube-prometheus-stack (Grafana + Prometheus)
+- [~] Forgejo (SQLite, SSH on 2222, webhook ALLOWED_HOST_LIST)
 - [ ] Mirror or move this repo to the rebuilt Forgejo (needs the item above)
-- [ ] Woodpecker (Forgejo OAuth, kubernetes backend)
-- [ ] Forgejo backup: `forgejo dump` on a schedule, to R2 with `restic`
-- [ ] Secrets via SOPS, no `--from-literal` in shell
+- [~] Woodpecker (Forgejo OAuth, kubernetes backend); installed once its
+      OAuth app is in `secrets/woodpecker.sops.yaml`
+- [~] Forgejo backup: `forgejo dump` on a schedule, to R2 with `restic`
+      (`forgejo-backup` CronJob, 02:45)
+- [~] Secrets via SOPS, no `--from-literal` in shell (helm-secrets)
 
 ## 7. Verification and operations
 
 - [x] Restore test: rebuild the Vaultwarden VM; it restores the latest
       backup by itself (`vaultwarden-restore`)
 - [ ] Restore test: rebuild k3s, restore its snapshot and Forgejo
+      (an in-place restore from R2 passed on 2026-10-16)
 - [ ] Timed rebuild from scratch; record time-to-build here
 - [ ] HTTPS for Grafana, Forgejo, Woodpecker
 - [ ] Phone access to Vaultwarden

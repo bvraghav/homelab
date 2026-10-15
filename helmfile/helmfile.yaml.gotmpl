@@ -1,0 +1,117 @@
+# Everything that runs inside k3s, with pinned chart versions.
+#
+#   make -C helmfile diff     what would change
+#   make -C helmfile apply    change it
+#
+# The lab's domain and addresses come from secrets/network.sops.yaml, and
+# secrets from their own SOPS files, decrypted by helm-secrets.
+
+environments:
+  default:
+    secrets:
+      - ../secrets/network.sops.yaml
+      # Only account_id is used, for R2's address.
+      - ../secrets/r2.sops.yaml
+---
+repositories:
+  - name: jetstack
+    url: https://charts.jetstack.io
+
+# Woodpecker logs in through an OAuth app made in Forgejo once it runs;
+# until secrets/woodpecker.sops.yaml holds it, Woodpecker isn't installed.
+{{ $woodpecker := isFile "../secrets/woodpecker.sops.yaml" }}
+
+helmDefaults:
+  wait: true
+  timeout: 600
+
+releases:
+  # Pods resolve lab.<domain> through Pi-hole; everything else as before.
+  - name: coredns-lab
+    namespace: kube-system
+    chart: ./charts/coredns-lab
+    values:
+      - domain: {{ .Values.domain | quote }}
+        pihole: {{ .Values.hosts.pihole.address | quote }}
+
+  - name: cert-manager
+    namespace: cert-manager
+    createNamespace: true
+    chart: jetstack/cert-manager
+    version: v1.21.2
+    values:
+      - values/cert-manager.yaml
+
+  # The Cloudflare token, the issuers, the wildcard certificate, and
+  # Traefik's default certificate.
+  - name: lab-certs
+    namespace: cert-manager
+    chart: ./charts/lab-certs
+    needs:
+      - cert-manager/cert-manager
+    # Its kinds come from cert-manager's CRDs, which don't exist before the
+    # first install: diff it without checking them against the cluster.
+    disableValidationOnInstall: true
+    values:
+      - domain: {{ .Values.domain | quote }}
+    secrets:
+      - ../secrets/cloudflare.sops.yaml
+
+  - name: kube-prometheus-stack
+    namespace: monitoring
+    createNamespace: true
+    # From the OCI registry: the classic repository serves the chart from
+    # GitHub release assets, which time out from here.
+    chart: oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack
+    version: 92.9.0
+    # Brings its own CRDs, so its first diff can't check its objects either.
+    disableValidationOnInstall: true
+    values:
+      - values/kube-prometheus-stack.yaml.gotmpl
+    secrets:
+      - ../secrets/grafana.sops.yaml
+
+  - name: forgejo
+    namespace: forgejo
+    createNamespace: true
+    chart: oci://code.forgejo.org/forgejo-helm/forgejo
+    version: 17.3.0
+    values:
+      - values/forgejo.yaml.gotmpl
+    secrets:
+      - ../secrets/forgejo.sops.yaml
+
+  - name: forgejo-backup
+    namespace: forgejo
+    chart: ./charts/forgejo-backup
+    needs:
+      - forgejo/forgejo
+    values:
+      - account_id: {{ .Values.account_id | quote }}
+        bucket: homelab-backups
+        claimName: gitea-shared-storage
+        # The same Forgejo as the chart's, for a dump it can read.
+        forgejoImage: code.forgejo.org/forgejo/forgejo:15.0.10-rootless
+        resticImage: docker.io/restic/restic:0.18.1
+    secrets:
+      - ../secrets/restic.sops.yaml
+
+  - name: woodpecker-forgejo
+    namespace: woodpecker
+    createNamespace: true
+    installed: {{ $woodpecker }}
+    chart: ./charts/woodpecker-forgejo
+{{- if $woodpecker }}
+    secrets:
+      - ../secrets/woodpecker.sops.yaml
+{{- end }}
+
+  - name: woodpecker
+    namespace: woodpecker
+    installed: {{ $woodpecker }}
+    chart: oci://ghcr.io/woodpecker-ci/helm/woodpecker
+    version: 3.7.5
+    needs:
+      - woodpecker/woodpecker-forgejo
+    values:
+      - values/woodpecker.yaml.gotmpl

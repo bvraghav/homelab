@@ -1,0 +1,5 @@
+apiVersion: v2
+name: forgejo-backup
+description: A nightly forgejo dump, sent to R2 with restic
+type: application
+version: 0.1.0
