@@ -1,0 +1,86 @@
+# restic's password and R2 key, from secrets/restic.sops.yaml.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: forgejo-backup
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+stringData:
+  RESTIC_PASSWORD: {{ .Values.RESTIC_PASSWORD | quote }}
+  AWS_ACCESS_KEY_ID: {{ .Values.AWS_ACCESS_KEY_ID | quote }}
+  AWS_SECRET_ACCESS_KEY: {{ .Values.AWS_SECRET_ACCESS_KEY | quote }}
+  RESTIC_REPOSITORY: {{ printf "s3:https://%s.r2.cloudflarestorage.com/%s/forgejo" .Values.account_id .Values.bucket | quote }}
+---
+# Every night: forgejo dump writes one zip of the repositories, the
+# database and the config; restic sends it to R2 and prunes old ones.
+# Forgejo's volume is on one node's disk, so this pod runs there too.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: forgejo-backup
+  namespace: {{ .Release.Namespace }}
+spec:
+  schedule: "45 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: Never
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+          initContainers:
+            - name: dump
+              image: {{ .Values.forgejoImage | quote }}
+              command:
+                - forgejo
+                - dump
+                - --config=/data/gitea/conf/app.ini
+                - --work-path=/data
+                - --custom-path=/data/gitea
+                - --tempdir=/backup
+                - --file=/backup/forgejo-dump.zip
+              env:
+                - name: HOME
+                  value: /data/gitea/git
+              volumeMounts:
+                # Not read-only: SQLite may write a lock file even to read.
+                - name: data
+                  mountPath: /data
+                - name: backup
+                  mountPath: /backup
+          containers:
+            - name: restic
+              image: {{ .Values.resticImage | quote }}
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -eu
+                  # Only "no repository yet" (exit 10) means: create it.
+                  rc=0
+                  restic cat config >/dev/null || rc=$?
+                  if [ "$rc" -eq 10 ]; then restic init; elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
+                  restic backup --host forgejo --tag forgejo /backup/forgejo-dump.zip
+                  restic forget --host forgejo --tag forgejo \
+                    --keep-daily 7 --keep-weekly 4 --keep-monthly 3 --prune
+              envFrom:
+                - secretRef:
+                    name: forgejo-backup
+              env:
+                - name: RESTIC_CACHE_DIR
+                  value: /backup/.cache
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: {{ .Values.claimName }}
+            - name: backup
+              emptyDir: {}

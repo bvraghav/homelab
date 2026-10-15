@@ -1,0 +1,50 @@
+# Forgejo with SQLite on a node's disk, behind Traefik at
+# forgejo.lab.<domain>, with SSH on port 2222. The admin's password is in
+# secrets/forgejo.sops.yaml. Its data is dumped to R2 every night by the
+# forgejo-backup release.
+
+gitea:
+  admin:
+    username: forgejo-admin
+    email: forgejo-admin@{{ .Values.domain }}
+    passwordMode: keepUpdated
+
+  config:
+    APP_NAME: Forgejo
+    server:
+      DOMAIN: forgejo.{{ .Values.domain }}
+      ROOT_URL: https://forgejo.{{ .Values.domain }}/
+      SSH_DOMAIN: forgejo.{{ .Values.domain }}
+      SSH_PORT: 2222
+      SSH_LISTEN_PORT: 2222
+    service:
+      DISABLE_REGISTRATION: true
+    # Webhooks to private addresses are refused unless listed: Woodpecker
+    # is one.
+    webhook:
+      ALLOWED_HOST_LIST: ci.{{ .Values.domain }}
+
+# k3s's service load balancer opens 2222 on every node; Traefik keeps 80
+# and 443.
+service:
+  ssh:
+    type: LoadBalancer
+    port: 2222
+
+ingress:
+  enabled: true
+  className: traefik
+  hosts:
+    - host: forgejo.{{ .Values.domain }}
+      paths:
+        - path: /
+          pathType: Prefix
+          port: http
+  # No secretName: Traefik serves its default, the lab's wildcard.
+  tls:
+    - hosts:
+        - forgejo.{{ .Values.domain }}
+
+persistence:
+  size: 10Gi
+  storageClass: local-path

@@ -1,0 +1,40 @@
+# Woodpecker CI at ci.lab.<domain>, logging in through Forgejo, running
+# each pipeline step as a pod in the woodpecker namespace. Its OAuth
+# client is the woodpecker-forgejo Secret; the agent's secret is made by
+# the chart.
+
+server:
+  env:
+    WOODPECKER_HOST: https://ci.{{ .Values.domain }}
+    WOODPECKER_FORGEJO: "true"
+    WOODPECKER_FORGEJO_URL: https://forgejo.{{ .Values.domain }}
+    # Any Forgejo user may log in: Forgejo's own sign-ups are off, so it
+    # already decides who has an account.
+    WOODPECKER_OPEN: "true"
+    # Forgejo users who are Woodpecker admins.
+    WOODPECKER_ADMIN: forgejo-admin
+  extraSecretNamesForEnvFrom:
+    - woodpecker-forgejo
+  persistentVolume:
+    size: 2Gi
+    storageClass: local-path
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - host: ci.{{ .Values.domain }}
+        paths:
+          - path: /
+    # No secretName: Traefik serves its default, the lab's wildcard.
+    tls:
+      - hosts:
+          - ci.{{ .Values.domain }}
+
+agent:
+  replicaCount: 1
+  env:
+    # local-path volumes are on one node: a pipeline's steps share one,
+    # so they can't be ReadWriteMany.
+    WOODPECKER_BACKEND_K8S_STORAGE_CLASS: local-path
+    WOODPECKER_BACKEND_K8S_STORAGE_RWX: "false"
+    WOODPECKER_BACKEND_K8S_VOLUME_SIZE: 1G

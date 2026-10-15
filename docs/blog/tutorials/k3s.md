@@ -209,6 +209,7 @@ tests that, with real workloads.
 ## See also
 
 - [Rebuild step 8: Vaultwarden](vaultwarden.md)
+- [Rebuild step 10a: the platform on k3s](k3s-platform.md)
 - [`push-secrets.sh`](../../../scripts/push-secrets.md)
 - [Back to the blog](../MANIFEST.md)
 

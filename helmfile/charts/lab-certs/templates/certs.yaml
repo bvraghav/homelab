@@ -1,0 +1,56 @@
+# The Cloudflare DNS token, in cert-manager's namespace: a ClusterIssuer
+# reads Secrets only from there. api_token comes from
+# secrets/cloudflare.sops.yaml.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudflare-token
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+stringData:
+  api-token: {{ .Values.api_token | quote }}
+{{- range $name, $server := dict
+      "letsencrypt" "https://acme-v02.api.letsencrypt.org/directory"
+      "letsencrypt-staging" "https://acme-staging-v02.api.letsencrypt.org/directory" }}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ $name }}
+spec:
+  acme:
+    server: {{ $server }}
+    privateKeySecretRef:
+      name: {{ $name }}-account
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: cloudflare-token
+              key: api-token
+{{- end }}
+---
+# One wildcard for every app. k3s runs Traefik in kube-system, so the
+# certificate lives there, as Traefik's default.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: lab-wildcard
+  namespace: kube-system
+spec:
+  secretName: lab-wildcard-tls
+  dnsNames:
+    - {{ .Values.domain | quote }}
+    - {{ printf "*.%s" .Values.domain | quote }}
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+---
+apiVersion: traefik.io/v1alpha1
+kind: TLSStore
+metadata:
+  name: default
+  namespace: kube-system
+spec:
+  defaultCertificate:
+    secretName: lab-wildcard-tls

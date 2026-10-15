@@ -44,9 +44,10 @@ OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
 | Vaultwarden  | `https://vault.lab.<domain>` | vaultwarden | `vaultwarden/server`             | 1.37.4  |
 | Caddy        | wildcard `*.lab.<domain>`, DNS-01 | vaultwarden | `caddy` + `caddy-dns/cloudflare`, built on the VM | 2.11.7, v0.2.4 |
 | k3s          | `https://k3s-server.lab.<domain>:6443` | k3s VMs | embedded etcd, Secrets encrypted | v1.36.5+k3s1 |
-| Prometheus + Grafana | `http://grafana.212bn` | k3s    | `prometheus-community/kube-prometheus-stack` |  |
-| Forgejo      | `http://forgejo.212bn`, SSH `:2222` | k3s | `oci://code.forgejo.org/forgejo-helm/forgejo` | 17.3.0 |
-| Woodpecker   | `http://ci.212bn`         | k3s         | `oci://ghcr.io/woodpecker-ci/helm/woodpecker` |   |
+| cert-manager | wildcard `*.lab.<domain>`, Traefik's default | k3s | `jetstack/cert-manager` | v1.21.2 |
+| Prometheus + Grafana | `https://grafana.lab.<domain>` | k3s    | `prometheus-community/kube-prometheus-stack` | 92.9.0 |
+| Forgejo      | `https://forgejo.lab.<domain>`, SSH `:2222` | k3s | `oci://code.forgejo.org/forgejo-helm/forgejo` | 17.3.0 (Forgejo 15.0.10) |
+| Woodpecker   | `https://ci.lab.<domain>` | k3s         | `oci://ghcr.io/woodpecker-ci/helm/woodpecker` | 3.7.5 (Woodpecker 3.19.0) |
 
 ## Tools (laptop)
 
@@ -76,8 +77,8 @@ OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
 | Caddy's certificate and ACME account | vaultwarden VM `/srv/vaultwarden/caddy/`; reissued if lost |
 | k3s join token                 | `secrets/k3s.sops.yaml`; on the nodes, `/etc/homelab/k3s.env` |
 | kubeconfig                     | laptop `~/.kube/config`           |
-| Forgejo admin                  | k8s secret `forgejo/forgejo-admin` |
-| Woodpecker OAuth client        | k8s secret `woodpecker/woodpecker-forgejo` |
+| Forgejo admin (`forgejo-admin`) | `secrets/forgejo.sops.yaml`; in k3s, `forgejo/forgejo-admin` |
+| Woodpecker OAuth client        | `secrets/woodpecker.sops.yaml`; in k3s, `woodpecker/woodpecker-forgejo` |
 | age key (SOPS), daily          | laptop `~/.config/sops/age/keys.txt` |
 | age key (SOPS), backup         | offline USB stick + paper copy    |
 | Cloudflare DNS API token, Zone ID | `secrets/cloudflare.sops.yaml` |
@@ -85,6 +86,7 @@ OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
 | OpenTofu state passphrase      | `secrets/tofu.sops.yaml`          |
 | Cloudflare R2 token (OpenTofu), account ID | `secrets/r2.sops.yaml` |
 | restic password, R2 key for restic | `secrets/restic.sops.yaml`  |
+| Grafana admin password         | `secrets/grafana.sops.yaml`; in k3s, from helm-secrets |
 | Pi-hole web password           | `secrets/pihole.sops.yaml`; on the VM, `/etc/homelab/pihole.env` |
 | Tailscale auth key (reusable, `tag:lab`, 90 days) | `secrets/tailscale.sops.yaml`; on the VM, `/etc/homelab/tailscale.env` |
 | Proxmox API token, `tofu@pve!provider` | `secrets/proxmox.sops.yaml` |
@@ -99,5 +101,5 @@ with `restic`, encrypted.
 |---------------------|---------------------------------------|----------|------------------|-------------------|
 | Vaultwarden         | SQLite `.backup`, attachments, keys; restored by itself on a rebuild | daily 02:30 | 7 d, 4 w, 3 m | 2026-10-15: VM rebuilt, snapshot restored by itself |
 | k3s                 | etcd snapshot, sent to R2 by k3s itself (`homelab-backups/k3s`) | daily 02:30 | last 7 | 2026-10-16: in place, from R2; markers and a Secret came back |
-| Forgejo             | `forgejo dump`                        | daily    | 7 d, 4 w, 3 m    |                   |
+| Forgejo             | `forgejo dump`, sent by restic (`homelab-backups/forgejo`) | daily 02:45 | 7 d, 4 w, 3 m | |
 | Vaultwarden export  | encrypted JSON, off-site              | manual   |                  |                   |

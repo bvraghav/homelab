@@ -1,0 +1,37 @@
+# Prometheus and Grafana, sized for a small lab. Metrics are kept for a
+# week, on the node's disk only: they aren't backed up, and a rebuild
+# starts them afresh. Grafana's admin password is in
+# secrets/grafana.sops.yaml.
+
+grafana:
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - grafana.{{ .Values.domain }}
+    # No secretName: Traefik serves its default, the lab's wildcard.
+    tls:
+      - hosts:
+          - grafana.{{ .Values.domain }}
+
+prometheus:
+  prometheusSpec:
+    retention: 7d
+    resources:
+      requests:
+        memory: 400Mi
+
+# No receiver to send alerts to yet.
+alertmanager:
+  enabled: false
+
+# k3s runs these inside its own process, and doesn't expose their metrics
+# where the chart looks: without this, they'd show as down.
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeEtcd:
+  enabled: false

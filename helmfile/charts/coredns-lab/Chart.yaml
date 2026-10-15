@@ -1,0 +1,5 @@
+apiVersion: v2
+name: coredns-lab
+description: Forward lab.<domain> from k3s's CoreDNS to Pi-hole
+type: application
+version: 0.1.0

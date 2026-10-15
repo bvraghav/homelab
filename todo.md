@@ -153,16 +153,18 @@ the VM.
 
 ## 6. k3s workloads
 
-- [ ] helmfile (or tofu helm provider) with pinned chart versions
-- [ ] CoreDNS: forward local domain to Pi-hole (`coredns-custom`)
-- [ ] cert-manager: wildcard cert for `*.lab.<domain>` through DNS-01,
+- [x] helmfile with pinned chart versions (`helmfile/`)
+- [x] CoreDNS: forward local domain to Pi-hole (`coredns-custom`)
+- [x] cert-manager: wildcard cert for `*.lab.<domain>` through DNS-01,
       used by Traefik's ingresses
-- [ ] kube-prometheus-stack (Grafana + Prometheus)
-- [ ] Forgejo (SQLite, SSH on 2222, webhook ALLOWED_HOST_LIST)
+- [x] kube-prometheus-stack (Grafana + Prometheus)
+- [~] Forgejo (SQLite, SSH on 2222, webhook ALLOWED_HOST_LIST)
 - [ ] Mirror or move this repo to the rebuilt Forgejo (needs the item above)
-- [ ] Woodpecker (Forgejo OAuth, kubernetes backend)
-- [ ] Forgejo backup: `forgejo dump` on a schedule, to R2 with `restic`
-- [ ] Secrets via SOPS, no `--from-literal` in shell
+- [~] Woodpecker (Forgejo OAuth, kubernetes backend); installed once its
+      OAuth app is in `secrets/woodpecker.sops.yaml`
+- [~] Forgejo backup: `forgejo dump` on a schedule, to R2 with `restic`
+      (`forgejo-backup` CronJob, 02:45)
+- [~] Secrets via SOPS, no `--from-literal` in shell (helm-secrets)
 
 ## 7. Verification and operations
 

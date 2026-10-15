@@ -45,6 +45,23 @@ For a readable summary of each release, see
   snapshots sent to R2 by k3s itself, keeping 7. Agents join by address.
 - `secrets/k3s.sops.yaml`: the join token, generated straight into SOPS.
 - Post: *Rebuild step 9: k3s*.
+- `helmfile/`: everything inside k3s, with pinned charts. CoreDNS forwards
+  `lab.<domain>` to Pi-hole (`coredns-lab`); cert-manager v1.21.2 gets a
+  wildcard for `*.lab.<domain>` through DNS-01, served by Traefik as its
+  default (`lab-certs`); kube-prometheus-stack 92.9.0 with Grafana at
+  `grafana.lab.<domain>`, pulled from its OCI registry. Domain and
+  addresses from the network file, secrets through helm-secrets.
+- `secrets/grafana.sops.yaml`: Grafana's admin password, generated
+  straight into SOPS.
+- Post: *Rebuild step 10a: the platform on k3s*.
+- `helmfile/`: Forgejo (chart 17.3.0) with SQLite, SSH on 2222, sign-ups
+  off, and a `forgejo-backup` CronJob that dumps it to R2 with restic every
+  night (7 daily, 4 weekly, 3 monthly). Woodpecker (chart 3.7.5), logging
+  in through Forgejo, installed only once its OAuth app is in
+  `secrets/woodpecker.sops.yaml`.
+- `secrets/forgejo.sops.yaml`: Forgejo's admin password, generated
+  straight into SOPS.
+- Post: *Rebuild step 10b: Forgejo and Woodpecker*.
 
 - `tofu/`: OpenTofu for rebuild step 5. A pinned Debian 13 cloud image,
   five VMs (Pi-hole, Vaultwarden with a data disk, a k3s server and two
@@ -134,6 +151,13 @@ For a readable summary of each release, see
 
 ### Fixed
 
+- Woodpecker refused the first login of any Forgejo user but
+  `forgejo-admin` (`registration_closed`). Its sign-ups are now open:
+  Forgejo's are off, so only accounts made there can log in.
+  `forgejo-admin` stays its only admin.
+- `make -C helmfile apply` failed on a new cluster: diffing `lab-certs`
+  and kube-prometheus-stack needed CRDs that the same apply installs.
+  Their first diff now skips that check (`disableValidationOnInstall`).
 - k3s couldn't send snapshots to R2: R2 answers 400 to k3s's default
   region. `tofu/k3s.tf` sets `etcd-s3-region: auto`. The k3s post's manual
   snapshot loads the R2 key first, which the command needs too.

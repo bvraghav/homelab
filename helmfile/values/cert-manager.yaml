@@ -1,0 +1,7 @@
+crds:
+  enabled: true
+# Check TXT records in public DNS, not through CoreDNS and Pi-hole, which
+# don't have them.
+extraArgs:
+  - --dns01-recursive-nameservers-only
+  - --dns01-recursive-nameservers=1.1.1.1:53,1.0.0.1:53
