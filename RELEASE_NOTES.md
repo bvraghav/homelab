@@ -3,6 +3,34 @@
 The full list of changes is in [`CHANGELOG.md`](CHANGELOG.md). Each release
 has a short title and a one-line subtitle, the same in both files.
 
+## 0.4.0: Home Forge (2026-10-16)
+
+*Rebuild steps 9 and 10: k3s with its snapshots in R2, the platform on it, and the lab's own Git forge and CI.*
+
+The cluster is back, and so are the apps the lab exists for. k3s runs on
+three VMs built from code, with its state sent to R2 every night and a
+restore already proven. On it, one helmfile installs the platform and
+the lab's own Git forge and CI.
+
+### Highlights
+
+- **k3s from code.** A pinned k3s on three VMs, installed but held until
+  its token, generated up front into SOPS, is pushed. Secrets are
+  encrypted inside etcd, and a snapshot goes to R2 every night. One was
+  restored from R2 in place, and everything in it came back.
+- **One helmfile for everything inside k3s.** Pinned charts, the lab's
+  domain and addresses from SOPS, secrets through helm-secrets: nothing
+  typed into `--from-literal`.
+- **The platform.** Pods resolve lab names through Pi-hole; cert-manager
+  gets one Let's Encrypt wildcard, which Traefik serves for every Ingress;
+  Grafana and Prometheus watch the cluster.
+- **Forgejo and Woodpecker.** The lab's own Git forge, with SSH on 2222
+  and a nightly dump to R2, and CI that logs in through it. Woodpecker
+  installs itself once its OAuth app exists.
+- **Fixes along the way.** R2 wants region `auto`; first installs no
+  longer trip over CRDs that arrive in the same apply; Woodpecker lets
+  Forgejo's users in.
+
 ## 0.3.0: First Tenants (2026-10-15)
 
 *Rebuild steps 5 to 8: VMs from code, the lab's names, remote access, and the vault, with a tested restore.*
