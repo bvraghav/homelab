@@ -144,8 +144,8 @@ For a readable summary of each release, see
 ### Fixed
 
 - `make -C helmfile apply` failed on a new cluster: diffing `lab-certs`
-  needed cert-manager's CRDs, which the same apply installs. Its first
-  diff now skips that check (`disableValidationOnInstall`).
+  and kube-prometheus-stack needed CRDs that the same apply installs.
+  Their first diff now skips that check (`disableValidationOnInstall`).
 - k3s couldn't send snapshots to R2: R2 answers 400 to k3s's default
   region. `tofu/k3s.tf` sets `etcd-s3-region: auto`. The k3s post's manual
   snapshot loads the R2 key first, which the command needs too.

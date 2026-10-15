@@ -58,6 +58,8 @@ releases:
     # GitHub release assets, which time out from here.
     chart: oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack
     version: 92.9.0
+    # Brings its own CRDs, so its first diff can't check its objects either.
+    disableValidationOnInstall: true
     values:
       - values/kube-prometheus-stack.yaml.gotmpl
     secrets:

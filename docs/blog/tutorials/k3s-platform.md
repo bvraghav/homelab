@@ -115,8 +115,9 @@ nodes.
 **`diff` or `apply`: "no matches for kind "Certificate" … ensure CRDs are installed first"**
 : helmfile diffs every release before it installs any, and `lab-certs`
   uses kinds from cert-manager's CRDs, which come with cert-manager in
-  the same apply. `disableValidationOnInstall: true` on `lab-certs` lets
-  its first diff skip that check. If it still appears, cert-manager's
+  the same apply; kube-prometheus-stack's own objects need the CRDs it
+  brings. `disableValidationOnInstall: true` on both lets their first
+  diff skip that check. If it still appears, cert-manager's
   CRDs are missing: `crds.enabled: true` in `values/cert-manager.yaml`.
 
 **The certificate stays `READY: False`**
