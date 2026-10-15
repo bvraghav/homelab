@@ -169,6 +169,7 @@ the VM.
 - [x] Restore test: rebuild the Vaultwarden VM; it restores the latest
       backup by itself (`vaultwarden-restore`)
 - [ ] Restore test: rebuild k3s, restore its snapshot and Forgejo
+      (an in-place restore from R2 passed on 2026-10-16)
 - [ ] Timed rebuild from scratch; record time-to-build here
 - [ ] HTTPS for Grafana, Forgejo, Woodpecker
 - [ ] Phone access to Vaultwarden

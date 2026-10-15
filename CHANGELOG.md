@@ -80,7 +80,9 @@ For a readable summary of each release, see
   gateway.
 - `todo.md`: rebuild step 6, Pi-hole, done; DHCP hands it out, and
   Proxmox uses it.
-- `todo.md`: rebuild step 9, k3s, done.
+- `todo.md`: rebuild step 9, k3s, done. An etcd snapshot was restored in
+  place from R2, and its markers, a Secret among them, came back; the k3s
+  post has the procedure.
 - `tofu/r2.tf`: the bucket's location hint, `apac`, the nearest R2 has to
   India; the bucket was already there.
 - `todo.md`: rebuild step 7, Tailscale, done. Rebuild step 8,

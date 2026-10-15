@@ -136,6 +136,44 @@ The list shows it twice: on the server (`file://`) and in R2
 `config.yaml` are harmless: they're the server's, which this command
 skips.
 
+## 5. Restore a snapshot
+
+A snapshot isn't a backup until it's been restored. On an empty cluster
+this costs nothing, so it was tested right away (2026-10-16), in place:
+
+1. Leave a marker, a ConfigMap and a Secret, and take a snapshot:
+
+   ```sh
+   kubectl create configmap restore-marker --from-literal=when=before
+   kubectl create secret generic restore-marker --from-literal=check=ok
+   ssh debian@<k3s-server-ip> 'sudo sh -c "set -a; . /etc/homelab/restic.env; k3s etcd-snapshot save --name restore-test"'
+   kubectl delete configmap,secret restore-marker
+   ```
+
+2. On the server: stop k3s, delete the snapshot's local copy so it has to
+   come from R2, reset the cluster from it, and start k3s. The reset
+   needs the token and the R2 key, from the pushed files:
+
+   ```sh
+   sudo systemctl stop k3s
+   sudo rm /var/lib/rancher/k3s/server/db/snapshots/<snapshot>
+   sudo sh -c 'set -a; . /etc/homelab/k3s.env; . /etc/homelab/restic.env;
+     k3s server --cluster-reset --cluster-reset-restore-path=<snapshot>'
+   sudo systemctl start k3s
+   ```
+
+   The reset ends with "Managed etcd cluster membership has been reset,
+   restart without --cluster-reset flag now": that's success.
+
+3. Check: the nodes are `Ready`, the ConfigMap is back, and the Secret
+   still decrypts (`kubectl get secret restore-marker -o
+   jsonpath='{.data.check}' | base64 -d` prints `ok`). Then delete the
+   markers, and the test snapshot with `k3s etcd-snapshot delete`.
+
+The same reset, run on a newly built server VM after the token and R2 key
+are pushed, is how a lost server comes back; [step 12](../MANIFEST.md)
+tests that, with real workloads.
+
 ## What can go wrong
 
 **`k3s.service` doesn't start, "condition failed"**
@@ -166,6 +204,7 @@ skips.
 - [ ] `kubectl get nodes`: three, Ready, unique names, `v1.36.5+k3s1`
 - [ ] Kubeconfig on the laptop, pointing at `k3s-server.lab.<domain>`
 - [ ] A first etcd snapshot in R2
+- [ ] A snapshot restored from R2, markers back
 
 ## See also
 
