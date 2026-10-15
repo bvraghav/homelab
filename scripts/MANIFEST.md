@@ -7,6 +7,7 @@ added, changed or removed.
 
 | Script | Purpose | Changes anything? | Runs on |
 |--------|---------|-------------------|---------|
+| [`release-notes.sh`](release-notes.md) | Print a version's GitHub release title or description from `RELEASE_NOTES.md` | No | Laptop, `release` workflow |
 | [`scrub-history.sh`](scrub-history.md) | Find shell history entries that look like secrets, values masked; remove them with `--apply` | Only with `--apply` | Laptop, k3s VMs, Proxmox host |
 
 ## Conventions for new scripts

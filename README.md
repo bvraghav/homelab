@@ -18,7 +18,7 @@ can be rebuilt quickly and repeatably.
 | `docs/` | Docs and blog, published to GitHub Pages |
 | `site/`, `Makefile` | Docs build: `make site` |
 | `scripts/` | Helper scripts; see `scripts/MANIFEST.md` |
-| `.github/` | CI: build and deploy the docs |
+| `.github/` | CI: docs site, and releases from tags |
 | `todo.md` | Tasks and rebuild progress |
 | `MANIFEST.md` | Inventory of hosts, services and versions |
 | `CHANGELOG.md`, `RELEASE_NOTES.md` | Changes and notes per release |

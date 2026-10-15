@@ -1,0 +1,81 @@
+# Create the GitHub release for a version tag, from RELEASE_NOTES.md.
+#
+#   push a version tag (vX.Y.Z)   create the release, or update it if it exists
+#   manual run with a tag         the same, for an existing tag (e.g. to redo one)
+#
+# The title is "v" + the tag's section heading in RELEASE_NOTES.md without
+# its date; the description is that section's text, plus a "Full Changelog"
+# link from the previous version tag. scripts/release-notes.sh does the
+# extracting, so `scripts/release-notes.sh --body --repo <url> X.Y.Z`
+# previews it locally.
+#
+# A release cycle with git flow (this repo's tag prefix is "v"):
+#
+#   git flow release start X.Y.Z
+#   # bump VERSION; add the X.Y.Z sections to CHANGELOG.md and RELEASE_NOTES.md
+#   git flow release finish -m "X.Y.Z: Title" X.Y.Z
+#   git push upstream master develop vX.Y.Z
+#
+# The site workflow deploys the docs for the same tag.
+
+name: release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag, e.g. v0.0.3
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+      REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0   # all tags, to find the previous version
+
+      - name: Check tag, VERSION and notes agree
+        run: |
+          [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::not a version tag: $TAG"; exit 1; }
+          version="${TAG#v}"
+          file="$(cat VERSION)"
+          if [ "$version" != "$file" ]; then
+            echo "::error::tag $TAG doesn't match VERSION ($file)"
+            exit 1
+          fi
+          grep -qE "^## \[${version//./\\.}\]" CHANGELOG.md \
+            || { echo "::error::no [$version] section in CHANGELOG.md"; exit 1; }
+
+      - name: Build title and description
+        run: |
+          scripts/release-notes.sh --title "$TAG" > "$RUNNER_TEMP/title.txt"
+          scripts/release-notes.sh --body --repo "$REPO_URL" "$TAG" > "$RUNNER_TEMP/notes.md"
+          echo "## $(cat "$RUNNER_TEMP/title.txt")" >> "$GITHUB_STEP_SUMMARY"
+          cat "$RUNNER_TEMP/notes.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create or update the release
+        run: |
+          title="$(cat "$RUNNER_TEMP/title.txt")"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "$title" --notes-file "$RUNNER_TEMP/notes.md"
+            echo "Updated release $TAG"
+          else
+            gh release create "$TAG" --verify-tag --title "$title" --notes-file "$RUNNER_TEMP/notes.md"
+            echo "Created release $TAG"
+          fi

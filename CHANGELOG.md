@@ -12,6 +12,15 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+### Added
+
+- `.github/workflows/release.yml`: pushing a version tag creates the GitHub
+  release, or updates it, with its title and description from
+  `RELEASE_NOTES.md` and a "Full Changelog" link. Can also be run by hand
+  for an existing tag.
+- `scripts/release-notes.sh` and its page: print a version's release title
+  or description, to preview a release locally.
+
 ## [0.0.2] - 2026-10-15 - Clean Slate
 
 *Scrub secrets from shell history, and publish the scripts with the docs.*
