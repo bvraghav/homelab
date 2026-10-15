@@ -153,11 +153,11 @@ the VM.
 
 ## 6. k3s workloads
 
-- [~] helmfile with pinned chart versions (`helmfile/`)
-- [~] CoreDNS: forward local domain to Pi-hole (`coredns-custom`)
-- [~] cert-manager: wildcard cert for `*.lab.<domain>` through DNS-01,
+- [x] helmfile with pinned chart versions (`helmfile/`)
+- [x] CoreDNS: forward local domain to Pi-hole (`coredns-custom`)
+- [x] cert-manager: wildcard cert for `*.lab.<domain>` through DNS-01,
       used by Traefik's ingresses
-- [~] kube-prometheus-stack (Grafana + Prometheus)
+- [x] kube-prometheus-stack (Grafana + Prometheus)
 - [~] Forgejo (SQLite, SSH on 2222, webhook ALLOWED_HOST_LIST)
 - [ ] Mirror or move this repo to the rebuilt Forgejo (needs the item above)
 - [~] Woodpecker (Forgejo OAuth, kubernetes backend); installed once its
