@@ -87,6 +87,7 @@ after 4 follow as they're done.
 | [Rebuild step 2: secrets with SOPS and age](tutorials/sops-age.md) | A laptop key, an offline backup key, `.sops.yaml`, and using secrets without typing them | 2026-10-15 |
 | [Rebuild step 3: moving DNS to Cloudflare](tutorials/dns-to-cloudflare.md) | DNS hosting moved without breaking the website or email, a one-zone API token, and a staging certificate | 2026-10-15 |
 | [Rebuild step 4: installing Proxmox VE](tutorials/proxmox-install.md) | Install, free repository, 2FA, SSH keys, an OpenTofu token and a Let's Encrypt certificate | 2026-10-15 |
+| [Rebuild step 5: the VMs, with OpenTofu](tutorials/opentofu-vms.md) | Five Debian VMs and an R2 backup bucket from one command; encrypted state in git, addresses in SOPS | 2026-10-15 |
 
 ## By tag
 

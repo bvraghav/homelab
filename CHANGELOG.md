@@ -12,6 +12,31 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+### Added
+
+- `tofu/`: OpenTofu for rebuild step 5. A pinned Debian 13 cloud image,
+  five VMs (Pi-hole, Vaultwarden with a data disk, a k3s server and two
+  agents), first-boot cloud-init with a user, an SSH key and the guest
+  agent, and an R2 bucket for backups. Providers `bpg/proxmox` 0.116.1,
+  `carlpett/sops` 1.4.1 and `cloudflare/cloudflare` 5.28.0. State is
+  encrypted, enforced, and committed; `tofu/Makefile` passes the
+  passphrase from SOPS and checks the state before staging it.
+- `secrets/network.sops.yaml`: the IP plan, addresses and router notes,
+  converted from the git-ignored `private/network.md`, which it replaces.
+- `secrets/tofu.sops.yaml` (state passphrase) and
+  `secrets/restic.sops.yaml` (restic's password), both generated straight
+  into SOPS.
+- Post: *Rebuild step 5: the VMs, with OpenTofu*.
+
+### Changed
+
+- `proxmox-tofu-token.sh`: the role gets `VM.GuestAgent.Audit`, so
+  OpenTofu can read VM addresses from the guest agent.
+- `.gitignore`: `tofu/terraform.tfstate` is committed; it's encrypted.
+- `todo.md`: Pi-hole runs as a VM; no template VM; the step 5 items in
+  progress. `MANIFEST.md`: the new VMs, the host's disks, and the new
+  secret files.
+
 ## [0.2.0] - 2026-10-15 - Bare Metal
 
 *Rebuild steps 1 to 4 done: tools, secrets, DNS, and a hardened Proxmox host.*

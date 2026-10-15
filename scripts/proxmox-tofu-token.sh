@@ -28,7 +28,8 @@ PRIVS='Datastore.Allocate Datastore.AllocateSpace Datastore.AllocateTemplate
 Datastore.Audit Pool.Allocate SDN.Use Sys.Audit Sys.Console Sys.Modify
 VM.Allocate VM.Audit VM.Clone VM.Config.CDROM VM.Config.Cloudinit
 VM.Config.CPU VM.Config.Disk VM.Config.HWType VM.Config.Memory
-VM.Config.Network VM.Config.Options VM.Migrate VM.PowerMgmt'
+VM.Config.Network VM.Config.Options VM.GuestAgent.Audit VM.Migrate
+VM.PowerMgmt'
 
 secret=secrets/proxmox.sops.yaml
 apply=0

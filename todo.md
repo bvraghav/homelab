@@ -44,10 +44,10 @@ Decide:
 - [x] Remote access: Tailscale; no DDNS and no port forwards (never the
       Proxmox UI on 8006, or SSH)
 - [x] IP plan: one LAN; the second router in AP mode runs DHCP, the first
-      (modem, gateway, WiFi) has its DHCP off. Addresses are kept out of
-      the repo, in `private/network.md` (git-ignored)
-- [ ] Where Pi-hole runs: its own device, or a VM on Proxmox (then local
-      names depend on the Proxmox host being up; hand out a fallback DNS)
+      (modem, gateway, WiFi) has its DHCP off. Addresses are kept
+      encrypted, in `secrets/network.sops.yaml`; OpenTofu reads them
+- [x] Where Pi-hole runs: a VM on Proxmox. Local names then depend on the
+      Proxmox host being up, so DHCP also hands out a fallback DNS
 
 Set up:
 
@@ -96,16 +96,19 @@ Set up:
 
 ## 4. OpenTofu: infrastructure
 
-- [ ] `tofu/` skeleton: providers (`bpg/proxmox`), versions, backend
-- [ ] Enable state encryption
-- [ ] R2 bucket for backups, and an access key limited to it, in SOPS
-      (`cloudflare` provider; its own token, not the DNS one)
-- [ ] Debian 13 cloud image download + template
-- [ ] Cloud-init: user, SSH key, static IP, nameserver, search domain
-- [ ] VM: Pi-hole, if it runs on Proxmox (see section 1)
-- [ ] VM: Vaultwarden (from template, not ISO), with its data on a
+- [~] `tofu/`: providers (`bpg/proxmox`, `sops`, `cloudflare`) pinned;
+      state local and committed to git; secrets and addresses from SOPS
+- [~] State encryption, enforced; passphrase in `secrets/tofu.sops.yaml`
+- [~] R2 bucket for backups (`cloudflare` provider, its own token in
+      `secrets/r2.sops.yaml`); restic's key, limited to the bucket, and
+      its password in `secrets/restic.sops.yaml`
+- [~] Debian 13 cloud image, pinned by checksum, imported into each VM;
+      no template
+- [~] Cloud-init: user, SSH key, static IP, nameserver, search domain
+- [~] VM: Pi-hole
+- [~] VM: Vaultwarden (from the cloud image, not ISO), with its data on a
       separate disk, so the VM can be recreated without losing the vault
-- [ ] VMs: k3s server + 2 agents (unique hostnames!)
+- [~] VMs: k3s server + 2 agents (unique hostnames!)
 - [ ] k3s join token generated up front and kept in SOPS, so agents never
       read it off the server
 
@@ -120,7 +123,7 @@ the VM.
       the DNS provider's plugin, for the wildcard cert through DNS-01
 - [ ] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
       join with the token from SOPS
-- [ ] qemu-guest-agent on all VMs
+- [~] qemu-guest-agent on all VMs
 - [ ] Backup timers (`restic` to R2; repository password and key pushed
       from SOPS): Vaultwarden (SQLite `.backup`, `attachments/`,
       `rsa_key*`), k3s (datastore snapshot), Pi-hole if not in the repo;

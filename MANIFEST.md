@@ -17,13 +17,23 @@ and are expected to change in the rebuild.
 
 | VMID | Name          | IP              | vCPU | RAM  | Disk  | Role                    |
 |------|---------------|-----------------|------|------|-------|-------------------------|
-| —    | proxmox       | `<ip>`          |      |      |       | hypervisor: Proxmox VE 9.2.2, kernel 7.0.2-6-pve |
-| 9000 | debian13-tmpl | —               | 2    | 2 GB | —     | cloud-init template     |
-| —    | vaultwarden   | `<ip>`          | 1    | 1 GB | 10 GB | Docker: Vaultwarden, Caddy |
-| 201  | k3s-server    | `192.168.10.61` | 2    | 4 GB | 32 GB | k3s control plane       |
-| 202  | k3s-agent1    | `192.168.10.62` | 2    | 4 GB | 32 GB | k3s agent               |
-| 203  | k3s-agent2    | `192.168.10.63` | 2    | 4 GB | 32 GB | k3s agent               |
-| —    | pihole        | `<ip>`          |      |      |       | local DNS               |
+| —    | proxmox       | `<ip>`          | 6    | 15 GB | 240 GB SSD | hypervisor: Proxmox VE 9.2.2, kernel 7.0.2-6-pve |
+| 101  | pihole        | `<ip>`          | 1    | 512 MB | 8 GB | local DNS               |
+| 102  | vaultwarden   | `<ip>`          | 1    | 1 GB | 8 GB + 4 GB data | Docker: Vaultwarden, Caddy |
+| 201  | k3s-server    | `<ip>`          | 2    | 4 GB | 32 GB | k3s control plane       |
+| 202  | k3s-agent1    | `<ip>`          | 2    | 3 GB | 32 GB | k3s agent               |
+| 203  | k3s-agent2    | `<ip>`          | 2    | 3 GB | 32 GB | k3s agent               |
+
+Addresses are in `secrets/network.sops.yaml`. VMs are created by
+OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
+`20261001-2618`, user `debian`.
+
+## Proxmox storage
+
+| Disk | Size | Use |
+|------|------|-----|
+| SSD (`sda`) | 240 GB | Proxmox: root 65 GB, swap 8 GB; `local` (ISOs, images, snippets) on root; `local-lvm` thin pool 130 GB for VM disks |
+| HDD (`sdb`) | 1 TB | Not in use: an old install's LVM (`ram-vg`) is still on it. Check it for data before wiping |
 
 ## Services
 
@@ -68,6 +78,10 @@ and are expected to change in the rebuild.
 | age key (SOPS), daily          | laptop `~/.config/sops/age/keys.txt` |
 | age key (SOPS), backup         | offline USB stick + paper copy    |
 | Cloudflare DNS API token, Zone ID | `secrets/cloudflare.sops.yaml` |
+| Network: addresses, IP plan, router notes | `secrets/network.sops.yaml` |
+| OpenTofu state passphrase      | `secrets/tofu.sops.yaml`          |
+| Cloudflare R2 token (OpenTofu), account ID | `secrets/r2.sops.yaml` |
+| restic password, R2 key for restic | `secrets/restic.sops.yaml`  |
 | Proxmox API token, `tofu@pve!provider` | `secrets/proxmox.sops.yaml` |
 | Proxmox ACME account key, Cloudflare plugin data | Proxmox host, `/etc/pve/priv/` |
 

@@ -198,7 +198,7 @@ have been:
   and prunes them to 7 daily, 4 weekly and 3 monthly;
 - a restore is a rebuild plus `restic restore`.
 
-OpenTofu creates the bucket and its access key in step 5, and each
+OpenTofu creates the bucket in [step 5](opentofu-vms.md), and each
 service's step adds its timer. Nothing to do here.
 
 ## 8. A trusted certificate for the web UI
@@ -245,6 +245,7 @@ and remove it once Pi-hole is up.
 ## See also
 
 - [Rebuild step 3: moving DNS to Cloudflare](dns-to-cloudflare.md)
+- [Rebuild step 5: the VMs, with OpenTofu](opentofu-vms.md)
 - [Certificates and DNS for the homelab](certs-and-dns.md)
 - [TF: good and bad use cases](../tools/tofu-use-cases.md): why Proxmox
   itself is installed by hand.
