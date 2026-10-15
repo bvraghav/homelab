@@ -30,6 +30,11 @@ For a readable summary of each release, see
 - `todo.md`: rebuild step 2, SOPS + age, done; SOPS + age ticked off as
   the secrets decision. Rebuild step 3 done: `<domain>`'s DNS at
   Cloudflare, its token stored, and a DNS-01 dry run passed.
+- Backups are of data, not VMs: a timer on each VM dumps its service's
+  data, and `restic` sends it to an S3 bucket (Cloudflare R2). The
+  Proxmox backup job is dropped from step 4's post and `todo.md`; the
+  bucket comes in step 5, each service's timer in its own step.
+  `MANIFEST.md`'s backups table lists the data, and the Proxmox version.
 
 ### Fixed
 

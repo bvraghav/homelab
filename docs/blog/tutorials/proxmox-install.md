@@ -1,6 +1,6 @@
 ---
 title: "Rebuild step 4: installing Proxmox VE"
-subtitle: From a blank box to a hardened, backed-up hypervisor with a trusted certificate and a token for OpenTofu
+subtitle: From a blank box to a hardened hypervisor with a trusted certificate and a token for OpenTofu
 author: "Raghav B. Venkataramaiyer"
 date: 2026-10-15
 lang: en
@@ -10,8 +10,7 @@ abstract: |
   what the code runs against. This step installs it by hand on the blank
   box, then does everything the rest of the rebuild relies on: updates
   from the free repository, two-factor login, SSH by key only, an API
-  token for OpenTofu, a backup job, and a Let's Encrypt certificate for
-  the web UI.
+  token for OpenTofu, and a Let's Encrypt certificate for the web UI.
 ---
 
 ## Why this is needed
@@ -186,32 +185,23 @@ The provider reads it from `PROXMOX_VE_API_TOKEN`. Some of its operations,
 such as uploading cloud-init snippets, also use SSH to the host; the key
 from step 6 covers that.
 
-## 8. Backups
+## 8. Backups: not here
 
-Backups on the same disk as the VMs aren't backups. Add storage that
-survives the disk: a second disk, a NAS share, or a Proxmox Backup Server.
+Proxmox's own backup job saves whole VMs. This lab doesn't use it: every
+VM is rebuilt from code, so what needs saving is the data inside them.
+Each service backs up its own data instead, the way database dumps always
+have been:
 
-1. **Datacenter → Storage → Add**: *Directory* (a mounted second disk),
-   *NFS*/*SMB* (a NAS) or *Proxmox Backup Server*. Content: **Backup**.
-2. **Datacenter → Backup → Add**:
+- a systemd timer on each VM dumps the service's data (Vaultwarden's
+  SQLite database and attachments, a Forgejo dump, a k3s snapshot);
+- `restic` sends the dumps, encrypted, to an S3 bucket (Cloudflare R2),
+  and prunes them to 7 daily, 4 weekly and 3 monthly;
+- a restore is a rebuild plus `restic restore`.
 
-   | Field | Value |
-   |-------|-------|
-   | Storage | The one from above |
-   | Schedule | Daily, at a quiet hour, e.g. `02:00` |
-   | Selection | All |
-   | Mode | Snapshot |
-   | Compression | ZSTD |
-   | Retention | Keep daily 7, weekly 4, monthly 3 |
-   | Notification | Email `<email>` on failure |
+OpenTofu creates the bucket and its access key in step 5, and each
+service's step adds its timer. Nothing to do here.
 
-3. Record the schedule and retention in the manifest's backups table.
-
-There are no VMs yet, so the first runs back up nothing; the job is ready
-for step 5. A backup isn't proven until it's restored, which the task list
-tests once the VMs exist.
-
-## 9. A trusted certificate for the web UI
+## 8. A trusted certificate for the web UI
 
 Proxmox has an ACME client built in, and it can use the Cloudflare token
 from [step 3](dns-to-cloudflare.md):
@@ -250,7 +240,6 @@ and remove it once Pi-hole is up.
 - [ ] TOTP for `root@pam` and `admin@pve`; recovery keys saved
 - [ ] SSH by key only
 - [ ] `tofu@pve` token in `secrets/proxmox.sops.yaml`
-- [ ] Backup storage and a daily job
 
 ## See also
 

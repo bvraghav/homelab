@@ -17,7 +17,7 @@ and are expected to change in the rebuild.
 
 | VMID | Name          | IP              | vCPU | RAM  | Disk  | Role                    |
 |------|---------------|-----------------|------|------|-------|-------------------------|
-| —    | proxmox       | `<ip>`          |      |      |       | hypervisor              |
+| —    | proxmox       | `<ip>`          |      |      |       | hypervisor: Proxmox VE 9.2.2, kernel 7.0.2-6-pve |
 | 9000 | debian13-tmpl | —               | 2    | 2 GB | —     | cloud-init template     |
 | —    | vaultwarden   | `<ip>`          | 1    | 1 GB | 10 GB | Docker: Vaultwarden, Caddy |
 | 201  | k3s-server    | `192.168.10.61` | 2    | 4 GB | 32 GB | k3s control plane       |
@@ -71,7 +71,12 @@ and are expected to change in the rebuild.
 
 ## Backups
 
-| What                | How                     | Schedule | Retention | Last restore test |
-|---------------------|-------------------------|----------|-----------|-------------------|
-| All VMs             | Proxmox vzdump snapshot |          |           |                   |
-| Vaultwarden export  | encrypted JSON, off-site |         |           |                   |
+Data only: the VMs are rebuilt from code. Each dump goes to Cloudflare R2
+with `restic`, encrypted.
+
+| What                | How                                   | Schedule | Retention        | Last restore test |
+|---------------------|---------------------------------------|----------|------------------|-------------------|
+| Vaultwarden         | SQLite `.backup`, attachments, keys   | daily    | 7 d, 4 w, 3 m    |                   |
+| k3s                 | datastore snapshot                    | daily    | 7 d, 4 w, 3 m    |                   |
+| Forgejo             | `forgejo dump`                        | daily    | 7 d, 4 w, 3 m    |                   |
+| Vaultwarden export  | encrypted JSON, off-site              | manual   |                  |                   |
