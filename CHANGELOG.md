@@ -54,6 +54,14 @@ For a readable summary of each release, see
 - `secrets/grafana.sops.yaml`: Grafana's admin password, generated
   straight into SOPS.
 - Post: *Rebuild step 10a: the platform on k3s*.
+- `helmfile/`: Forgejo (chart 17.3.0) with SQLite, SSH on 2222, sign-ups
+  off, and a `forgejo-backup` CronJob that dumps it to R2 with restic every
+  night (7 daily, 4 weekly, 3 monthly). Woodpecker (chart 3.7.5), logging
+  in through Forgejo, installed only once its OAuth app is in
+  `secrets/woodpecker.sops.yaml`.
+- `secrets/forgejo.sops.yaml`: Forgejo's admin password, generated
+  straight into SOPS.
+- Post: *Rebuild step 10b: Forgejo and Woodpecker*.
 
 - `tofu/`: OpenTofu for rebuild step 5. A pinned Debian 13 cloud image,
   five VMs (Pi-hole, Vaultwarden with a data disk, a k3s server and two

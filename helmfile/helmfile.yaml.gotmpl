@@ -10,10 +10,16 @@ environments:
   default:
     secrets:
       - ../secrets/network.sops.yaml
+      # Only account_id is used, for R2's address.
+      - ../secrets/r2.sops.yaml
 ---
 repositories:
   - name: jetstack
     url: https://charts.jetstack.io
+
+# Woodpecker logs in through an OAuth app made in Forgejo once it runs;
+# until secrets/woodpecker.sops.yaml holds it, Woodpecker isn't installed.
+{{ $woodpecker := isFile "../secrets/woodpecker.sops.yaml" }}
 
 helmDefaults:
   wait: true
@@ -64,3 +70,48 @@ releases:
       - values/kube-prometheus-stack.yaml.gotmpl
     secrets:
       - ../secrets/grafana.sops.yaml
+
+  - name: forgejo
+    namespace: forgejo
+    createNamespace: true
+    chart: oci://code.forgejo.org/forgejo-helm/forgejo
+    version: 17.3.0
+    values:
+      - values/forgejo.yaml.gotmpl
+    secrets:
+      - ../secrets/forgejo.sops.yaml
+
+  - name: forgejo-backup
+    namespace: forgejo
+    chart: ./charts/forgejo-backup
+    needs:
+      - forgejo/forgejo
+    values:
+      - account_id: {{ .Values.account_id | quote }}
+        bucket: homelab-backups
+        claimName: gitea-shared-storage
+        # The same Forgejo as the chart's, for a dump it can read.
+        forgejoImage: code.forgejo.org/forgejo/forgejo:15.0.10-rootless
+        resticImage: docker.io/restic/restic:0.18.1
+    secrets:
+      - ../secrets/restic.sops.yaml
+
+  - name: woodpecker-forgejo
+    namespace: woodpecker
+    createNamespace: true
+    installed: {{ $woodpecker }}
+    chart: ./charts/woodpecker-forgejo
+{{- if $woodpecker }}
+    secrets:
+      - ../secrets/woodpecker.sops.yaml
+{{- end }}
+
+  - name: woodpecker
+    namespace: woodpecker
+    installed: {{ $woodpecker }}
+    chart: oci://ghcr.io/woodpecker-ci/helm/woodpecker
+    version: 3.7.5
+    needs:
+      - woodpecker/woodpecker-forgejo
+    values:
+      - values/woodpecker.yaml.gotmpl

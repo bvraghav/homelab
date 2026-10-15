@@ -145,6 +145,7 @@ nodes.
 ## See also
 
 - [Rebuild step 9: k3s](k3s.md)
+- [Rebuild step 10b: Forgejo and Woodpecker](forgejo-woodpecker.md)
 - [Certificates and DNS for the homelab](certs-and-dns.md)
 - [Helmfile](../tools/helmfile.md)
 - [Back to the blog](../MANIFEST.md)
