@@ -15,6 +15,11 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [x] Release 0.0.1, *Groundwork*: docs site deployed from tag `v0.0.1`
 - [x] Script and tutorial for scrubbing history (`scripts/scrub-history.sh`)
 - [x] Clean secrets out of shell history: laptop, k3s VMs, Proxmox host
+- [x] Release 0.0.2, *Clean Slate*: scrub script, scripts on the docs site
+- [x] Releases from tags: `release` workflow + `scripts/release-notes.sh` (0.0.3)
+- [x] Publish changelog, release notes and licence with the docs (0.0.4)
+- [x] Fix a published release's notes without moving its tag (manual run)
+- [x] Write up the release workflow in `docs/blog/`
 
 ## 1. Decisions before rebuilding
 
@@ -84,3 +89,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - GitHub environment deployment rules take globs (`v*.*.*`), not regexes.
 - Releasing through a pull request skips git flow's back-merge; merge `master`
   into `develop` by hand.
+- git flow's tag prefix must match the tags in use (`v`); pass git flow the
+  bare version.
+- **Re-run** replays a workflow run's original event (same tag, commit and
+  workflow file); use **Run workflow** to pick up changes.

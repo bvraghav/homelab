@@ -7,7 +7,9 @@
 --    are written for their real location, so their relative links are
 --    resolved from there: links into docs/ are rewritten relative to the
 --    page's place on the site, and links to other repository files become
---    links to the repository (when homelab-repo is set).
+--    links to the repository (when homelab-repo is set). Ordinary pages can
+--    link the repository way too (../../../scripts/x.md, which works on
+--    GitHub): links that leave docs/ are mapped the same way.
 -- 2. Footer. Every page gets a footer with the site version, linked to the
 --    release notes, and, when known, links to the page's source and the
 --    commit it was built from.
@@ -110,9 +112,12 @@ local function rewrite(target, page, repo, ref)
     return nil  -- fragment, absolute path or URL
   end
   local path, frag = target:match('^([^#]*)(#?.*)$')
-  local from = repo_path(page)
+  local from, mount = repo_path(page)
   local resolved = normalize(dirname(from) .. path)
   if not resolved then return nil end
+  -- From an ordinary docs/ page, a link that stays inside docs/ already
+  -- resolves on the site; leave it to md-preview.
+  if not mount and resolved:sub(1, 5) == 'docs/' then return nil end
   local site = site_path(resolved)
   if site then return relative(dirname(page), site) .. frag end
   if repo and ref then return string.format('%s/blob/%s/%s%s', repo, ref, resolved, frag) end
@@ -158,9 +163,9 @@ function Pandoc(doc)
   local repo = meta(doc, 'homelab-repo')
   local page = meta(doc, 'md-preview-page')
 
-  -- Only pages in a mounted folder need their links rewritten; links
-  -- between ordinary docs/ pages already resolve on the site.
-  if page and select(2, repo_path(page)) then
+  -- Rewrite links written for the repository: every link from a mounted
+  -- page, and links from other pages that leave docs/.
+  if page then
     local function fix(el)
       local new = rewrite(el.target, page, repo, ref)
       if new then el.target = new end
