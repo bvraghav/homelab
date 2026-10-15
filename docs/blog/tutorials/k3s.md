@@ -121,12 +121,20 @@ Three nodes, `Ready`, each with its own name, all `v1.36.5+k3s1`. Then:
 
 ```sh
 kubectl -n kube-system get pods     # coredns, traefik, metrics-server: Running
-ssh debian@<k3s-server-ip> 'sudo k3s etcd-snapshot save --name first' 
 ```
 
-The snapshot command saves one now, rather than at 02:30, and uploads it
-to R2. `sudo k3s etcd-snapshot ls` on the server lists it with an `s3`
-location.
+Save a first snapshot now, rather than wait for 02:30. The command sends
+its own S3 settings to the server, so it needs the R2 key in its
+environment too, from the pushed file:
+
+```sh
+ssh debian@<k3s-server-ip> 'sudo sh -c "set -a; . /etc/homelab/restic.env; k3s etcd-snapshot save --name first; k3s etcd-snapshot ls"'
+```
+
+The list shows it twice: on the server (`file://`) and in R2
+(`s3://homelab-backups/k3s/…`). The warnings about unknown flags in
+`config.yaml` are harmless: they're the server's, which this command
+skips.
 
 ## What can go wrong
 
@@ -142,7 +150,12 @@ location.
 : The kubeconfig points at a name the server's certificate doesn't have.
   Use `k3s-server.lab.<domain>`, as in section 3.
 
-**The snapshot isn't in R2**
+**`etcd-snapshot`: "failed to test for existence of bucket …: 400 Bad Request"**
+: The command ran without the R2 key: load `/etc/homelab/restic.env`
+  first, as in section 4. It also needs `etcd-s3-region: auto` in
+  `config.yaml`; R2 answers 400 to the default region, `us-east-1`.
+
+**The nightly snapshot isn't in R2**
 : On the server, `sudo journalctl -u k3s | grep -i s3`. A 403 means the
   R2 key in `secrets/restic.sops.yaml` can't write to the bucket.
 

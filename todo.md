@@ -40,6 +40,8 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done, `[-]` dropped.
 - [x] Rebuild step 8: Vaultwarden behind Caddy with a wildcard
       certificate; nightly restic backups to R2; restore test passed
       (2026-10-15)
+- [x] Rebuild step 9: k3s on three VMs, token from SOPS, Secrets
+      encrypted, nightly etcd snapshots in R2
 
 ## 1. Network setup
 
@@ -135,7 +137,7 @@ the VM.
 - [x] Vaultwarden VM: Docker, compose file, Caddyfile; Caddy built with
       the DNS provider's plugin, for the wildcard cert through DNS-01
       (`tofu/vaultwarden.tf`); data on its own disk; no admin page
-- [~] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
+- [x] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
       join with the token from SOPS
 - [x] qemu-guest-agent on all VMs
 - [~] Backup timers (`restic` to R2; repository password and key pushed
@@ -146,7 +148,7 @@ the VM.
 - [x] `scripts/push-secrets.sh <vm>`: each SOPS secret for that VM, piped
       over SSH into a root-only file; lists what it would push without
       `--apply`
-- [~] cloud-init installs services without their secrets; k3s with
+- [x] cloud-init installs services without their secrets; k3s with
       `INSTALL_K3S_SKIP_START`, started once the token is pushed
 
 ## 6. k3s workloads

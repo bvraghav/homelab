@@ -80,6 +80,9 @@ For a readable summary of each release, see
   gateway.
 - `todo.md`: rebuild step 6, Pi-hole, done; DHCP hands it out, and
   Proxmox uses it.
+- `todo.md`: rebuild step 9, k3s, done.
+- `tofu/r2.tf`: the bucket's location hint, `apac`, the nearest R2 has to
+  India; the bucket was already there.
 - `todo.md`: rebuild step 7, Tailscale, done. Rebuild step 8,
   Vaultwarden, done, and its restore test passed: a rebuilt VM restored
   the latest backup by itself.
@@ -129,6 +132,9 @@ For a readable summary of each release, see
 
 ### Fixed
 
+- k3s couldn't send snapshots to R2: R2 answers 400 to k3s's default
+  region. `tofu/k3s.tf` sets `etcd-s3-region: auto`. The k3s post's manual
+  snapshot loads the R2 key first, which the command needs too.
 - Rebuilding the Pi-hole VM failed halfway: the laptop found Proxmox
   through Pi-hole, and lost it when Pi-hole's VM shut down. The posts no
   longer say to remove `proxmox.lab.<domain>` from the laptop's

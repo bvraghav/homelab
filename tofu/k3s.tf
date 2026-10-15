@@ -28,6 +28,8 @@ locals {
     "etcd-s3-endpoint"            = "${data.sops_file.r2.data["account_id"]}.r2.cloudflarestorage.com"
     "etcd-s3-bucket"              = var.backup_bucket
     "etcd-s3-folder"              = "k3s"
+    # R2 answers 400 to k3s's default region, us-east-1.
+    "etcd-s3-region" = "auto"
   }
 
   k3s_agent_config = {
