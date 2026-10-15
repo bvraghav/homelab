@@ -3,6 +3,28 @@
 The full list of changes is in [`CHANGELOG.md`](CHANGELOG.md). Each release
 has a short title and a one-line subtitle, the same in both files.
 
+## 0.1.0: Release Train (2026-10-15)
+
+*The release workflow, written up, and fixing notes after the fact for free.*
+
+The first minor release. The repository's own machinery is now in place:
+docs published from tags, helper scripts with a page each, and releases
+that build themselves. What's left on the list is the homelab itself.
+
+### Highlights
+
+- **A write-up of releases from tags.** A new blog post walks through the
+  release cycle with git flow, what the `release` workflow does with
+  `RELEASE_NOTES.md`, and what tripped us up along the way.
+- **Fixing a published release's notes, for free.** The notes live in a
+  file, the workflow creates *or updates* a release, and a manual run reads
+  the notes from a branch rather than the tag. Together, that means a
+  release's notes can be corrected without touching its tag. One catch:
+  **Re-run** replays the old run; use **Run workflow** instead.
+- **Posts can link to scripts the GitHub way.** Links from any page that
+  leave `docs/` now resolve to the published page on the site, and to the
+  repository on GitHub.
+
 ## 0.0.4: Paper Trail (2026-10-15)
 
 *The changelog, release notes and licence, published with the docs.*
