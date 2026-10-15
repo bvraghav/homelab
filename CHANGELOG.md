@@ -12,6 +12,10 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-15 - Blank Box
+
+*The network decided, and the first four steps of the rebuild written up and scripted.*
+
 ### Added
 
 - `.gitignore`: `private/`, for local-only notes such as the network
@@ -153,7 +157,8 @@ For a readable summary of each release, see
   self-hosted KaTeX and mermaid; `sitemap.xml` from git history.
 - `CHANGELOG.md` and `RELEASE_NOTES.md`.
 
-[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/bvraghav/homelab/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/bvraghav/homelab/compare/v0.0.4...v0.1.0
 [0.0.4]: https://github.com/bvraghav/homelab/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/bvraghav/homelab/compare/v0.0.2...v0.0.3

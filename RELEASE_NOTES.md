@@ -3,6 +3,35 @@
 The full list of changes is in [`CHANGELOG.md`](CHANGELOG.md). Each release
 has a short title and a one-line subtitle, the same in both files.
 
+## 0.1.1: Blank Box (2026-10-15)
+
+*The network decided, and the first four steps of the rebuild written up and scripted.*
+
+The rebuild now has a plan that starts from a blank box: how the network
+fits together, where names and certificates come from, and the first four
+steps, each with a post and a script.
+
+### Highlights
+
+- **The network is decided.** Lab services live under `lab.<domain>`,
+  answered by Pi-hole on the LAN and over Tailscale everywhere else, with
+  a Let's Encrypt wildcard issued through a DNS challenge. Nothing listens
+  on the internet, and dynamic DNS isn't needed. Addresses stay out of the
+  repository, in a git-ignored `private/` folder.
+- **Certificates and DNS, from a blank box.** A new tutorial walks
+  through the whole chain in build order: Cloudflare, Proxmox's own
+  certificate, Pi-hole records, the Tailscale subnet router, Caddy and
+  cert-manager.
+- **The rebuild, step by step.** Posts for the first four steps: tools on
+  the laptop, secrets with SOPS and age, moving DNS to Cloudflare, and
+  installing Proxmox VE. The blog index lists them in order.
+- **A script for each step.** `laptop-tools.sh`, `sops-setup.sh`,
+  `dns01-test.sh` and `proxmox-tofu-token.sh` do what the posts describe,
+  safe by default, and never with a secret on a command line.
+- **Who builds what.** OpenTofu creates the VMs, cloud-init configures
+  them up to a running k3s, and helmfile installs what runs in it.
+  Vaultwarden keeps its own VM.
+
 ## 0.1.0: Release Train (2026-10-15)
 
 *The release workflow, written up, and fixing notes after the fact for free.*
