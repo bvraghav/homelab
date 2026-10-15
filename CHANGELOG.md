@@ -19,8 +19,13 @@ For a readable summary of each release, see
   backup.
 - Tutorial `docs/blog/tutorials/scrub-history.md`, linked from the blog index
   and the secrets post.
-- `scripts/MANIFEST.md`: inventory of scripts, usage, and conventions for
-  new ones.
+- `scripts/MANIFEST.md` (with `scripts/README.md` linking to it): inventory
+  of scripts and conventions for new ones.
+- `scripts/scrub-history.md`: the script's page, and the template for every
+  script's page.
+- Scripts published on the docs site through the `docs/scripts` symlink.
+- `site/site.lua`, replacing `site/footer.lua`: also rewrites links in
+  symlinked folders, so they work both on GitHub and on the site.
 
 ## [0.0.1] - 2026-10-15 - Groundwork
 

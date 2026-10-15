@@ -15,7 +15,7 @@
 #
 # Before --apply, run `unset HISTFILE` in the shell you run this from, and
 # close other terminals; a running shell can write the old history back.
-# Walkthrough: docs/blog/tutorials/scrub-history.md
+# Docs: scripts/scrub-history.md; walkthrough: docs/blog/tutorials/scrub-history.md
 
 set -euo pipefail
 
