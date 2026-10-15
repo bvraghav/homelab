@@ -142,9 +142,13 @@ In **proxmox → System → DNS**:
 
 ## 6. The laptop
 
-Once the laptop has a new lease (`dig +short proxmox.lab.<domain>`
-answers without `@`), remove the `proxmox.lab.<domain>` line from
-`/etc/hosts` that step 4 added.
+Once the laptop has a new lease, `dig +short grafana.lab.<domain>`
+answers without `@`.
+
+**Keep** the `proxmox.lab.<domain>` line in `/etc/hosts` from step 4.
+Pi-hole runs on Proxmox: when its VM is shut down for a rebuild, the
+laptop would lose the name, and OpenTofu would lose Proxmox halfway
+through the rebuild.
 
 The other VMs use Pi-hole after their next reboot, or when they're rebuilt
 in their own steps.
@@ -170,6 +174,11 @@ in their own steps.
   shows what it got. Check Router2's *DHCP* (LAN) settings, not its
   WAN or internet DNS settings, which some routers show nearby.
 
+**Rebuilding the Pi-hole VM fails: "VM shutdown … error while waiting for task"**
+: The laptop found Proxmox through Pi-hole, and lost it when Pi-hole's VM
+  shut down. Put `proxmox.lab.<domain>` back in `/etc/hosts` (section 6),
+  then plan and apply again.
+
 **Lab names work on the laptop but not on the phone**
 : Android's *Private DNS* set to a provider bypasses Pi-hole; set it to
   *Automatic* or *Off*.
@@ -190,7 +199,7 @@ in their own steps.
 - [ ] `dig @<pihole-ip>` answers for the lab's names and for the internet
 - [ ] Router2's DHCP hands out Pi-hole, then the gateway
 - [ ] Proxmox uses Pi-hole, search domain `lab.<domain>`
-- [ ] Laptop resolves `proxmox.lab.<domain>` without `/etc/hosts`
+- [ ] Laptop resolves lab names through Pi-hole; `proxmox` stays in `/etc/hosts`
 
 ## See also
 

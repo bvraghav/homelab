@@ -100,6 +100,10 @@ For a readable summary of each release, see
 
 ### Fixed
 
+- Rebuilding the Pi-hole VM failed halfway: the laptop found Proxmox
+  through Pi-hole, and lost it when Pi-hole's VM shut down. The posts no
+  longer say to remove `proxmox.lab.<domain>` from the laptop's
+  `/etc/hosts`; it stays.
 - `sops-setup.sh`: when a key couldn't be created, the script stopped
   without a word; it now shows `age-keygen`'s error and says which key.
 - `sops edit secrets/<name>.sops.yaml` failed on a fresh clone: there was

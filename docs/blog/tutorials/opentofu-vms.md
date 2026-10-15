@@ -113,8 +113,9 @@ list in the same file, if present, replaces it.
    `ssh-add -l` lists the key.
 
 4. **The name resolves.** OpenTofu calls `https://proxmox.lab.<domain>:8006`,
-   so the certificate from step 4 checks out. Until Pi-hole knows it, the
-   laptop's `/etc/hosts` line from step 4 does.
+   so the certificate from step 4 checks out. The laptop's `/etc/hosts`
+   line from step 4 resolves it, and stays: Pi-hole can't, while its own
+   VM is being rebuilt.
 
 ## 3. Cloudflare R2, for backups
 
