@@ -17,7 +17,7 @@ and are expected to change in the rebuild.
 
 | VMID | Name          | IP              | vCPU | RAM  | Disk  | Role                    |
 |------|---------------|-----------------|------|------|-------|-------------------------|
-| —    | proxmox       | `<ip>`          |      |      |       | hypervisor              |
+| —    | proxmox       | `<ip>`          |      |      |       | hypervisor: Proxmox VE 9.2.2, kernel 7.0.2-6-pve |
 | 9000 | debian13-tmpl | —               | 2    | 2 GB | —     | cloud-init template     |
 | —    | vaultwarden   | `<ip>`          | 1    | 1 GB | 10 GB | Docker: Vaultwarden, Caddy |
 | 201  | k3s-server    | `192.168.10.61` | 2    | 4 GB | 32 GB | k3s control plane       |
@@ -46,10 +46,12 @@ and are expected to change in the rebuild.
 | Helm       | `helm`                   | 4.3.0   |
 | helmfile   | `helmfile`               | 1.8.0   |
 | kubectl    | `kubectl`                | 1.37.1  |
-| certbot    | `certbot`, `certbot-dns-cloudflare` |  |
-| Tailscale  | `tailscale`              |         |
+| certbot    | `certbot`, `certbot-dns-cloudflare` | 5.8.0 |
+| Tailscale  | `tailscale`              | 1.102.4 |
 | jq         | `jq`                     | 1.8.2 |
 | ShellCheck | `shellcheck`             | 0.11.0  |
+| helm-diff  | Helm plugin, `helmfile init` | 3.15.13 |
+| helm-secrets | Helm plugin, `helmfile init` | 4.7.4 |
 
 ## Secrets (locations only, never values)
 
@@ -63,11 +65,20 @@ and are expected to change in the rebuild.
 | kubeconfig                     | laptop `~/.kube/config`           |
 | Forgejo admin                  | k8s secret `forgejo/forgejo-admin` |
 | Woodpecker OAuth client        | k8s secret `woodpecker/woodpecker-forgejo` |
-| age key (SOPS)                 |                                   |
+| age key (SOPS), daily          | laptop `~/.config/sops/age/keys.txt` |
+| age key (SOPS), backup         | offline USB stick + paper copy    |
+| Cloudflare DNS API token, Zone ID | `secrets/cloudflare.sops.yaml` |
+| Proxmox API token, `tofu@pve!provider` | `secrets/proxmox.sops.yaml` |
+| Proxmox ACME account key, Cloudflare plugin data | Proxmox host, `/etc/pve/priv/` |
 
 ## Backups
 
-| What                | How                     | Schedule | Retention | Last restore test |
-|---------------------|-------------------------|----------|-----------|-------------------|
-| All VMs             | Proxmox vzdump snapshot |          |           |                   |
-| Vaultwarden export  | encrypted JSON, off-site |         |           |                   |
+Data only: the VMs are rebuilt from code. Each dump goes to Cloudflare R2
+with `restic`, encrypted.
+
+| What                | How                                   | Schedule | Retention        | Last restore test |
+|---------------------|---------------------------------------|----------|------------------|-------------------|
+| Vaultwarden         | SQLite `.backup`, attachments, keys   | daily    | 7 d, 4 w, 3 m    |                   |
+| k3s                 | datastore snapshot                    | daily    | 7 d, 4 w, 3 m    |                   |
+| Forgejo             | `forgejo dump`                        | daily    | 7 d, 4 w, 3 m    |                   |
+| Vaultwarden export  | encrypted JSON, off-site              | manual   |                  |                   |

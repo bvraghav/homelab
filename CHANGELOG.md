@@ -12,6 +12,50 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-15 - Bare Metal
+
+*Rebuild steps 1 to 4 done: tools, secrets, DNS, and a hardened Proxmox host.*
+
+### Added
+
+- `.sops.yaml`: files named `*.sops.yaml`, `*.sops.json` or `*.sops.env`
+  are encrypted to the laptop's and the offline backup's age keys.
+- `secrets/cloudflare.sops.yaml`: the Cloudflare DNS API token, scoped to
+  `<domain>`'s zone, and the Zone ID, encrypted.
+- `secrets/proxmox.sops.yaml`: OpenTofu's Proxmox API token,
+  `tofu@pve!provider`, encrypted; created by `proxmox-tofu-token.sh`.
+
+### Changed
+
+- `todo.md`: rebuild step 1, tools on the laptop, done. Decided: secrets
+  reach the VMs over SSH after the first boot, not through cloud-init; new
+  tasks for `scripts/push-secrets.sh` and for services that start once
+  their secrets arrive.
+- `MANIFEST.md`: the remaining tool versions, and the Helm plugins; where
+  the two age keys are kept.
+- `todo.md`: rebuild step 2, SOPS + age, done; SOPS + age ticked off as
+  the secrets decision. Rebuild step 3 done: `<domain>`'s DNS at
+  Cloudflare, its token stored, and a DNS-01 dry run passed.
+- Backups are of data, not VMs: a timer on each VM dumps its service's
+  data, and `restic` sends it to an S3 bucket (Cloudflare R2). The
+  Proxmox backup job is dropped from step 4's post and `todo.md`; the
+  bucket comes in step 5, each service's timer in its own step.
+  `MANIFEST.md`'s backups table lists the data, and the Proxmox version.
+- `todo.md`: rebuild step 4, Proxmox VE, done: installed, updated,
+  two-factor login, SSH by key only, OpenTofu's token stored, and a Let's
+  Encrypt certificate on the web UI. `MANIFEST.md` lists where the new
+  secrets are kept.
+
+### Fixed
+
+- `sops-setup.sh`: when a key couldn't be created, the script stopped
+  without a word; it now shows `age-keygen`'s error and says which key.
+- `sops edit secrets/<name>.sops.yaml` failed on a fresh clone: there was
+  no `secrets/` folder. It's now in the repository, and `sops-setup.sh`
+  creates it if it's missing.
+- Step 4's post didn't say that Proxmox shows **Datacenter → ACME** only
+  to `root@pam`; logged in as `admin@pve`, the menu isn't there.
+
 ## [0.1.1] - 2026-10-15 - Blank Box
 
 *The network decided, and the first four steps of the rebuild written up and scripted.*
@@ -157,7 +201,8 @@ For a readable summary of each release, see
   self-hosted KaTeX and mermaid; `sitemap.xml` from git history.
 - `CHANGELOG.md` and `RELEASE_NOTES.md`.
 
-[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/bvraghav/homelab/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/bvraghav/homelab/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/bvraghav/homelab/compare/v0.0.4...v0.1.0
 [0.0.4]: https://github.com/bvraghav/homelab/compare/v0.0.3...v0.0.4
