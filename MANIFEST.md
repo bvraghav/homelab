@@ -43,7 +43,7 @@ OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
 | Tailscale subnet router | `lab-router` in the tailnet | pihole | `tailscale` (Debian package) | 1.104.1 |
 | Vaultwarden  | `https://vault.lab.<domain>` | vaultwarden | `vaultwarden/server`             | 1.37.4  |
 | Caddy        | wildcard `*.lab.<domain>`, DNS-01 | vaultwarden | `caddy` + `caddy-dns/cloudflare`, built on the VM | 2.11.7, v0.2.4 |
-| k3s          | `https://192.168.10.61:6443` | k3s VMs  | —                                   | v1.36.5+k3s1 |
+| k3s          | `https://k3s-server.lab.<domain>:6443` | k3s VMs | embedded etcd, Secrets encrypted | v1.36.5+k3s1 |
 | Prometheus + Grafana | `http://grafana.212bn` | k3s    | `prometheus-community/kube-prometheus-stack` |  |
 | Forgejo      | `http://forgejo.212bn`, SSH `:2222` | k3s | `oci://code.forgejo.org/forgejo-helm/forgejo` | 17.3.0 |
 | Woodpecker   | `http://ci.212bn`         | k3s         | `oci://ghcr.io/woodpecker-ci/helm/woodpecker` |   |
@@ -74,7 +74,7 @@ OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
 | Cloudflare DNS token, for Caddy | pushed to the vaultwarden VM, `/etc/homelab/cloudflare.env` |
 | restic password, R2 key        | pushed to the vaultwarden VM, `/etc/homelab/restic.env` |
 | Caddy's certificate and ACME account | vaultwarden VM `/srv/vaultwarden/caddy/`; reissued if lost |
-| k3s node token                 | k3s-server `/var/lib/rancher/k3s/server/node-token` |
+| k3s join token                 | `secrets/k3s.sops.yaml`; on the nodes, `/etc/homelab/k3s.env` |
 | kubeconfig                     | laptop `~/.kube/config`           |
 | Forgejo admin                  | k8s secret `forgejo/forgejo-admin` |
 | Woodpecker OAuth client        | k8s secret `woodpecker/woodpecker-forgejo` |
@@ -98,6 +98,6 @@ with `restic`, encrypted.
 | What                | How                                   | Schedule | Retention        | Last restore test |
 |---------------------|---------------------------------------|----------|------------------|-------------------|
 | Vaultwarden         | SQLite `.backup`, attachments, keys; restored by itself on a rebuild | daily 02:30 | 7 d, 4 w, 3 m | 2026-10-15: VM rebuilt, snapshot restored by itself |
-| k3s                 | datastore snapshot                    | daily    | 7 d, 4 w, 3 m    |                   |
+| k3s                 | etcd snapshot, sent to R2 by k3s itself (`homelab-backups/k3s`) | daily 02:30 | last 7 | 2026-10-16: in place, from R2; markers and a Secret came back |
 | Forgejo             | `forgejo dump`                        | daily    | 7 d, 4 w, 3 m    |                   |
 | Vaultwarden export  | encrypted JSON, off-site              | manual   |                  |                   |

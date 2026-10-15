@@ -51,7 +51,9 @@ scripts/push-secrets.sh --help
   2. on the VM, `sudo` writes them under a root-only umask to
      `/etc/homelab/<name>.env.tmp`, then moves it into place;
   3. once all files are pushed, each enabled `<name>.service` is
-     restarted, then the VM's own `<vm>.service`, each once. A service
+     restarted, then the VM's own `<vm>.service`, each once. A VM in the
+     `RESTART` table gets its own list instead: the k3s agents restart
+     `k3s-agent`. A service
      that waits for its secrets has `ConditionPathExists=` lines for them,
      so this is also its first start.
 - Services read the file as an `EnvironmentFile=` or a compose `env_file`.
