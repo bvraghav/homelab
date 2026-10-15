@@ -12,6 +12,10 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+## [0.0.3] - 2026-10-15 - Autopilot
+
+*GitHub releases are created automatically from version tags.*
+
 ### Added
 
 - `.github/workflows/release.yml`: pushing a version tag creates the GitHub
@@ -76,6 +80,7 @@ For a readable summary of each release, see
   self-hosted KaTeX and mermaid; `sitemap.xml` from git history.
 - `CHANGELOG.md` and `RELEASE_NOTES.md`.
 
-[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/bvraghav/homelab/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/bvraghav/homelab/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/bvraghav/homelab/releases/tag/v0.0.1
