@@ -54,6 +54,26 @@ backups and dotfile repos, and sometimes synced to other machines.
   followed by the command. Without it, each entry is just the command. Both
   work with the steps below.
 
+## The short way: the script
+
+The repository has a script that does steps 2 to 4 for you. It lists by
+default and changes nothing until you add `--apply`:
+
+```zsh
+unset HISTFILE                                   # step 1 still applies
+scripts/scrub-history.sh                         # list matches, values masked
+scripts/scrub-history.sh --apply                 # private backup, then remove whole entries
+scripts/scrub-history.sh --file ~/.bash_history  # a bash history instead
+scripts/scrub-history.sh --pattern 'hunter2|K10' # add your own patterns
+```
+
+With `--apply`, it refuses to run while other shells of the same kind are
+open, because they could write the old history back. Close them, or pass
+`--force` if you're sure. It prints where the backup is; delete it once a new
+terminal's history looks right (step 6). Steps 7 and 8 are still up to you.
+
+The rest of this tutorial does the same by hand, explaining each step.
+
 ## 1. Stop history from being written
 
 Close every other terminal and tmux pane running zsh. In the one you keep:
