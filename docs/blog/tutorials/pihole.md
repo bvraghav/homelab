@@ -103,13 +103,15 @@ dig +short @<pihole-ip> grafana.lab.<domain>    # ingress, then its address
 dig +short @<pihole-ip> example.com             # the internet still works
 ```
 
-The web UI is at `http://<pihole-ip>/admin`. To log in, show the password
-for a moment, and clear the screen afterwards:
+The web UI is at `http://<pihole-ip>/admin`. It asks for a password only,
+no username. Copy it to the clipboard without showing it; `-o` lets it be
+pasted once, then clears it:
 
 ```sh
-sops decrypt --extract '["FTLCONF_webserver_api_password"]' secrets/pihole.sops.yaml; echo
-clear
+sops decrypt --extract '["FTLCONF_webserver_api_password"]' secrets/pihole.sops.yaml | wl-copy -n -o
 ```
+
+On X11, `xclip -selection clipboard` instead of `wl-copy -n -o`.
 
 Save it in Vaultwarden once that's back (step 8).
 
@@ -165,6 +167,12 @@ in their own steps.
 **Lab names work on the laptop but not on the phone**
 : Android's *Private DNS* set to a provider bypasses Pi-hole; set it to
   *Automatic* or *Off*.
+
+**The web UI rejects the password**
+: Typed from the screen, it's easy to get wrong; copy it as in section 3.
+  To check what Pi-hole expects, without showing it:
+  `sops decrypt --extract '["FTLCONF_webserver_api_password"]' secrets/pihole.sops.yaml | jq -Rc '{password: .}' | curl -s --data @- http://<pihole-ip>/api/auth`
+  says `"valid":true` when it matches.
 
 **A name answers NXDOMAIN now and then**
 : The device asked the secondary DNS: section 4.

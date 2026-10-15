@@ -47,6 +47,8 @@ For a readable summary of each release, see
   their SSH host keys if cloud-init runs again.
 - VMs use Pi-hole for DNS, then the gateway; Pi-hole itself uses the
   gateway.
+- `todo.md`: rebuild step 6, Pi-hole, done; DHCP hands it out, and
+  Proxmox uses it.
 - `tofu/Makefile`: options for `plan` go in `TF_CLI_ARGS_plan`; the step 5
   post's `-replace` example uses it, and escapes the quotes it needs.
 - `proxmox-tofu-token.sh`: the role gets `VM.GuestAgent.Audit`, so

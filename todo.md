@@ -33,6 +33,8 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done, `[-]` dropped.
 - [x] Rebuild step 5: OpenTofu (`tofu/`) creates the Debian 13 image, five
       VMs with cloud-init, and the R2 backup bucket; state encrypted in
       git; network plan, R2 token and restic's key in SOPS
+- [x] Rebuild step 6: Pi-hole on VM 101, all code; web password pushed
+      with `scripts/push-secrets.sh`; DHCP and Proxmox use it
 
 ## 1. Network setup
 
@@ -55,11 +57,11 @@ Decide:
 Set up:
 
 - [x] Second router in AP mode with DHCP; first router's DHCP off
-- [ ] DHCP hands out Pi-hole as the DNS server, the gateway second
+- [x] DHCP hands out Pi-hole as the DNS server, the gateway second
 - [x] Move the domain's DNS to a provider with an API (nameservers only;
       the registrar can stay)
 - [x] DNS API token scoped to editing that zone; stored per section 2
-- [~] Pi-hole: static IP, start on boot, upstream DNS, local records for
+- [x] Pi-hole: static IP, start on boot, upstream DNS, local records for
       `lab.<domain>` (an A record for the ingress, CNAMEs for each app),
       generated from `secrets/network.sops.yaml` (`tofu/pihole.tf`)
 - [ ] Tailscale: a subnet router on a lab node advertising the LAN; split
@@ -122,7 +124,7 @@ cloud-init runs only on a VM's first boot; changing it means recreating
 the VM.
 
 
-- [~] Pi-hole: Docker, pinned image, settings as `FTLCONF_*` variables;
+- [x] Pi-hole: Docker, pinned image, settings as `FTLCONF_*` variables;
       web password pushed; no backup needed, it's all code
 - [ ] Vaultwarden VM: Docker, compose file, Caddyfile; Caddy built with
       the DNS provider's plugin, for the wildcard cert through DNS-01
