@@ -218,6 +218,11 @@ Each service's step pushes this file to its VM, and backs up to
 **Permission errors from the API, e.g. `VM.GuestAgent.Audit`**
 : The role is older than the script; section 2, step 2.
 
+**`cloudflare_r2_bucket`: "failed to make http request"**
+: The token can't use R2: most often it's the DNS token from step 3,
+  pasted by mistake, which sees no account at all. Create the token in
+  section 3, and replace `api_token` in `secrets/r2.sops.yaml`.
+
 **"error decrypting state"**
 : `tofu` ran without the passphrase. Use `make -C tofu …`, which passes
   it from SOPS.
