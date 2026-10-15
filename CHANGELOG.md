@@ -12,6 +12,55 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-16 - Home Forge
+
+*Rebuild steps 9 and 10: k3s with its snapshots in R2, the platform on it, and the lab's own Git forge and CI.*
+
+### Added
+
+- `tofu/k3s.tf`: k3s `v1.36.5+k3s1` on a server and two agents, from an
+  install script pinned by checksum; installed, not started, until the
+  token arrives. Embedded etcd with Secrets encrypted, and nightly
+  snapshots sent to R2 by k3s itself, keeping 7. Agents join by address.
+- `secrets/k3s.sops.yaml`: the join token, generated straight into SOPS.
+- `helmfile/`: everything inside k3s, with pinned charts. CoreDNS forwards
+  `lab.<domain>` to Pi-hole (`coredns-lab`); cert-manager v1.21.2 gets a
+  wildcard for `*.lab.<domain>` through DNS-01, served by Traefik as its
+  default (`lab-certs`); kube-prometheus-stack 92.9.0 with Grafana at
+  `grafana.lab.<domain>`, pulled from its OCI registry. Domain and
+  addresses from the network file, secrets through helm-secrets.
+- `helmfile/`: Forgejo (chart 17.3.0) with SQLite, SSH on 2222, sign-ups
+  off, and a `forgejo-backup` CronJob that dumps it to R2 with restic every
+  night (7 daily, 4 weekly, 3 monthly). Woodpecker (chart 3.7.5), open to
+  Forgejo's users, with `forgejo-admin` its admin; installed only once its
+  OAuth app is in `secrets/woodpecker.sops.yaml`.
+- `secrets/grafana.sops.yaml` and `secrets/forgejo.sops.yaml`: the admin
+  passwords, generated straight into SOPS.
+- Posts: *Rebuild step 9: k3s*, *Rebuild step 10a: the platform on k3s*
+  and *Rebuild step 10b: Forgejo and Woodpecker*.
+
+### Changed
+
+- `push-secrets.sh`: a `RESTART` table for VMs whose services aren't
+  named after their files; the k3s nodes' secrets.
+- `tofu/r2.tf`: the bucket's location hint, `apac`, the nearest R2 has to
+  India; the bucket was already there.
+- `todo.md`: rebuild step 9, k3s, done. An etcd snapshot was restored in
+  place from R2, and its markers, a Secret among them, came back; the k3s
+  post has the procedure. Step 10a done; 10b's checks still open.
+
+### Fixed
+
+- k3s couldn't send snapshots to R2: R2 answers 400 to k3s's default
+  region. `tofu/k3s.tf` sets `etcd-s3-region: auto`. The k3s post's manual
+  snapshot loads the R2 key first, which the command needs too.
+- `make -C helmfile apply` failed on a new cluster: diffing `lab-certs`
+  and kube-prometheus-stack needed CRDs that the same apply installs.
+  Their first diff now skips that check (`disableValidationOnInstall`).
+- Woodpecker refused the first login of any Forgejo user but
+  `forgejo-admin` (`registration_closed`). Its sign-ups are now open:
+  Forgejo's are off, so only accounts made there can log in.
+
 ## [0.3.0] - 2026-10-15 - First Tenants
 
 *Rebuild steps 5 to 8: VMs from code, the lab's names, remote access, and the vault, with a tested restore.*
@@ -39,29 +88,6 @@ For a readable summary of each release, see
   a rebuilt VM; if R2 can't be read, Vaultwarden doesn't start. Sign-ups
   only with `vaultwarden_signups_allowed`; no admin page.
 - Post: *Rebuild step 8: Vaultwarden*.
-- `tofu/k3s.tf`: k3s `v1.36.5+k3s1` on a server and two agents, from an
-  install script pinned by checksum; installed, not started, until the
-  token arrives. Embedded etcd with Secrets encrypted, and nightly
-  snapshots sent to R2 by k3s itself, keeping 7. Agents join by address.
-- `secrets/k3s.sops.yaml`: the join token, generated straight into SOPS.
-- Post: *Rebuild step 9: k3s*.
-- `helmfile/`: everything inside k3s, with pinned charts. CoreDNS forwards
-  `lab.<domain>` to Pi-hole (`coredns-lab`); cert-manager v1.21.2 gets a
-  wildcard for `*.lab.<domain>` through DNS-01, served by Traefik as its
-  default (`lab-certs`); kube-prometheus-stack 92.9.0 with Grafana at
-  `grafana.lab.<domain>`, pulled from its OCI registry. Domain and
-  addresses from the network file, secrets through helm-secrets.
-- `secrets/grafana.sops.yaml`: Grafana's admin password, generated
-  straight into SOPS.
-- Post: *Rebuild step 10a: the platform on k3s*.
-- `helmfile/`: Forgejo (chart 17.3.0) with SQLite, SSH on 2222, sign-ups
-  off, and a `forgejo-backup` CronJob that dumps it to R2 with restic every
-  night (7 daily, 4 weekly, 3 monthly). Woodpecker (chart 3.7.5), logging
-  in through Forgejo, installed only once its OAuth app is in
-  `secrets/woodpecker.sops.yaml`.
-- `secrets/forgejo.sops.yaml`: Forgejo's admin password, generated
-  straight into SOPS.
-- Post: *Rebuild step 10b: Forgejo and Woodpecker*.
 
 - `tofu/`: OpenTofu for rebuild step 5. A pinned Debian 13 cloud image,
   five VMs (Pi-hole, Vaultwarden with a data disk, a k3s server and two
@@ -83,8 +109,6 @@ For a readable summary of each release, see
 
 - `tofu/cloud-init.tf`: a role can add other cloud-init keys, such as
   `fs_setup` and `mounts`. The Vaultwarden VM has 2 GB, to build Caddy.
-- `push-secrets.sh`: a `RESTART` table for VMs whose services aren't
-  named after their files; the k3s nodes' secrets.
 - `push-secrets.sh`: restarts services once all files are pushed, and
   also the VM's own `<vm>.service`; pushes `cloudflare` and `restic` to
   the Vaultwarden VM.
@@ -97,11 +121,6 @@ For a readable summary of each release, see
   gateway.
 - `todo.md`: rebuild step 6, Pi-hole, done; DHCP hands it out, and
   Proxmox uses it.
-- `todo.md`: rebuild step 9, k3s, done. An etcd snapshot was restored in
-  place from R2, and its markers, a Secret among them, came back; the k3s
-  post has the procedure.
-- `tofu/r2.tf`: the bucket's location hint, `apac`, the nearest R2 has to
-  India; the bucket was already there.
 - `todo.md`: rebuild step 7, Tailscale, done. Rebuild step 8,
   Vaultwarden, done, and its restore test passed: a rebuilt VM restored
   the latest backup by itself.
@@ -151,16 +170,6 @@ For a readable summary of each release, see
 
 ### Fixed
 
-- Woodpecker refused the first login of any Forgejo user but
-  `forgejo-admin` (`registration_closed`). Its sign-ups are now open:
-  Forgejo's are off, so only accounts made there can log in.
-  `forgejo-admin` stays its only admin.
-- `make -C helmfile apply` failed on a new cluster: diffing `lab-certs`
-  and kube-prometheus-stack needed CRDs that the same apply installs.
-  Their first diff now skips that check (`disableValidationOnInstall`).
-- k3s couldn't send snapshots to R2: R2 answers 400 to k3s's default
-  region. `tofu/k3s.tf` sets `etcd-s3-region: auto`. The k3s post's manual
-  snapshot loads the R2 key first, which the command needs too.
 - Rebuilding the Pi-hole VM failed halfway: the laptop found Proxmox
   through Pi-hole, and lost it when Pi-hole's VM shut down. The posts no
   longer say to remove `proxmox.lab.<domain>` from the laptop's
@@ -318,7 +327,8 @@ For a readable summary of each release, see
   self-hosted KaTeX and mermaid; `sitemap.xml` from git history.
 - `CHANGELOG.md` and `RELEASE_NOTES.md`.
 
-[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/bvraghav/homelab/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/bvraghav/homelab/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/bvraghav/homelab/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/bvraghav/homelab/compare/v0.1.0...v0.1.1
