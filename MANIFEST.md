@@ -65,7 +65,8 @@ and are expected to change in the rebuild.
 | kubeconfig                     | laptop `~/.kube/config`           |
 | Forgejo admin                  | k8s secret `forgejo/forgejo-admin` |
 | Woodpecker OAuth client        | k8s secret `woodpecker/woodpecker-forgejo` |
-| age key (SOPS)                 |                                   |
+| age key (SOPS), daily          | laptop `~/.config/sops/age/keys.txt` |
+| age key (SOPS), backup         | offline USB stick + paper copy    |
 
 ## Backups
 

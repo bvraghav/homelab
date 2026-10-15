@@ -22,6 +22,8 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [x] Write up the release workflow in `docs/blog/`
 - [x] Rebuild step 1: tools on the laptop (`scripts/laptop-tools.sh`);
       versions in `MANIFEST.md`
+- [x] Rebuild step 2: SOPS + age, a laptop key and an offline backup key
+      (`scripts/sops-setup.sh`); `.sops.yaml` committed
 
 ## 1. Network setup
 
@@ -60,7 +62,7 @@ Set up:
 
 ## 2. Decisions before rebuilding
 
-- [ ] Secrets: SOPS + age now; OpenBao + External Secrets later?
+- [x] Secrets: SOPS + age now (OpenBao + External Secrets maybe later)
 - [x] Who builds what: OpenTofu creates the VMs; cloud-init configures
       them, up to "k3s is running"; helmfile installs everything inside
       k3s. Vaultwarden stays on its own VM (Docker, no Helm), so it works
