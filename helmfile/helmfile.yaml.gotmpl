@@ -43,6 +43,9 @@ releases:
     chart: ./charts/lab-certs
     needs:
       - cert-manager/cert-manager
+    # Its kinds come from cert-manager's CRDs, which don't exist before the
+    # first install: diff it without checking them against the cluster.
+    disableValidationOnInstall: true
     values:
       - domain: {{ .Values.domain | quote }}
     secrets:
