@@ -3,6 +3,34 @@
 The full list of changes is in [`CHANGELOG.md`](CHANGELOG.md). Each release
 has a short title and a one-line subtitle, the same in both files.
 
+## 0.0.2: Clean Slate (2026-10-15)
+
+*Scrub secrets from shell history, and publish the scripts with the docs.*
+
+Building the homelab by hand left secrets in shell history: an admin
+password, an OAuth secret, a cluster join token. This release cleans them up
+and starts a home for helper scripts. The test-run cluster itself will be
+destroyed and rebuilt from scratch, so no secret from it carries over.
+
+### Highlights
+
+- **`scripts/scrub-history.sh`.** Lists shell history entries that look like
+  secrets, with values masked, and removes them with `--apply`, whole
+  multi-line entries included, after a private backup. It refuses to run
+  while other shells could write the old history back.
+- **A tutorial** on scrubbing shell history by hand: finding secrets without
+  printing them, cleaning other copies, and keeping secrets out of history
+  with a zsh hook.
+- **Scripts on the docs site.** Each script has its own page, following one
+  template, and `scripts/MANIFEST.md` lists them all. Links on those pages
+  work both on GitHub and on the site.
+
+### Upgrade notes
+
+- Tags now use a `v` prefix, as `v0.0.1` already did. For a clone made
+  before this release, run `git config gitflow.prefix.versiontag v` so
+  `git flow release finish` creates `v`-prefixed tags.
+
 ## 0.0.1: Groundwork (2026-10-15)
 
 *Repository skeleton, test-run write-ups and a published docs site.*

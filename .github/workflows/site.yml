@@ -5,14 +5,15 @@
 #   push a version tag          build, check and deploy (any bump, even a patch)
 #   manual run                  build and check; deploys only when run on a tag
 #
-# Version tags are what `git flow release finish` creates: 1.2.3 (this repo
-# uses no tag prefix), or v1.2.3. A tag must match the VERSION file, or the
-# build fails. Every page's footer shows the version.
+# Version tags are what `git flow release finish` creates: v1.2.3 (this
+# repo's tag prefix is "v"); 1.2.3 also works. Without the v, a tag must
+# match the VERSION file, or the build fails. Every page's footer shows the
+# version.
 #
 # One-time setup:
 #   1. Settings → Pages → Build and deployment → Source: "GitHub Actions".
 #   2. Settings → Environments → github-pages → Deployment branches and
-#      tags: add a *tag* rule, e.g. `*.*.*` (and `v*.*.*` if you use the v).
+#      tags: add a *tag* rule `v*.*.*` (globs, not regexes).
 #      By default only the default branch may deploy, so tag deploys fail
 #      until this rule exists.
 #   3. Optional: the repository variable SITE_URL (Settings → Secrets and
