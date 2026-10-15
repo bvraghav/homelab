@@ -25,7 +25,7 @@ SITE_VERSION ?= $(if $(TAG),$(TAG),$(shell cat VERSION)-dev)
 REF      ?= $(shell git rev-parse HEAD 2>/dev/null)
 
 BASE_URL    := $(if $(SITE_URL),--base-url $(SITE_URL))
-PANDOC_ARGS := --lua-filter site/footer.lua \
+PANDOC_ARGS := --lua-filter site/site.lua \
                -M homelab-version=$(SITE_VERSION) \
                $(if $(REF),-M homelab-ref=$(REF)) \
                $(if $(REPO_URL),-M homelab-repo=$(REPO_URL))

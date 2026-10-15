@@ -3,14 +3,43 @@
 All notable changes to this repository are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/). Each version is a git tag
-without a prefix (e.g. `0.0.1`), created by `git flow release finish`; the
-tag must match the `VERSION` file. Each version has a short title and a
+with a `v` prefix (e.g. `v0.0.1`), created by `git flow release finish`;
+without the `v`, it must match the `VERSION` file. Each version has a short title and a
 one-line subtitle, which `RELEASE_NOTES.md` uses too.
 
 For a readable summary of each release, see
 [`RELEASE_NOTES.md`](RELEASE_NOTES.md).
 
 ## [Unreleased]
+
+## [0.0.2] - 2026-10-15 - Clean Slate
+
+*Scrub secrets from shell history, and publish the scripts with the docs.*
+
+### Added
+
+- `scripts/scrub-history.sh`: list shell history entries that look like
+  secrets, values masked; `--apply` removes whole entries after a private
+  backup.
+- Tutorial `docs/blog/tutorials/scrub-history.md`, linked from the blog index
+  and the secrets post.
+- `scripts/MANIFEST.md` (with `scripts/README.md` linking to it): inventory
+  of scripts and conventions for new ones.
+- `scripts/scrub-history.md`: the script's page, and the template for every
+  script's page.
+- Scripts published on the docs site through the `docs/scripts` symlink.
+- `site/site.lua`, replacing `site/footer.lua`: also rewrites links in
+  symlinked folders, so they work both on GitHub and on the site.
+
+### Changed
+
+- `todo.md`: mirroring the repo to Forgejo moved after the Forgejo rebuild;
+  secret rotation dropped in favour of destroying the test-run VMs.
+- Tags use a `v` prefix (`gitflow.prefix.versiontag`), matching `v0.0.1`.
+
+### Fixed
+
+- Changelog links pointed at tag `0.0.1`; the tag is `v0.0.1`.
 
 ## [0.0.1] - 2026-10-15 - Groundwork
 
@@ -38,5 +67,6 @@ For a readable summary of each release, see
   self-hosted KaTeX and mermaid; `sitemap.xml` from git history.
 - `CHANGELOG.md` and `RELEASE_NOTES.md`.
 
-[Unreleased]: https://github.com/bvraghav/homelab/compare/0.0.1...HEAD
-[0.0.1]: https://github.com/bvraghav/homelab/releases/tag/0.0.1
+[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/bvraghav/homelab/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/bvraghav/homelab/releases/tag/v0.0.1

@@ -7,12 +7,14 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 
 - [x] Create repo skeleton (README, LICENCE, .gitignore, MANIFEST, todo)
 - [x] Fill in identity placeholders in `LICENCE.md`
-- [ ] Push repo to a remote (Forgejo after rebuild; elsewhere until then)
+- [x] Push repo to a remote: GitHub `bvraghav/homelab`
 - [x] Write up the manual test run in `docs/blog/`
 - [x] Publish `docs/` to GitHub Pages (workflow + Makefile)
-- [ ] Enable Pages (Source: GitHub Actions) once the remote exists
-- [ ] Allow version tags to deploy: github-pages environment, tag rule `*.*.*`
-- [ ] Clean secrets out of shell history (`grep from-literal ~/.zsh_history`)
+- [x] Enable Pages (Source: GitHub Actions)
+- [x] Allow version tags to deploy: github-pages environment, tag rule `v*.*.*`
+- [x] Release 0.0.1, *Groundwork*: docs site deployed from tag `v0.0.1`
+- [x] Script and tutorial for scrubbing history (`scripts/scrub-history.sh`)
+- [x] Clean secrets out of shell history: laptop, k3s VMs, Proxmox host
 
 ## 1. Decisions before rebuilding
 
@@ -24,6 +26,8 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 
 ## 2. Proxmox host (manual, documented)
 
+- [ ] Destroy the test-run VMs (k3s nodes, Vaultwarden, template); no
+      secrets from the test run carry over
 - [ ] Install Proxmox VE; record version in MANIFEST
 - [ ] 2FA for `root@pam`; create `admin@pve`
 - [ ] SSH keys only for root (`PermitRootLogin prohibit-password`)
@@ -54,6 +58,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [ ] CoreDNS: forward local domain to Pi-hole (`coredns-custom`)
 - [ ] kube-prometheus-stack (Grafana + Prometheus)
 - [ ] Forgejo (SQLite, SSH on 2222, webhook ALLOWED_HOST_LIST)
+- [ ] Mirror or move this repo to the rebuilt Forgejo (needs the item above)
 - [ ] Woodpecker (Forgejo OAuth, kubernetes backend)
 - [ ] Secrets via SOPS, no `--from-literal` in shell
 
@@ -76,3 +81,6 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - Traefik owns ports 80/443 on k3s nodes; use Ingress, not LoadBalancer.
 - Forgejo chart init container is still named `configure-gitea`.
 - `helm install` on an existing release fails; use `helm upgrade --install`.
+- GitHub environment deployment rules take globs (`v*.*.*`), not regexes.
+- Releasing through a pull request skips git flow's back-merge; merge `master`
+  into `develop` by hand.
