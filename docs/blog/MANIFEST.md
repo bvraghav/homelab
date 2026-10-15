@@ -32,6 +32,7 @@ flowchart LR
   S --> SH[Scrub history]
   M --> RW[Releases from tags]
   HF --> S
+  S --> CD[Certificates and DNS]
 ```
 
 1. [Why this repo exists](misc/motivation.md)
@@ -43,6 +44,7 @@ flowchart LR
 7. [A secret store for the homelab](tools/secrets.md)
 8. [How to scrub shell history to clean secrets](tutorials/scrub-history.md)
 9. [Releases from tags](tools/release-workflow.md)
+10. [Certificates and DNS, from a blank box](tutorials/certs-and-dns.md)
 
 ## All posts
 
@@ -70,6 +72,7 @@ flowchart LR
 |------|---------|------|
 | [Pinning Helm chart versions](tutorials/helm.md) | Step by step: find versions, a deploy script, upgrades and rollbacks | 2026-10-15 |
 | [How to scrub shell history to clean secrets](tutorials/scrub-history.md) | Find secrets in shell history without printing them, remove whole entries, rotate, and prevent it with a zsh hook | 2026-10-15 |
+| [Certificates and DNS, from a blank box](tutorials/certs-and-dns.md) | Private `lab.<domain>` names in Pi-hole, a Let's Encrypt wildcard through DNS-01, and Tailscale for access from anywhere | 2026-10-15 |
 
 ## By tag
 
@@ -81,6 +84,9 @@ flowchart LR
 
 `secrets`
 : [Motivation](misc/motivation.md) · [Secrets](tools/secrets.md) · [Scrub shell history](tutorials/scrub-history.md)
+
+`networking`
+: [Certificates and DNS](tutorials/certs-and-dns.md)
 
 `releases`
 : [Releases from tags](tools/release-workflow.md)

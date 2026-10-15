@@ -16,6 +16,11 @@ For a readable summary of each release, see
 
 - `.gitignore`: `private/`, for local-only notes such as the network
   address plan.
+- Tutorial *Certificates and DNS for the homelab, from a blank box*:
+  moving `<domain>`'s DNS to Cloudflare, a scoped API token, Proxmox's own
+  ACME certificate, lab names in Pi-hole, a Tailscale subnet router with
+  split DNS, Caddy and cert-manager with a Let's Encrypt wildcard through
+  DNS-01, in build order.
 
 ### Changed
 
