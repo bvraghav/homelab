@@ -1,0 +1,122 @@
+# Build the docs site (docs/) with md-preview, and publish it to GitHub
+# Pages. Adapted from md-preview's own site workflow.
+#
+#   push to develop or master   build and check only
+#   push a version tag          build, check and deploy (any bump, even a patch)
+#   manual run                  build and check; deploys only when run on a tag
+#
+# Version tags are what `git flow release finish` creates: 1.2.3 (this repo
+# uses no tag prefix), or v1.2.3. A tag must match the VERSION file, or the
+# build fails. Every page's footer shows the version.
+#
+# One-time setup:
+#   1. Settings → Pages → Build and deployment → Source: "GitHub Actions".
+#   2. Settings → Environments → github-pages → Deployment branches and
+#      tags: add a *tag* rule, e.g. `*.*.*` (and `v*.*.*` if you use the v).
+#      By default only the default branch may deploy, so tag deploys fail
+#      until this rule exists.
+#   3. Optional: the repository variable SITE_URL (Settings → Secrets and
+#      variables → Actions → Variables) for a custom domain, e.g.
+#      https://docs.example.com/ ; it's used for sitemap.xml.
+
+name: site
+
+on:
+  push:
+    branches: [master, develop]
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+    # Branch pushes build only when the site could have changed. GitHub
+    # doesn't apply path filters to tag pushes, so every version tag deploys.
+    paths:
+      - 'docs/**'
+      - 'site/**'
+      - 'Makefile'
+      - 'VERSION'
+      - '.github/workflows/site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PANDOC_VERSION: "3.11"
+  MD_PREVIEW_VERSION: "0.2.4"
+  # GitHub Pages hosts are lowercase; set vars.SITE_URL if the owner isn't.
+  SITE_URL: ${{ vars.SITE_URL || format('https://{0}.github.io/{1}/', github.repository_owner, github.event.repository.name) }}
+  REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # full history and tags: sitemap dates, footer version
+
+      - name: Check tag matches VERSION
+        if: github.ref_type == 'tag'
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          file="$(cat VERSION)"
+          if [ "$tag" != "$file" ]; then
+            echo "::error::tag $GITHUB_REF_NAME doesn't match VERSION ($file)"
+            exit 1
+          fi
+
+      - name: Install pandoc ${{ env.PANDOC_VERSION }}
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/pandoc.deb" \
+            "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-1-amd64.deb"
+          sudo apt-get install -y "$RUNNER_TEMP/pandoc.deb"
+          pandoc --version | head -1
+
+      - name: Install md-preview ${{ env.MD_PREVIEW_VERSION }}
+        run: |
+          git clone -q --depth 1 --branch "v${MD_PREVIEW_VERSION}" \
+            https://github.com/bvraghav/md-preview "$RUNNER_TEMP/md-preview"
+          echo "$RUNNER_TEMP/md-preview/bin" >> "$GITHUB_PATH"
+
+      - name: Cache KaTeX and mermaid
+        uses: actions/cache@v6
+        with:
+          path: ~/.local/share/md-preview/vendor
+          key: md-preview-vendor-${{ env.MD_PREVIEW_VERSION }}
+
+      - name: Build site
+        run: |
+          md-preview version
+          echo "site version: $(make -s version)"
+          make fetch site SITE_URL="$SITE_URL" REPO_URL="$REPO_URL"
+
+      - name: Check links
+        run: make check
+
+      - name: Upload Pages artifact
+        if: github.ref_type == 'tag'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    name: deploy (version tags only)
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
