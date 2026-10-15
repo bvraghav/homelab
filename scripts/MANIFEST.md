@@ -11,6 +11,7 @@ added, changed or removed.
 | [`sops-setup.sh`](sops-setup.md) | Check the age keys and `.sops.yaml`, and that each key decrypts alone; create what's missing with `--apply` | Only with `--apply` | Laptop |
 | [`dns01-test.sh`](dns01-test.md) | Dry-run a Let's Encrypt wildcard for `lab.<domain>` through DNS-01, with the token from SOPS | A temporary TXT record | Laptop |
 | [`proxmox-tofu-token.sh`](proxmox-tofu-token.md) | Create OpenTofu's Proxmox user, role and token over SSH, and store the token in SOPS | Only with `--apply` | Laptop, against the Proxmox host |
+| [`push-secrets.sh`](push-secrets.md) | Push a VM's secrets from SOPS to root-only files on the VM, and restart its services | Only with `--apply` | Laptop, against a lab VM |
 | [`release-notes.sh`](release-notes.md) | Print a version's GitHub release title or description from `RELEASE_NOTES.md` | No | Laptop, `release` workflow |
 | [`scrub-history.sh`](scrub-history.md) | Find shell history entries that look like secrets, values masked; remove them with `--apply` | Only with `--apply` | Laptop, k3s VMs, Proxmox host |
 

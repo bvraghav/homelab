@@ -12,6 +12,79 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-15 - First Tenants
+
+*Rebuild steps 5 to 8: VMs from code, the lab's names, remote access, and the vault, with a tested restore.*
+
+### Added
+
+- `tofu/pihole.tf`: Pi-hole on its VM, with Docker and a pinned image
+  (`pihole/pihole:2026.09.0`). Settings are `FTLCONF_*` variables; an A
+  record per host and CNAMEs per app are generated from the network file.
+- `scripts/push-secrets.sh`: pushes a VM's secrets from SOPS to root-only
+  files in `/etc/homelab/`, over SSH, and restarts the services that read
+  them.
+- `secrets/pihole.sops.yaml`: Pi-hole's web password, generated straight
+  into SOPS.
+- Post: *Rebuild step 6: Pi-hole*.
+- `tofu/tailscale.tf`: the Pi-hole VM is also the tailnet's subnet router,
+  `lab-router`, tagged `tag:lab`, with Tailscale 1.104.1 pinned. It joins
+  with an auth key from `secrets/tailscale.sops.yaml`, read from a file,
+  never an argument.
+- Post: *Rebuild step 7: Tailscale*.
+- `tofu/vaultwarden.tf`: Vaultwarden 1.37.4 on its VM, behind Caddy 2.11.7
+  built with `caddy-dns/cloudflare` v0.2.4, for a wildcard certificate
+  through DNS-01. Data on the VM's second disk, backed up nightly to R2
+  with restic (7 daily, 4 weekly, 3 monthly), and restored by itself onto
+  a rebuilt VM; if R2 can't be read, Vaultwarden doesn't start. Sign-ups
+  only with `vaultwarden_signups_allowed`; no admin page.
+- Post: *Rebuild step 8: Vaultwarden*.
+
+- `tofu/`: OpenTofu for rebuild step 5. A pinned Debian 13 cloud image,
+  five VMs (Pi-hole, Vaultwarden with a data disk, a k3s server and two
+  agents), first-boot cloud-init with a user, an SSH key and the guest
+  agent, and an R2 bucket for backups. Providers `bpg/proxmox` 0.116.1,
+  `carlpett/sops` 1.4.1 and `cloudflare/cloudflare` 5.28.0. State is
+  encrypted, enforced, and committed; `tofu/Makefile` passes the
+  passphrase from SOPS and checks the state before staging it.
+- `secrets/network.sops.yaml`: the IP plan, addresses and router notes,
+  converted from the git-ignored `private/network.md`, which it replaces.
+- `secrets/tofu.sops.yaml` (state passphrase) and
+  `secrets/restic.sops.yaml` (restic's password, generated straight into
+  SOPS, and R2 key limited to the bucket); `secrets/r2.sops.yaml`
+  (OpenTofu's R2 token and the account ID).
+- `tofu/terraform.tfstate`: the five VMs and the bucket, encrypted.
+- Post: *Rebuild step 5: the VMs, with OpenTofu*.
+
+### Changed
+
+- `tofu/cloud-init.tf`: a role can add other cloud-init keys, such as
+  `fs_setup` and `mounts`. The Vaultwarden VM has 2 GB, to build Caddy.
+- `push-secrets.sh`: restarts services once all files are pushed, and
+  also the VM's own `<vm>.service`; pushes `cloudflare` and `restic` to
+  the Vaultwarden VM.
+- `tofu/cloud-init.tf`: a VM can have several roles; the Pi-hole VM has
+  Pi-hole and Tailscale. `push-secrets.sh` pushes both its secrets.
+- `tofu/cloud-init.tf`: cloud-init is built as data, a base plus each
+  role's packages, files and commands, instead of a template. VMs keep
+  their SSH host keys if cloud-init runs again.
+- VMs use Pi-hole for DNS, then the gateway; Pi-hole itself uses the
+  gateway.
+- `todo.md`: rebuild step 6, Pi-hole, done; DHCP hands it out, and
+  Proxmox uses it.
+- `todo.md`: rebuild step 7, Tailscale, done. Rebuild step 8,
+  Vaultwarden, done, and its restore test passed: a rebuilt VM restored
+  the latest backup by itself.
+- Vaultwarden's backup and restore give restic a cache directory, which
+  it had none of without `$HOME`.
+- `tofu/Makefile`: options for `plan` go in `TF_CLI_ARGS_plan`; the step 5
+  post's `-replace` example uses it, and escapes the quotes it needs.
+- `proxmox-tofu-token.sh`: the role gets `VM.GuestAgent.Audit`, so
+  OpenTofu can read VM addresses from the guest agent.
+- `.gitignore`: `tofu/terraform.tfstate` is committed; it's encrypted.
+- `todo.md`: Pi-hole runs as a VM; no template VM; rebuild step 5 done. `MANIFEST.md`: the new VMs, the host's disks, and the new
+  secret files.
+
 ## [0.2.0] - 2026-10-15 - Bare Metal
 
 *Rebuild steps 1 to 4 done: tools, secrets, DNS, and a hardened Proxmox host.*
@@ -48,6 +121,10 @@ For a readable summary of each release, see
 
 ### Fixed
 
+- Rebuilding the Pi-hole VM failed halfway: the laptop found Proxmox
+  through Pi-hole, and lost it when Pi-hole's VM shut down. The posts no
+  longer say to remove `proxmox.lab.<domain>` from the laptop's
+  `/etc/hosts`; it stays.
 - `sops-setup.sh`: when a key couldn't be created, the script stopped
   without a word; it now shows `age-keygen`'s error and says which key.
 - `sops edit secrets/<name>.sops.yaml` failed on a fresh clone: there was
@@ -201,7 +278,8 @@ For a readable summary of each release, see
   self-hosted KaTeX and mermaid; `sitemap.xml` from git history.
 - `CHANGELOG.md` and `RELEASE_NOTES.md`.
 
-[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/bvraghav/homelab/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/bvraghav/homelab/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/bvraghav/homelab/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/bvraghav/homelab/compare/v0.0.4...v0.1.0

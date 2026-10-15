@@ -10,27 +10,39 @@ and are expected to change in the rebuild.
 |---------------|-------------------------------|-------------------------------|
 | LAN subnet    | `192.168.10.0/24` (test run)  |                               |
 | Local domain  | `212bn` (test run)            | consider `home.arpa` or a real domain |
-| DNS           | Pi-hole `<ip>`                |                               |
-| DHCP          | router                        | hands out Pi-hole as DNS      |
+| DNS           | Pi-hole (VM 101), gateway as fallback | records from `secrets/network.sops.yaml` |
+| DHCP          | Router2                       | hands out Pi-hole, then the gateway |
 
 ## Hosts and VMs
 
 | VMID | Name          | IP              | vCPU | RAM  | Disk  | Role                    |
 |------|---------------|-----------------|------|------|-------|-------------------------|
-| —    | proxmox       | `<ip>`          |      |      |       | hypervisor: Proxmox VE 9.2.2, kernel 7.0.2-6-pve |
-| 9000 | debian13-tmpl | —               | 2    | 2 GB | —     | cloud-init template     |
-| —    | vaultwarden   | `<ip>`          | 1    | 1 GB | 10 GB | Docker: Vaultwarden, Caddy |
-| 201  | k3s-server    | `192.168.10.61` | 2    | 4 GB | 32 GB | k3s control plane       |
-| 202  | k3s-agent1    | `192.168.10.62` | 2    | 4 GB | 32 GB | k3s agent               |
-| 203  | k3s-agent2    | `192.168.10.63` | 2    | 4 GB | 32 GB | k3s agent               |
-| —    | pihole        | `<ip>`          |      |      |       | local DNS               |
+| —    | proxmox       | `<ip>`          | 6    | 15 GB | 240 GB SSD | hypervisor: Proxmox VE 9.2.2, kernel 7.0.2-6-pve |
+| 101  | pihole        | `<ip>`          | 1    | 512 MB | 8 GB | local DNS               |
+| 102  | vaultwarden   | `<ip>`          | 1    | 2 GB | 8 GB + 4 GB data | Docker: Vaultwarden, Caddy |
+| 201  | k3s-server    | `<ip>`          | 2    | 4 GB | 32 GB | k3s control plane       |
+| 202  | k3s-agent1    | `<ip>`          | 2    | 3 GB | 32 GB | k3s agent               |
+| 203  | k3s-agent2    | `<ip>`          | 2    | 3 GB | 32 GB | k3s agent               |
+
+Addresses are in `secrets/network.sops.yaml`. VMs are created by
+OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
+`20261001-2618`, user `debian`.
+
+## Proxmox storage
+
+| Disk | Size | Use |
+|------|------|-----|
+| SSD (`sda`) | 240 GB | Proxmox: root 65 GB, swap 8 GB; `local` (ISOs, images, snippets) on root; `local-lvm` thin pool 130 GB for VM disks |
+| HDD (`sdb`) | 1 TB | Not in use: an old install's LVM (`ram-vg`) is still on it. Check it for data before wiping |
 
 ## Services
 
 | Service      | URL                       | Runs on     | Chart / image                       | Version |
 |--------------|---------------------------|-------------|-------------------------------------|---------|
-| Vaultwarden  | `https://vault.212bn`     | vaultwarden | `vaultwarden/server`                |         |
-| Caddy        | —                         | vaultwarden | `caddy:2`                           |         |
+| Pi-hole      | `http://pihole.lab.<domain>/admin` | pihole | `pihole/pihole`            | 2026.09.0 |
+| Tailscale subnet router | `lab-router` in the tailnet | pihole | `tailscale` (Debian package) | 1.104.1 |
+| Vaultwarden  | `https://vault.lab.<domain>` | vaultwarden | `vaultwarden/server`             | 1.37.4  |
+| Caddy        | wildcard `*.lab.<domain>`, DNS-01 | vaultwarden | `caddy` + `caddy-dns/cloudflare`, built on the VM | 2.11.7, v0.2.4 |
 | k3s          | `https://192.168.10.61:6443` | k3s VMs  | —                                   | v1.36.5+k3s1 |
 | Prometheus + Grafana | `http://grafana.212bn` | k3s    | `prometheus-community/kube-prometheus-stack` |  |
 | Forgejo      | `http://forgejo.212bn`, SSH `:2222` | k3s | `oci://code.forgejo.org/forgejo-helm/forgejo` | 17.3.0 |
@@ -59,8 +71,9 @@ and are expected to change in the rebuild.
 |--------------------------------|-----------------------------------|
 | Proxmox root password, 2FA recovery | Vaultwarden + offline copy   |
 | Vaultwarden master password, 2FA recovery | offline only            |
-| Vaultwarden `ADMIN_TOKEN`      |                                   |
-| Caddy local CA (`root.key`)    | vaultwarden VM `caddy-data/`      |
+| Cloudflare DNS token, for Caddy | pushed to the vaultwarden VM, `/etc/homelab/cloudflare.env` |
+| restic password, R2 key        | pushed to the vaultwarden VM, `/etc/homelab/restic.env` |
+| Caddy's certificate and ACME account | vaultwarden VM `/srv/vaultwarden/caddy/`; reissued if lost |
 | k3s node token                 | k3s-server `/var/lib/rancher/k3s/server/node-token` |
 | kubeconfig                     | laptop `~/.kube/config`           |
 | Forgejo admin                  | k8s secret `forgejo/forgejo-admin` |
@@ -68,6 +81,12 @@ and are expected to change in the rebuild.
 | age key (SOPS), daily          | laptop `~/.config/sops/age/keys.txt` |
 | age key (SOPS), backup         | offline USB stick + paper copy    |
 | Cloudflare DNS API token, Zone ID | `secrets/cloudflare.sops.yaml` |
+| Network: addresses, IP plan, router notes | `secrets/network.sops.yaml` |
+| OpenTofu state passphrase      | `secrets/tofu.sops.yaml`          |
+| Cloudflare R2 token (OpenTofu), account ID | `secrets/r2.sops.yaml` |
+| restic password, R2 key for restic | `secrets/restic.sops.yaml`  |
+| Pi-hole web password           | `secrets/pihole.sops.yaml`; on the VM, `/etc/homelab/pihole.env` |
+| Tailscale auth key (reusable, `tag:lab`, 90 days) | `secrets/tailscale.sops.yaml`; on the VM, `/etc/homelab/tailscale.env` |
 | Proxmox API token, `tofu@pve!provider` | `secrets/proxmox.sops.yaml` |
 | Proxmox ACME account key, Cloudflare plugin data | Proxmox host, `/etc/pve/priv/` |
 
@@ -78,7 +97,7 @@ with `restic`, encrypted.
 
 | What                | How                                   | Schedule | Retention        | Last restore test |
 |---------------------|---------------------------------------|----------|------------------|-------------------|
-| Vaultwarden         | SQLite `.backup`, attachments, keys   | daily    | 7 d, 4 w, 3 m    |                   |
+| Vaultwarden         | SQLite `.backup`, attachments, keys; restored by itself on a rebuild | daily 02:30 | 7 d, 4 w, 3 m | 2026-10-15: VM rebuilt, snapshot restored by itself |
 | k3s                 | datastore snapshot                    | daily    | 7 d, 4 w, 3 m    |                   |
 | Forgejo             | `forgejo dump`                        | daily    | 7 d, 4 w, 3 m    |                   |
 | Vaultwarden export  | encrypted JSON, off-site              | manual   |                  |                   |

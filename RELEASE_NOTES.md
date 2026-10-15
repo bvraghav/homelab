@@ -3,6 +3,35 @@
 The full list of changes is in [`CHANGELOG.md`](CHANGELOG.md). Each release
 has a short title and a one-line subtitle, the same in both files.
 
+## 0.3.0: First Tenants (2026-10-15)
+
+*Rebuild steps 5 to 8: VMs from code, the lab's names, remote access, and the vault, with a tested restore.*
+
+The lab has residents now. OpenTofu builds every VM from a pinned Debian
+image, Pi-hole names everything under `lab.<domain>`, Tailscale reaches it
+all from anywhere without an open port, and Vaultwarden is back, backed up
+every night and proven to restore.
+
+### Highlights
+
+- **VMs from code.** One `make -C tofu apply` creates five VMs and an R2
+  bucket. Addresses and secrets come from SOPS, and OpenTofu's state is
+  committed to git, always encrypted.
+- **The lab's names.** Pi-hole runs from a pinned image, and its records
+  are generated from the network file: one per host, one per app, never a
+  wildcard.
+- **Remote access, no open ports.** The Pi-hole VM is also a tagged
+  Tailscale subnet router, with split DNS for `lab.<domain>`.
+- **Secrets pushed, never typed.** `push-secrets.sh` sends a VM's secrets
+  from SOPS to root-only files over SSH, and starts the services waiting
+  for them.
+- **The vault, with a tested restore.** Vaultwarden sits behind Caddy and
+  a Let's Encrypt wildcard. restic backs it up to R2 every night; a
+  rebuilt VM restores the latest backup by itself, and refuses to start
+  empty if it can't. The first restore test passed.
+- **Backups of data, not VMs.** Proxmox's backup job is gone: what
+  matters is each service's data, and the VMs are rebuilt from code.
+
 ## 0.2.0: Bare Metal (2026-10-15)
 
 *Rebuild steps 1 to 4 done: tools, secrets, DNS, and a hardened Proxmox host.*

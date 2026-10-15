@@ -134,7 +134,10 @@ under **Upload Custom Certificate**, and renew it by hand or by script.
 
 ## 5. Pi-hole and the lab names
 
-Give Pi-hole a static address, `<pihole-ip>`, then:
+Give Pi-hole a static address, `<pihole-ip>`, then follow the steps below.
+In this lab they're code: [rebuild step 6](pihole.md) generates the
+records from the network file.
+
 
 1. In Pi-hole, **Settings → Local DNS Records**, add one A record per
    machine and one CNAME per app on k3s:
@@ -169,6 +172,9 @@ TXT record through Pi-hole would never see it.
 
 ## 6. Tailscale: subnet router and split DNS
 
+In this lab, [rebuild step 7](tailscale.md) does this from code, with a
+tagged auth key.
+
 Pick a lab machine that's always on; the Pi-hole host is a good fit.
 
 ```sh
@@ -189,6 +195,8 @@ Phones accept routes by default. Linux clients need
 `sudo tailscale up --accept-routes`.
 
 ## 7. Caddy on the Vaultwarden VM
+
+In this lab, [rebuild step 8](vaultwarden.md) does this from code.
 
 Caddy only does DNS-01 with a plugin for the DNS provider, so it needs a
 custom build. A `Dockerfile` next to the compose file:

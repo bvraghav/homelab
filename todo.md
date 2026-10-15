@@ -30,6 +30,16 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done, `[-]` dropped.
 - [x] Rebuild step 4: Proxmox VE 9.2.2 on the blank box, updates from the
       no-subscription repository, TOTP, SSH by key only, OpenTofu's token
       in `secrets/proxmox.sops.yaml`, Let's Encrypt certificate for the UI
+- [x] Rebuild step 5: OpenTofu (`tofu/`) creates the Debian 13 image, five
+      VMs with cloud-init, and the R2 backup bucket; state encrypted in
+      git; network plan, R2 token and restic's key in SOPS
+- [x] Rebuild step 6: Pi-hole on VM 101, all code; web password pushed
+      with `scripts/push-secrets.sh`; DHCP and Proxmox use it
+- [x] Rebuild step 7: Tailscale subnet router `lab-router` on the Pi-hole
+      VM, tagged, with split DNS for `lab.<domain>`
+- [x] Rebuild step 8: Vaultwarden behind Caddy with a wildcard
+      certificate; nightly restic backups to R2; restore test passed
+      (2026-10-15)
 
 ## 1. Network setup
 
@@ -44,22 +54,24 @@ Decide:
 - [x] Remote access: Tailscale; no DDNS and no port forwards (never the
       Proxmox UI on 8006, or SSH)
 - [x] IP plan: one LAN; the second router in AP mode runs DHCP, the first
-      (modem, gateway, WiFi) has its DHCP off. Addresses are kept out of
-      the repo, in `private/network.md` (git-ignored)
-- [ ] Where Pi-hole runs: its own device, or a VM on Proxmox (then local
-      names depend on the Proxmox host being up; hand out a fallback DNS)
+      (modem, gateway, WiFi) has its DHCP off. Addresses are kept
+      encrypted, in `secrets/network.sops.yaml`; OpenTofu reads them
+- [x] Where Pi-hole runs: a VM on Proxmox. Local names then depend on the
+      Proxmox host being up, so DHCP also hands out a fallback DNS
 
 Set up:
 
 - [x] Second router in AP mode with DHCP; first router's DHCP off
-- [ ] DHCP hands out Pi-hole as the DNS server
+- [x] DHCP hands out Pi-hole as the DNS server, a public one second
 - [x] Move the domain's DNS to a provider with an API (nameservers only;
       the registrar can stay)
 - [x] DNS API token scoped to editing that zone; stored per section 2
-- [ ] Pi-hole: static IP, start on boot, upstream DNS, local records for
-      `lab.<domain>` (an A record for the ingress, CNAMEs for each app)
-- [ ] Tailscale: a subnet router on a lab node advertising the LAN; split
-      DNS for `lab.<domain>` to Pi-hole
+- [x] Pi-hole: static IP, start on boot, upstream DNS, local records for
+      `lab.<domain>` (an A record for the ingress, CNAMEs for each app),
+      generated from `secrets/network.sops.yaml` (`tofu/pihole.tf`)
+- [x] Tailscale: a subnet router on the Pi-hole VM advertising the LAN,
+      tagged `tag:lab`, route auto-approved; split DNS for `lab.<domain>`
+      to Pi-hole (`tofu/tailscale.tf`, auth key in SOPS)
 - [ ] Verify name resolution: laptop, phone (Android Private DNS off or
       automatic), at home and over Tailscale; nodes and pods once they
       exist
@@ -96,16 +108,19 @@ Set up:
 
 ## 4. OpenTofu: infrastructure
 
-- [ ] `tofu/` skeleton: providers (`bpg/proxmox`), versions, backend
-- [ ] Enable state encryption
-- [ ] R2 bucket for backups, and an access key limited to it, in SOPS
-      (`cloudflare` provider; its own token, not the DNS one)
-- [ ] Debian 13 cloud image download + template
-- [ ] Cloud-init: user, SSH key, static IP, nameserver, search domain
-- [ ] VM: Pi-hole, if it runs on Proxmox (see section 1)
-- [ ] VM: Vaultwarden (from template, not ISO), with its data on a
+- [x] `tofu/`: providers (`bpg/proxmox`, `sops`, `cloudflare`) pinned;
+      state local and committed to git; secrets and addresses from SOPS
+- [x] State encryption, enforced; passphrase in `secrets/tofu.sops.yaml`
+- [x] R2 bucket for backups (`cloudflare` provider, its own token in
+      `secrets/r2.sops.yaml`); restic's key, limited to the bucket, and
+      its password in `secrets/restic.sops.yaml`
+- [x] Debian 13 cloud image, pinned by checksum, imported into each VM;
+      no template
+- [x] Cloud-init: user, SSH key, static IP, nameserver, search domain
+- [x] VM: Pi-hole
+- [x] VM: Vaultwarden (from the cloud image, not ISO), with its data on a
       separate disk, so the VM can be recreated without losing the vault
-- [ ] VMs: k3s server + 2 agents (unique hostnames!)
+- [x] VMs: k3s server + 2 agents (unique hostnames!)
 - [ ] k3s join token generated up front and kept in SOPS, so agents never
       read it off the server
 
@@ -115,17 +130,20 @@ cloud-init runs only on a VM's first boot; changing it means recreating
 the VM.
 
 
-- [ ] Pi-hole install, if it runs on Proxmox; records per section 1
-- [ ] Vaultwarden VM: Docker, compose file, Caddyfile; Caddy built with
+- [x] Pi-hole: Docker, pinned image, settings as `FTLCONF_*` variables;
+      web password pushed; no backup needed, it's all code
+- [x] Vaultwarden VM: Docker, compose file, Caddyfile; Caddy built with
       the DNS provider's plugin, for the wildcard cert through DNS-01
+      (`tofu/vaultwarden.tf`); data on its own disk; no admin page
 - [ ] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
       join with the token from SOPS
-- [ ] qemu-guest-agent on all VMs
-- [ ] Backup timers (`restic` to R2; repository password and key pushed
+- [x] qemu-guest-agent on all VMs
+- [~] Backup timers (`restic` to R2; repository password and key pushed
       from SOPS): Vaultwarden (SQLite `.backup`, `attachments/`,
-      `rsa_key*`), k3s (datastore snapshot), Pi-hole if not in the repo;
-      `OnFailure=` notice
-- [ ] `scripts/push-secrets.sh <vm>`: each SOPS secret for that VM, piped
+      `rsa_key*`) written; k3s (datastore snapshot) to do; no Pi-hole (all
+      code)
+- [ ] A notice when a backup fails (`OnFailure=`); needs a way to send it
+- [x] `scripts/push-secrets.sh <vm>`: each SOPS secret for that VM, piped
       over SSH into a root-only file; lists what it would push without
       `--apply`
 - [ ] cloud-init installs services without their secrets; k3s with
@@ -146,7 +164,8 @@ the VM.
 
 ## 7. Verification and operations
 
-- [ ] Restore test: rebuild the Vaultwarden VM, `restic restore` its data
+- [x] Restore test: rebuild the Vaultwarden VM; it restores the latest
+      backup by itself (`vaultwarden-restore`)
 - [ ] Restore test: rebuild k3s, restore its snapshot and Forgejo
 - [ ] Timed rebuild from scratch; record time-to-build here
 - [ ] HTTPS for Grafana, Forgejo, Woodpecker

@@ -198,7 +198,7 @@ have been:
   and prunes them to 7 daily, 4 weekly and 3 monthly;
 - a restore is a rebuild plus `restic restore`.
 
-OpenTofu creates the bucket and its access key in step 5, and each
+OpenTofu creates the bucket in [step 5](opentofu-vms.md), and each
 service's step adds its timer. Nothing to do here.
 
 ## 8. A trusted certificate for the web UI
@@ -224,15 +224,16 @@ The certificate names `proxmox.lab.<domain>`, so that name appears in the
 public Certificate Transparency logs;
 [Certificates and DNS](certs-and-dns.md) explains the alternative.
 
-Until Pi-hole knows the name (step 6), `https://<proxmox-ip>:8006` still
-warns, because the certificate doesn't match the address. To use the name
-already, add a line to the laptop's `/etc/hosts`:
+`https://<proxmox-ip>:8006` still warns, because the certificate doesn't
+match the address. Add the name to the laptop's `/etc/hosts`:
 
 ```
 <proxmox-ip>  proxmox.lab.<domain>
 ```
 
-and remove it once Pi-hole is up.
+Keep it, even once Pi-hole knows the name (step 6). Pi-hole runs on
+Proxmox: while its VM is down or being rebuilt, the laptop must still
+reach Proxmox, or OpenTofu loses it halfway through.
 
 ## Checklist
 
@@ -245,6 +246,7 @@ and remove it once Pi-hole is up.
 ## See also
 
 - [Rebuild step 3: moving DNS to Cloudflare](dns-to-cloudflare.md)
+- [Rebuild step 5: the VMs, with OpenTofu](opentofu-vms.md)
 - [Certificates and DNS for the homelab](certs-and-dns.md)
 - [TF: good and bad use cases](../tools/tofu-use-cases.md): why Proxmox
   itself is installed by hand.
