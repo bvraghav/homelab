@@ -1,0 +1,58 @@
+# --- OpenTofu / Terraform ---
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+# variable files often hold secrets; commit *.tfvars.example instead
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+# NOTE: .terraform.lock.hcl is intentionally committed (pins provider versions)
+
+# --- Secrets and keys ---
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+*.agekey
+age.key
+keys.txt
+# decrypted SOPS output; encrypted *.sops.yaml files are fine to commit
+*.dec.yaml
+*.dec.json
+*.decrypted.*
+
+# --- Kubernetes ---
+kubeconfig
+*.kubeconfig
+k3s.yaml
+
+# --- Helm / helmfile ---
+charts/*.tgz
+.helmfile/
+
+# --- Editors and OS ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+\#*\#
+.#*
+.DS_Store
+Thumbs.db
+
+# --- Docs site (make site) ---
+_site/
+_build/
