@@ -15,8 +15,6 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [x] Release 0.0.1, *Groundwork*: docs site deployed from tag `v0.0.1`
 - [x] Script and tutorial for scrubbing history (`scripts/scrub-history.sh`)
 - [x] Clean secrets out of shell history: laptop, k3s VMs, Proxmox host
-- [ ] Rotate exposed secrets: Forgejo admin password, Woodpecker OAuth
-      secret, k3s node token (only if the test-run cluster is kept)
 
 ## 1. Decisions before rebuilding
 
@@ -28,6 +26,8 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 
 ## 2. Proxmox host (manual, documented)
 
+- [ ] Destroy the test-run VMs (k3s nodes, Vaultwarden, template); no
+      secrets from the test run carry over
 - [ ] Install Proxmox VE; record version in MANIFEST
 - [ ] 2FA for `root@pam`; create `admin@pve`
 - [ ] SSH keys only for root (`PermitRootLogin prohibit-password`)
