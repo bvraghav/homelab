@@ -12,6 +12,10 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-15 - Release Train
+
+*The release workflow, written up, and fixing notes after the fact for free.*
+
 ### Added
 
 - Blog post *Releases from tags*: the release cycle with git flow and the
@@ -115,7 +119,8 @@ For a readable summary of each release, see
   self-hosted KaTeX and mermaid; `sitemap.xml` from git history.
 - `CHANGELOG.md` and `RELEASE_NOTES.md`.
 
-[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/bvraghav/homelab/compare/v0.0.4...v0.1.0
 [0.0.4]: https://github.com/bvraghav/homelab/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/bvraghav/homelab/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/bvraghav/homelab/compare/v0.0.1...v0.0.2
