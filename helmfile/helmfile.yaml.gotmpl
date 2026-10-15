@@ -1,0 +1,61 @@
+# Everything that runs inside k3s, with pinned chart versions.
+#
+#   make -C helmfile diff     what would change
+#   make -C helmfile apply    change it
+#
+# The lab's domain and addresses come from secrets/network.sops.yaml, and
+# secrets from their own SOPS files, decrypted by helm-secrets.
+
+environments:
+  default:
+    secrets:
+      - ../secrets/network.sops.yaml
+---
+repositories:
+  - name: jetstack
+    url: https://charts.jetstack.io
+
+helmDefaults:
+  wait: true
+  timeout: 600
+
+releases:
+  # Pods resolve lab.<domain> through Pi-hole; everything else as before.
+  - name: coredns-lab
+    namespace: kube-system
+    chart: ./charts/coredns-lab
+    values:
+      - domain: {{ .Values.domain | quote }}
+        pihole: {{ .Values.hosts.pihole.address | quote }}
+
+  - name: cert-manager
+    namespace: cert-manager
+    createNamespace: true
+    chart: jetstack/cert-manager
+    version: v1.21.2
+    values:
+      - values/cert-manager.yaml
+
+  # The Cloudflare token, the issuers, the wildcard certificate, and
+  # Traefik's default certificate.
+  - name: lab-certs
+    namespace: cert-manager
+    chart: ./charts/lab-certs
+    needs:
+      - cert-manager/cert-manager
+    values:
+      - domain: {{ .Values.domain | quote }}
+    secrets:
+      - ../secrets/cloudflare.sops.yaml
+
+  - name: kube-prometheus-stack
+    namespace: monitoring
+    createNamespace: true
+    # From the OCI registry: the classic repository serves the chart from
+    # GitHub release assets, which time out from here.
+    chart: oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack
+    version: 92.9.0
+    values:
+      - values/kube-prometheus-stack.yaml.gotmpl
+    secrets:
+      - ../secrets/grafana.sops.yaml

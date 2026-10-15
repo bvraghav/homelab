@@ -44,7 +44,8 @@ OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
 | Vaultwarden  | `https://vault.lab.<domain>` | vaultwarden | `vaultwarden/server`             | 1.37.4  |
 | Caddy        | wildcard `*.lab.<domain>`, DNS-01 | vaultwarden | `caddy` + `caddy-dns/cloudflare`, built on the VM | 2.11.7, v0.2.4 |
 | k3s          | `https://k3s-server.lab.<domain>:6443` | k3s VMs | embedded etcd, Secrets encrypted | v1.36.5+k3s1 |
-| Prometheus + Grafana | `http://grafana.212bn` | k3s    | `prometheus-community/kube-prometheus-stack` |  |
+| cert-manager | wildcard `*.lab.<domain>`, Traefik's default | k3s | `jetstack/cert-manager` | v1.21.2 |
+| Prometheus + Grafana | `https://grafana.lab.<domain>` | k3s    | `prometheus-community/kube-prometheus-stack` | 92.9.0 |
 | Forgejo      | `http://forgejo.212bn`, SSH `:2222` | k3s | `oci://code.forgejo.org/forgejo-helm/forgejo` | 17.3.0 |
 | Woodpecker   | `http://ci.212bn`         | k3s         | `oci://ghcr.io/woodpecker-ci/helm/woodpecker` |   |
 
@@ -85,6 +86,7 @@ OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
 | OpenTofu state passphrase      | `secrets/tofu.sops.yaml`          |
 | Cloudflare R2 token (OpenTofu), account ID | `secrets/r2.sops.yaml` |
 | restic password, R2 key for restic | `secrets/restic.sops.yaml`  |
+| Grafana admin password         | `secrets/grafana.sops.yaml`; in k3s, from helm-secrets |
 | Pi-hole web password           | `secrets/pihole.sops.yaml`; on the VM, `/etc/homelab/pihole.env` |
 | Tailscale auth key (reusable, `tag:lab`, 90 days) | `secrets/tailscale.sops.yaml`; on the VM, `/etc/homelab/tailscale.env` |
 | Proxmox API token, `tofu@pve!provider` | `secrets/proxmox.sops.yaml` |

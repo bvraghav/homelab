@@ -1,0 +1,14 @@
+# k3s's CoreDNS imports every *.server key of coredns-custom as its own
+# server block, and reloads it by itself.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  lab.server: |
+    {{ .Values.domain }}:53 {
+      errors
+      cache 30
+      forward . {{ .Values.pihole }}
+    }

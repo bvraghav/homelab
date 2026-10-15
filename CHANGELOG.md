@@ -45,6 +45,15 @@ For a readable summary of each release, see
   snapshots sent to R2 by k3s itself, keeping 7. Agents join by address.
 - `secrets/k3s.sops.yaml`: the join token, generated straight into SOPS.
 - Post: *Rebuild step 9: k3s*.
+- `helmfile/`: everything inside k3s, with pinned charts. CoreDNS forwards
+  `lab.<domain>` to Pi-hole (`coredns-lab`); cert-manager v1.21.2 gets a
+  wildcard for `*.lab.<domain>` through DNS-01, served by Traefik as its
+  default (`lab-certs`); kube-prometheus-stack 92.9.0 with Grafana at
+  `grafana.lab.<domain>`, pulled from its OCI registry. Domain and
+  addresses from the network file, secrets through helm-secrets.
+- `secrets/grafana.sops.yaml`: Grafana's admin password, generated
+  straight into SOPS.
+- Post: *Rebuild step 10a: the platform on k3s*.
 
 - `tofu/`: OpenTofu for rebuild step 5. A pinned Debian 13 cloud image,
   five VMs (Pi-hole, Vaultwarden with a data disk, a k3s server and two

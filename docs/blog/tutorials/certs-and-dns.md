@@ -231,6 +231,9 @@ it.
 
 ## 8. cert-manager on k3s
 
+In this lab, [rebuild step 10a](k3s-platform.md) does this with helmfile,
+straight to the production issuer: DNS-01 was already proven in step 3.
+
 cert-manager gets the wildcard once, and Traefik serves it as the default
 certificate for every Ingress, so no app needs its own TLS setup.
 
