@@ -14,7 +14,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [x] Allow version tags to deploy: github-pages environment, tag rule `v*.*.*`
 - [x] Release 0.0.1, *Groundwork*: docs site deployed from tag `v0.0.1`
 - [x] Script and tutorial for scrubbing history (`scripts/scrub-history.sh`)
-- [~] Clean secrets out of shell history: laptop, k3s VMs, Proxmox host
+- [x] Clean secrets out of shell history: laptop, k3s VMs, Proxmox host
 - [ ] Rotate exposed secrets: Forgejo admin password, Woodpecker OAuth
       secret, k3s node token (only if the test-run cluster is kept)
 
