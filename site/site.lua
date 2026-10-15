@@ -1,14 +1,16 @@
 -- site.lua: a pandoc filter for the docs site. It runs before md-preview's
 -- own filter, so it sees links as written in the Markdown.
 --
--- 1. Mounted folders. docs/ can include folders from elsewhere in the
---    repository through symlinks (docs/scripts -> ../scripts). Their pages
+-- 1. Mounted files and folders. docs/ can include files and folders from
+--    elsewhere in the repository through symlinks (docs/scripts ->
+--    ../scripts, docs/CHANGELOG.md -> ../CHANGELOG.md). Their pages
 --    are written for their real location, so their relative links are
 --    resolved from there: links into docs/ are rewritten relative to the
 --    page's place on the site, and links to other repository files become
 --    links to the repository (when homelab-repo is set).
--- 2. Footer. Every page gets a footer with the site version and, when
---    known, links to the page's source and the commit it was built from.
+-- 2. Footer. Every page gets a footer with the site version, linked to the
+--    release notes, and, when known, links to the page's source and the
+--    commit it was built from.
 --
 -- Metadata it reads (passed with -M by the Makefile):
 --   homelab-version   version shown in the footer (required for the footer)
@@ -17,11 +19,17 @@
 --   md-preview-page   set by md-preview: the page's source relative to docs/,
 --                     or "dir/" for a generated folder listing
 
--- Symlinked folders under docs/: site path → repository path. Add a line
--- here when adding a symlink.
+-- Symlinks under docs/: site path → repository path. A folder ends in "/".
+-- Add a line here when adding a symlink.
 local MOUNTS = {
   ['scripts/'] = 'scripts/',
+  ['CHANGELOG.md'] = 'CHANGELOG.md',
+  ['RELEASE_NOTES.md'] = 'RELEASE_NOTES.md',
+  ['LICENCE.md'] = 'LICENCE.md',
 }
+
+-- The release notes page, relative to docs/, for the footer's version link.
+local RELEASE_NOTES_PAGE = 'RELEASE_NOTES.html'
 
 local stringify = pandoc.utils.stringify
 
@@ -114,7 +122,9 @@ local function rewrite(target, page, repo, ref)
 end
 
 local function footer(version, page, repo, ref)
-  local parts = { string.format('homelab docs <strong>%s</strong>', esc(version)) }
+  local notes = page and relative(dirname(page), RELEASE_NOTES_PAGE) or RELEASE_NOTES_PAGE
+  local parts = { string.format('homelab docs <a href="%s"><strong>%s</strong></a>',
+    esc(notes), esc(version)) }
 
   if page and not page:match('/$') then
     local source = repo_path(page)

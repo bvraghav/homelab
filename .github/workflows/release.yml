@@ -1,7 +1,13 @@
 # Create the GitHub release for a version tag, from RELEASE_NOTES.md.
 #
 #   push a version tag (vX.Y.Z)   create the release, or update it if it exists
-#   manual run with a tag         the same, for an existing tag (e.g. to redo one)
+#   manual run with a tag         the same, for an existing tag, e.g. to fix
+#                                 its notes after the release
+#
+# A tag push reads RELEASE_NOTES.md as it is at the tag. A manual run reads
+# it from the branch the run is started on ("Use workflow from"), so notes
+# can be corrected on develop and re-published without moving the tag. The
+# version check and the compare link always use the tag.
 #
 # The title is "v" + the tag's section heading in RELEASE_NOTES.md without
 # its date; the description is that section's text, plus a "Full Changelog"
@@ -44,6 +50,10 @@ jobs:
       TAG: ${{ inputs.tag || github.ref_name }}
       GH_TOKEN: ${{ github.token }}
       REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+      # Where RELEASE_NOTES.md is read from: the tag itself on a tag push (or
+      # a manual run started on a tag), otherwise the branch the run was
+      # started on.
+      NOTES_REF: ${{ github.ref_type == 'tag' && github.ref_name || format('origin/{0}', github.ref_name) }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -64,8 +74,11 @@ jobs:
 
       - name: Build title and description
         run: |
-          scripts/release-notes.sh --title "$TAG" > "$RUNNER_TEMP/title.txt"
-          scripts/release-notes.sh --body --repo "$REPO_URL" "$TAG" > "$RUNNER_TEMP/notes.md"
+          echo "Release notes from $NOTES_REF"
+          git show "$NOTES_REF:RELEASE_NOTES.md" > "$RUNNER_TEMP/RELEASE_NOTES.md"
+          notes="$RUNNER_TEMP/RELEASE_NOTES.md"
+          scripts/release-notes.sh --file "$notes" --title "$TAG" > "$RUNNER_TEMP/title.txt"
+          scripts/release-notes.sh --file "$notes" --body --repo "$REPO_URL" "$TAG" > "$RUNNER_TEMP/notes.md"
           echo "## $(cat "$RUNNER_TEMP/title.txt")" >> "$GITHUB_STEP_SUMMARY"
           cat "$RUNNER_TEMP/notes.md" >> "$GITHUB_STEP_SUMMARY"
 

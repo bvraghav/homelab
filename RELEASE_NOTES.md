@@ -3,13 +3,32 @@
 The full list of changes is in [`CHANGELOG.md`](CHANGELOG.md). Each release
 has a short title and a one-line subtitle, the same in both files.
 
+## 0.0.4: Paper Trail (2026-10-15)
+
+*The changelog, release notes and licence, published with the docs.*
+
+The docs site now carries the project's own records alongside the blog and
+the scripts, so a reader can see what changed, and under what terms, without
+leaving it.
+
+### Highlights
+
+- **What's new, Changelog and Licence** pages on the docs site, linked from
+  the landing page under *Project*. Each is the repository's own file,
+  symlinked into `docs/`, so there's one copy of each.
+- **The version in every page's footer** links to the release notes.
+- **Release notes can be corrected after a release.** A manual run of the
+  `release` workflow reads the notes from the branch it's started on, so a
+  published release can be updated without moving its tag. The 0.0.3 notes
+  were reworded this way.
+
 ## 0.0.3: Autopilot (2026-10-15)
 
 *GitHub releases are created automatically from version tags.*
 
 Until now, each GitHub release was written by hand after pushing a tag.
-From this release on, pushing a version tag is enough: the release, its
-title and its notes all come from this file.
+From this release on, pushing a version tag is enough: the release's title
+and notes come from `RELEASE_NOTES.md` in the repository.
 
 ### Highlights
 

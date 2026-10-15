@@ -12,6 +12,27 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+## [0.0.4] - 2026-10-15 - Paper Trail
+
+*The changelog, release notes and licence, published with the docs.*
+
+### Added
+
+- The changelog, release notes and licence are published with the docs,
+  through symlinks under `docs/`, and linked from the landing page under
+  *Project*.
+- The version in every page's footer links to the release notes.
+
+### Changed
+
+- `release` workflow: a manual run reads `RELEASE_NOTES.md` from the branch
+  it's started on, so a release's notes can be fixed without moving its tag.
+
+### Fixed
+
+- 0.0.3 release notes: "come from this file" read oddly on GitHub; they now
+  name `RELEASE_NOTES.md`.
+
 ## [0.0.3] - 2026-10-15 - Autopilot
 
 *GitHub releases are created automatically from version tags.*
@@ -80,7 +101,8 @@ For a readable summary of each release, see
   self-hosted KaTeX and mermaid; `sitemap.xml` from git history.
 - `CHANGELOG.md` and `RELEASE_NOTES.md`.
 
-[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/bvraghav/homelab/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/bvraghav/homelab/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/bvraghav/homelab/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/bvraghav/homelab/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/bvraghav/homelab/releases/tag/v0.0.1
