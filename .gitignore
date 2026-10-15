@@ -1,6 +1,8 @@
 # --- OpenTofu / Terraform ---
 **/.terraform/
 *.tfstate
+# ...except the lab's own, which OpenTofu encrypts (tofu/versions.tf)
+!tofu/terraform.tfstate
 *.tfstate.*
 *.tfplan
 crash.log
