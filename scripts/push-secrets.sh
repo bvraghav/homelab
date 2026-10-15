@@ -25,6 +25,16 @@ set -euo pipefail
 declare -A PUSH=(
   [pihole]="pihole tailscale"
   [vaultwarden]="cloudflare restic"
+  [k3s-server]="k3s restic"
+  [k3s-agent1]="k3s"
+  [k3s-agent2]="k3s"
+)
+
+# Services to restart once the files are pushed, if not the usual: each
+# file's <name>.service, then the VM's own <vm>.service.
+declare -A RESTART=(
+  [k3s-agent1]="k3s-agent"
+  [k3s-agent2]="k3s-agent"
 )
 
 user=${VM_USER:-debian}
@@ -95,9 +105,10 @@ for name in ${PUSH[$vm]}; do
 done
 
 # Each file's service, then the VM's own, each once: the VM's service may
-# need several files.
+# need several files. RESTART replaces that list for a VM.
+units=${RESTART[$vm]:-${PUSH[$vm]} $vm}
 declare -A done_units=()
-for unit in ${PUSH[$vm]} "$vm"; do
+for unit in $units; do
   [[ -v done_units[$unit] ]] && continue
   done_units[$unit]=1
   if on_vm "systemctl is-enabled --quiet $unit.service 2>/dev/null"; then

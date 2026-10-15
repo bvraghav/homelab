@@ -39,6 +39,12 @@ For a readable summary of each release, see
   a rebuilt VM; if R2 can't be read, Vaultwarden doesn't start. Sign-ups
   only with `vaultwarden_signups_allowed`; no admin page.
 - Post: *Rebuild step 8: Vaultwarden*.
+- `tofu/k3s.tf`: k3s `v1.36.5+k3s1` on a server and two agents, from an
+  install script pinned by checksum; installed, not started, until the
+  token arrives. Embedded etcd with Secrets encrypted, and nightly
+  snapshots sent to R2 by k3s itself, keeping 7. Agents join by address.
+- `secrets/k3s.sops.yaml`: the join token, generated straight into SOPS.
+- Post: *Rebuild step 9: k3s*.
 
 - `tofu/`: OpenTofu for rebuild step 5. A pinned Debian 13 cloud image,
   five VMs (Pi-hole, Vaultwarden with a data disk, a k3s server and two
@@ -60,6 +66,8 @@ For a readable summary of each release, see
 
 - `tofu/cloud-init.tf`: a role can add other cloud-init keys, such as
   `fs_setup` and `mounts`. The Vaultwarden VM has 2 GB, to build Caddy.
+- `push-secrets.sh`: a `RESTART` table for VMs whose services aren't
+  named after their files; the k3s nodes' secrets.
 - `push-secrets.sh`: restarts services once all files are pushed, and
   also the VM's own `<vm>.service`; pushes `cloudflare` and `restic` to
   the Vaultwarden VM.

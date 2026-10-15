@@ -12,6 +12,9 @@ locals {
   vm_roles = {
     pihole      = [local.pihole_cloud_init, local.tailscale_cloud_init]
     vaultwarden = [local.vaultwarden_cloud_init]
+    k3s-server  = [local.k3s_server_cloud_init]
+    k3s-agent1  = [local.k3s_agent_cloud_init]
+    k3s-agent2  = [local.k3s_agent_cloud_init]
   }
 
   roles = {
