@@ -1,25 +1,27 @@
 # homelab
 
-Infrastructure-as-code and notes for a Proxmox-based homelab, written so the
-whole lab can be torn down and rebuilt quickly and repeatably.
+Infrastructure-as-code and notes for a Proxmox homelab, so the whole lab
+can be rebuilt quickly and repeatably.
 
 ## What runs here
 
-- **Proxmox VE** host, with Debian cloud-init templates for all VMs
-- **Vaultwarden** behind Caddy, in its own Docker VM
-- **k3s** cluster (one server, two agents) running Prometheus + Grafana,
-  Forgejo and Woodpecker CI
+- **Proxmox VE**, with Debian cloud-init templates for all VMs
+- **Vaultwarden** behind Caddy, in a Docker VM
+- **k3s** (one server, two agents): Prometheus, Grafana, Forgejo, Woodpecker CI
 - **Pi-hole** for local DNS
 
 ## Layout
 
-| Path          | Purpose                                          |
-|---------------|--------------------------------------------------|
-| `tofu/`       | OpenTofu code for VMs, cloud-init and releases   |
-| `docs/`       | Documentation, published to GitHub Pages; `docs/blog/` for write-ups |
-| `todo.md`     | Task list and rebuild progress                   |
-| `MANIFEST.md` | Inventory of hosts, services and versions        |
-| `Makefile`    | `make site` builds the docs with md-preview      |
+| Path | Purpose |
+|------|---------|
+| `tofu/` | OpenTofu code for VMs, cloud-init and releases |
+| `docs/` | Docs and blog, published to GitHub Pages |
+| `site/`, `Makefile` | Docs build: `make site` |
+| `scripts/` | Helper scripts; see `scripts/MANIFEST.md` |
+| `.github/` | CI: build and deploy the docs |
+| `todo.md` | Tasks and rebuild progress |
+| `MANIFEST.md` | Inventory of hosts, services and versions |
+| `CHANGELOG.md`, `RELEASE_NOTES.md` | Changes and notes per release |
 
 ## Secrets
 

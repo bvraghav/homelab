@@ -29,6 +29,7 @@ flowchart LR
   T1 --> T2[TF for cloud]
   T1 --> T3[TF use cases]
   T3 --> S[Secrets]
+  S --> SH[Scrub history]
   HF --> S
 ```
 
@@ -39,6 +40,7 @@ flowchart LR
 5. [OpenTofu for cloud in general](tools/tofu-for-cloud-in-general.md)
 6. [TF: good and bad use cases](tools/tofu-use-cases.md)
 7. [A secret store for the homelab](tools/secrets.md)
+8. [How to scrub shell history to clean secrets](tutorials/scrub-history.md)
 
 ## All posts
 
@@ -64,6 +66,7 @@ flowchart LR
 | Post | Summary | Date |
 |------|---------|------|
 | [Pinning Helm chart versions](tutorials/helm.md) | Step by step: find versions, a deploy script, upgrades and rollbacks | 2026-10-15 |
+| [How to scrub shell history to clean secrets](tutorials/scrub-history.md) | Find secrets in shell history without printing them, remove whole entries, rotate, and prevent it with a zsh hook | 2026-10-15 |
 
 ## By tag
 
@@ -74,7 +77,7 @@ flowchart LR
 : [Motivation](misc/motivation.md) · [TF for homelab](tools/tofu-for-homelab.md) · [TF for cloud](tools/tofu-for-cloud-in-general.md) · [TF use cases](tools/tofu-use-cases.md)
 
 `secrets`
-: [Motivation](misc/motivation.md) · [Secrets](tools/secrets.md)
+: [Motivation](misc/motivation.md) · [Secrets](tools/secrets.md) · [Scrub shell history](tutorials/scrub-history.md)
 
 `kubernetes`
 : [Helm as a tool](tools/helm.md) · [Helm tutorial](tutorials/helm.md) · [Helmfile](tools/helmfile.md) · [Secrets](tools/secrets.md)
