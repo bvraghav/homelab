@@ -68,6 +68,8 @@ and are expected to change in the rebuild.
 | age key (SOPS), daily          | laptop `~/.config/sops/age/keys.txt` |
 | age key (SOPS), backup         | offline USB stick + paper copy    |
 | Cloudflare DNS API token, Zone ID | `secrets/cloudflare.sops.yaml` |
+| Proxmox API token, `tofu@pve!provider` | `secrets/proxmox.sops.yaml` |
+| Proxmox ACME account key, Cloudflare plugin data | Proxmox host, `/etc/pve/priv/` |
 
 ## Backups
 

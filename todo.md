@@ -27,6 +27,9 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done, `[-]` dropped.
 - [x] Rebuild step 3: `<domain>`'s DNS at Cloudflare, a one-zone API token
       in `secrets/cloudflare.sops.yaml`, DNS-01 dry run passed
       (`scripts/dns01-test.sh`)
+- [x] Rebuild step 4: Proxmox VE 9.2.2 on the blank box, updates from the
+      no-subscription repository, TOTP, SSH by key only, OpenTofu's token
+      in `secrets/proxmox.sops.yaml`, Let's Encrypt certificate for the UI
 
 ## 1. Network setup
 
@@ -81,12 +84,12 @@ Set up:
 
 ## 3. Proxmox host (manual, documented)
 
-- [ ] Destroy the test-run VMs (k3s nodes, Vaultwarden, template); no
+- [x] Destroy the test-run VMs (k3s nodes, Vaultwarden, template); no
       secrets from the test run carry over
 - [x] Install Proxmox VE; record version in MANIFEST
-- [ ] 2FA for `root@pam`; create `admin@pve`
-- [ ] SSH keys only for root (`PermitRootLogin prohibit-password`)
-- [ ] API token for OpenTofu (dedicated user + role):
+- [x] 2FA for `root@pam`; create `admin@pve`
+- [x] SSH keys only for root (`PermitRootLogin prohibit-password`)
+- [x] API token for OpenTofu (dedicated user + role):
       `scripts/proxmox-tofu-token.sh`
 - [-] ~~Backup storage and backup job~~: replaced by per-service data
       backups to S3 (section 2)

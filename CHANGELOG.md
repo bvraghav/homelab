@@ -18,6 +18,8 @@ For a readable summary of each release, see
   are encrypted to the laptop's and the offline backup's age keys.
 - `secrets/cloudflare.sops.yaml`: the Cloudflare DNS API token, scoped to
   `<domain>`'s zone, and the Zone ID, encrypted.
+- `secrets/proxmox.sops.yaml`: OpenTofu's Proxmox API token,
+  `tofu@pve!provider`, encrypted; created by `proxmox-tofu-token.sh`.
 
 ### Changed
 
@@ -35,6 +37,10 @@ For a readable summary of each release, see
   Proxmox backup job is dropped from step 4's post and `todo.md`; the
   bucket comes in step 5, each service's timer in its own step.
   `MANIFEST.md`'s backups table lists the data, and the Proxmox version.
+- `todo.md`: rebuild step 4, Proxmox VE, done: installed, updated,
+  two-factor login, SSH by key only, OpenTofu's token stored, and a Let's
+  Encrypt certificate on the web UI. `MANIFEST.md` lists where the new
+  secrets are kept.
 
 ### Fixed
 
@@ -43,6 +49,8 @@ For a readable summary of each release, see
 - `sops edit secrets/<name>.sops.yaml` failed on a fresh clone: there was
   no `secrets/` folder. It's now in the repository, and `sops-setup.sh`
   creates it if it's missing.
+- Step 4's post didn't say that Proxmox shows **Datacenter → ACME** only
+  to `root@pam`; logged in as `admin@pve`, the menu isn't there.
 
 ## [0.1.1] - 2026-10-15 - Blank Box
 
