@@ -3,6 +3,37 @@
 The full list of changes is in [`CHANGELOG.md`](CHANGELOG.md). Each release
 has a short title and a one-line subtitle, the same in both files.
 
+## 0.0.3: Autopilot (2026-10-15)
+
+*GitHub releases are created automatically from version tags.*
+
+Until now, each GitHub release was written by hand after pushing a tag.
+From this release on, pushing a version tag is enough: the release, its
+title and its notes all come from this file.
+
+### Highlights
+
+- **Releases from tags.** A new `release` workflow runs on every `vX.Y.Z`
+  tag. It checks the tag against `VERSION` and the changelog, then creates
+  the GitHub release, or updates it if one exists. It can also be run by
+  hand for an existing tag.
+- **Notes from `RELEASE_NOTES.md`.** The title is `v` plus the version's
+  heading here, without the date; the description is the section's text,
+  followed by a *Full Changelog* link from the previous version tag.
+- **Preview before tagging.** `scripts/release-notes.sh --body --repo <url>
+  X.Y.Z` prints exactly what the release will say.
+
+### Release cycle from now on
+
+```sh
+git flow release start X.Y.Z
+# bump VERSION; add X.Y.Z sections to CHANGELOG.md and RELEASE_NOTES.md
+git flow release finish -m "X.Y.Z: Title" X.Y.Z
+git push upstream master develop vX.Y.Z
+```
+
+Use the bare version with git flow (`X.Y.Z`); it adds the `v` to the tag.
+
 ## 0.0.2: Clean Slate (2026-10-15)
 
 *Scrub secrets from shell history, and publish the scripts with the docs.*
