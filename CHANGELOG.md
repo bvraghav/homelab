@@ -16,11 +16,15 @@ For a readable summary of each release, see
 
 - `.gitignore`: `private/`, for local-only notes such as the network
   address plan.
-- Tutorial *Certificates and DNS for the homelab, from a blank box*:
-  moving `<domain>`'s DNS to Cloudflare, a scoped API token, Proxmox's own
-  ACME certificate, lab names in Pi-hole, a Tailscale subnet router with
-  split DNS, Caddy and cert-manager with a Let's Encrypt wildcard through
-  DNS-01, in build order.
+- Tutorial *Certificates and DNS for the homelab, from a blank box*: lab
+  names in Pi-hole, a Tailscale subnet router with split DNS, Caddy and
+  cert-manager with a Let's Encrypt wildcard through DNS-01, in build
+  order; the DNS move and Proxmox's own certificate are in the step posts
+  below.
+- The rebuild, step by step: posts for steps 1 to 4, *Tools on the
+  laptop*, *Secrets with SOPS and age*, *Moving DNS to Cloudflare* and
+  *Installing Proxmox VE*, listed in order in the blog index.
+- `MANIFEST.md`: a *Tools* table with the laptop's tool versions.
 
 ### Changed
 

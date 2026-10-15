@@ -111,100 +111,26 @@ places.
 If Pi-hole runs on its own device rather than on Proxmox, step 5 can come
 before step 4.
 
-## 1. Move `<domain>`'s DNS to Cloudflare
+## 1–3. DNS at Cloudflare, an API token, a test certificate
 
-Only the DNS hosting moves; the domain stays with its registrar. That takes
-hours, where a registrar transfer takes days and locks the domain for 60.
-
-1. In Cloudflare, **Add a domain**, enter `<domain>`, pick the Free plan.
-2. Cloudflare imports the records it can find. **Compare them, record by
-   record, with the current provider**, especially the website (`<domain>`,
-   `www`) and email (MX, and the SPF, DKIM and DMARC TXT records). Set
-   existing records to *DNS only* (grey cloud) unless you want Cloudflare's
-   proxy in front of them.
-3. If DNSSEC is on at the registrar, **turn it off now**. Otherwise the
-   domain stops resolving while the nameservers change.
-4. At the registrar, replace the nameservers with the two Cloudflare shows.
-5. Wait until Cloudflare marks the domain **Active**.
-6. Check the website and email still work. Then turn DNSSEC on in
-   Cloudflare, and add the DS record it shows at the registrar.
+[Rebuild step 3: moving DNS to Cloudflare](dns-to-cloudflare.md) walks
+through all three: moving `<domain>`'s DNS hosting (not the domain) to
+Cloudflare without breaking the website or email, a token that can only
+edit that one zone, stored with SOPS, and a staging certificate for
+`lab.<domain>` and `*.lab.<domain>` from the laptop.
 
 Add **no** public records for `lab`. The lab's names live in Pi-hole only.
 
-## 2. Create the API token
-
-1. **My Profile → API Tokens → Create Token**, template **Edit zone DNS**.
-2. Permissions: **Zone → DNS → Edit** and **Zone → Zone → Read**.
-3. Zone resources: **Include → Specific zone → `<domain>`**.
-4. Create it, and save it in the password manager at once; it's shown
-   only once.
-
-Also note the **Zone ID** from the domain's Overview page. It isn't
-secret; Proxmox's ACME client uses it in step 4.
-
-## 3. Test a certificate from the laptop
-
-This proves the token and the DNS challenge work before any of the lab
-exists. It uses the staging server, so it costs nothing against the rate
-limits.
-
-```sh
-sudo pacman -S --needed certbot certbot-dns-cloudflare
-
-# The token goes in a file only you can read, through an editor, so it
-# never lands in shell history. One line:
-#   dns_cloudflare_api_token = <token>
-install -m 700 -d ~/.secrets
-install -m 600 /dev/null ~/.secrets/cloudflare.ini
-$EDITOR ~/.secrets/cloudflare.ini
-
-d=~/le-test
-certbot certonly --test-cert \
-  --dns-cloudflare --dns-cloudflare-credentials ~/.secrets/cloudflare.ini \
-  -d 'lab.<domain>' -d '*.lab.<domain>' \
-  --config-dir $d --work-dir $d --logs-dir $d
-```
-
-It worked if certbot says *Successfully received certificate*. Clean up:
-the real certificates are issued in the lab.
-
-```sh
-rm -rf ~/le-test ~/.secrets/cloudflare.ini
-```
-
 ## 4. Install Proxmox, with its own certificate
 
-In the installer's network step:
+[Rebuild step 4: installing Proxmox VE](proxmox-install.md) installs it
+with the hostname `proxmox.lab.<domain>` and the router as its DNS server,
+then gives the web UI a Let's Encrypt certificate through Proxmox's own
+ACME client and the Cloudflare token.
 
-| Field | Value |
-|-------|-------|
-| Hostname (FQDN) | `proxmox.lab.<domain>` |
-| IP address | `<proxmox-ip>`, from the IP plan |
-| Gateway | `<gateway-ip>` |
-| DNS server | `<gateway-ip>` for now; Pi-hole doesn't exist yet |
-
-Proxmox has an ACME client built in, so its web UI can get a trusted
-certificate straight away:
-
-1. **Datacenter → ACME → Accounts → Add**: Let's Encrypt V2, `<email>`.
-2. **Datacenter → ACME → Challenge Plugins → Add**: DNS API *Cloudflare
-   Managed DNS*, with API data:
-
-   ```
-   CF_Token=<token>
-   CF_Zone_ID=<zone-id>
-   ```
-
-3. **proxmox → System → Certificates → ACME → Add**: challenge type DNS,
-   the Cloudflare plugin, domain `proxmox.lab.<domain>`.
-4. **Order Certificates Now**. Proxmox renews it by itself.
-
-This certificate names `proxmox.lab.<domain>`, so that name appears in the
+That certificate names `proxmox.lab.<domain>`, so the name appears in the
 public logs. If that matters, upload the wildcard from step 8 instead,
 under **Upload Custom Certificate**, and renew it by hand or by script.
-
-Until step 5, open the UI at `https://<proxmox-ip>:8006`; the certificate
-won't match the address, which is expected.
 
 ## 5. Pi-hole and the lab names
 

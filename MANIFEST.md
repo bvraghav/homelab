@@ -36,6 +36,20 @@ and are expected to change in the rebuild.
 | Forgejo      | `http://forgejo.212bn`, SSH `:2222` | k3s | `oci://code.forgejo.org/forgejo-helm/forgejo` | 17.3.0 |
 | Woodpecker   | `http://ci.212bn`         | k3s         | `oci://ghcr.io/woodpecker-ci/helm/woodpecker` |   |
 
+## Tools (laptop)
+
+| Tool       | Package                  | Version |
+|------------|--------------------------|---------|
+| OpenTofu   | `opentofu`               | 1.13.1  |
+| SOPS       | `sops`                   | 3.13.3  |
+| age        | `age`                    | 1.3.2   |
+| Helm       | `helm`                   | 4.3.0   |
+| helmfile   | `helmfile`               | 1.8.0   |
+| kubectl    | `kubectl`                | 1.37.1  |
+| certbot    | `certbot`, `certbot-dns-cloudflare` |  |
+| Tailscale  | `tailscale`              |         |
+| ShellCheck | `shellcheck`             | 0.11.0  |
+
 ## Secrets (locations only, never values)
 
 | Secret                         | Stored in                         |
