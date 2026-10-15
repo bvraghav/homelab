@@ -59,7 +59,10 @@ address reachable through it, without installing Tailscale on each VM.
 
 ## 1. The tailnet policy
 
-In the Tailscale admin console, **Access controls**, add to the policy:
+The admin console is at <https://login.tailscale.com/admin>; signing in
+there the first time creates the tailnet. In **Access controls**
+(<https://login.tailscale.com/admin/acls/file>), switch to the **JSON
+editor**, and add inside the policy's outer braces:
 
 ```json
 "tagOwners": {
@@ -78,7 +81,8 @@ rules: the default allows every device to reach every other.
 
 ## 2. An auth key
 
-**Settings → Keys → Generate auth key**:
+**Settings → Keys → Generate auth key**
+(<https://login.tailscale.com/admin/settings/keys>):
 
 | Field | Value |
 |-------|-------|
@@ -118,7 +122,8 @@ the subnet route approved.
 
 ## 4. Split DNS
 
-**DNS → Nameservers → Add nameserver → Custom**:
+**DNS → Nameservers → Add nameserver → Custom**
+(<https://login.tailscale.com/admin/dns>):
 
 | Field | Value |
 |-------|-------|
