@@ -24,9 +24,8 @@ Can a homelab have the same? Yes. But first, an inventory.
     --from-literal=password='<password>'
   ```
 
-  Find and remove them with `grep -n 'from-literal' ~/.zsh_history`. In
-  future, add `setopt HIST_IGNORE_SPACE` to `.zshrc` and start such commands
-  with a space, or read values from files.
+  [How to scrub shell history](../tutorials/scrub-history.md) walks
+  through finding and removing them safely, and keeping them out in future.
 
 **Kubernetes Secrets**
 : The Forgejo admin and Woodpecker OAuth secrets are only base64-encoded,
