@@ -49,12 +49,13 @@ flowchart LR
 ## The rebuild, step by step
 
 One post per step of the rebuild from a blank box, in order. The steps
-after 4 follow as they're done.
+after 5 follow as they're done.
 
 1. [Tools on the laptop](tutorials/laptop-tools.md)
 2. [Secrets with SOPS and age](tutorials/sops-age.md)
 3. [Moving DNS to Cloudflare](tutorials/dns-to-cloudflare.md)
 4. [Installing Proxmox VE](tutorials/proxmox-install.md)
+5. [The VMs, with OpenTofu](tutorials/opentofu-vms.md)
 
 ## All posts
 
@@ -95,7 +96,7 @@ after 4 follow as they're done.
 : [Helm as a tool](tools/helm.md) · [Helm tutorial](tutorials/helm.md) · [Helmfile](tools/helmfile.md)
 
 `opentofu`
-: [Motivation](misc/motivation.md) · [TF for homelab](tools/tofu-for-homelab.md) · [TF for cloud](tools/tofu-for-cloud-in-general.md) · [TF use cases](tools/tofu-use-cases.md)
+: [Motivation](misc/motivation.md) · [TF for homelab](tools/tofu-for-homelab.md) · [TF for cloud](tools/tofu-for-cloud-in-general.md) · [TF use cases](tools/tofu-use-cases.md) · [Step 5: VMs with OpenTofu](tutorials/opentofu-vms.md)
 
 `secrets`
 : [Motivation](misc/motivation.md) · [Secrets](tools/secrets.md) · [Scrub shell history](tutorials/scrub-history.md) · [SOPS and age](tutorials/sops-age.md)
@@ -104,7 +105,7 @@ after 4 follow as they're done.
 : [Certificates and DNS](tutorials/certs-and-dns.md) · [DNS to Cloudflare](tutorials/dns-to-cloudflare.md)
 
 `rebuild`
-: [Step 1: tools](tutorials/laptop-tools.md) · [Step 2: SOPS and age](tutorials/sops-age.md) · [Step 3: DNS to Cloudflare](tutorials/dns-to-cloudflare.md) · [Step 4: Proxmox VE](tutorials/proxmox-install.md)
+: [Step 1: tools](tutorials/laptop-tools.md) · [Step 2: SOPS and age](tutorials/sops-age.md) · [Step 3: DNS to Cloudflare](tutorials/dns-to-cloudflare.md) · [Step 4: Proxmox VE](tutorials/proxmox-install.md) · [Step 5: VMs with OpenTofu](tutorials/opentofu-vms.md)
 
 `releases`
 : [Releases from tags](tools/release-workflow.md)
