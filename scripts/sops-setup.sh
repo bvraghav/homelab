@@ -53,7 +53,10 @@ make_key() {
   if ((apply)); then
     # A new folder only: an existing one, like a USB mount point, keeps its mode.
     [[ -d $(dirname "$file") ]] || install -m 700 -d "$(dirname "$file")"
-    (umask 077; age-keygen -o "$file" 2>/dev/null)
+    # age-keygen prints only the public key, or its error, to stderr.
+    if ! (umask 077; age-keygen -o "$file") 2>&1 | sed 's/^/          /'; then
+      die "couldn't create $file (see above)"
+    fi
     echo "created:  $file"
   else
     echo "missing:  $file (--apply creates it)"

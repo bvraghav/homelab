@@ -12,13 +12,26 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+### Added
+
+- `.sops.yaml`: files named `*.sops.yaml`, `*.sops.json` or `*.sops.env`
+  are encrypted to the laptop's and the offline backup's age keys.
+
 ### Changed
 
 - `todo.md`: rebuild step 1, tools on the laptop, done. Decided: secrets
   reach the VMs over SSH after the first boot, not through cloud-init; new
   tasks for `scripts/push-secrets.sh` and for services that start once
   their secrets arrive.
-- `MANIFEST.md`: the remaining tool versions, and the Helm plugins.
+- `MANIFEST.md`: the remaining tool versions, and the Helm plugins; where
+  the two age keys are kept.
+- `todo.md`: rebuild step 2, SOPS + age, done; SOPS + age ticked off as
+  the secrets decision.
+
+### Fixed
+
+- `sops-setup.sh`: when a key couldn't be created, the script stopped
+  without a word; it now shows `age-keygen`'s error and says which key.
 
 ## [0.1.1] - 2026-10-15 - Blank Box
 
