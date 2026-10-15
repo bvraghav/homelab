@@ -12,6 +12,20 @@ For a readable summary of each release, see
 
 ## [Unreleased]
 
+### Added
+
+- `.gitignore`: `private/`, for local-only notes such as the network
+  address plan.
+
+### Changed
+
+- `todo.md`: network setup is the first task section, split into
+  decisions and setup. Decided: a `lab.<domain>` subdomain, a Let's
+  Encrypt wildcard through DNS-01, Tailscale for remote access (no DDNS,
+  no port forwards), and one LAN with DHCP on the second router in AP
+  mode. New tasks for the DNS provider, its API token, the Tailscale
+  subnet router and split DNS, Caddy's DNS plugin and cert-manager.
+
 ## [0.1.0] - 2026-10-15 - Release Train
 
 *The release workflow, written up, and fixing notes after the fact for free.*

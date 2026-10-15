@@ -25,28 +25,36 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 
 Decide:
 
-- [ ] Local domain: `home.arpa`, or a subdomain of a real domain (not
-      `.local`, and not an unreserved name like the test run's)
-- [ ] Certificates: real domain + Let's Encrypt DNS-01, or a local CA
-      (phones struggled to trust the test run's local CA)
-- [ ] Remote access: Tailscale / WireGuard / none; never port-forward the
-      Proxmox UI (8006) or SSH
-- [ ] IP plan: subnet, DHCP range, static ranges for hosts, VMs and k3s
-      nodes, and room for k3s LoadBalancer IPs
-- [ ] Where Pi-hole runs: its own device, or a VM on Proxmox (then all
-      local names depend on the Proxmox host being up)
+- [x] Local domain: a subdomain of a real domain (`lab.<domain>`), answered
+      by Pi-hole on the LAN; only DNS-01 TXT records are public
+- [x] Certificates: Let's Encrypt wildcard (`*.lab.<domain>`) through
+      DNS-01 at a DNS provider with an API; no local CA, no DDNS, nothing
+      listening on the internet. A wildcard keeps app names out of the
+      public Certificate Transparency logs
+- [x] Remote access: Tailscale; no DDNS and no port forwards (never the
+      Proxmox UI on 8006, or SSH)
+- [x] IP plan: one LAN; the second router in AP mode runs DHCP, the first
+      (modem, gateway, WiFi) has its DHCP off. Addresses are kept out of
+      the repo, in `private/network.md` (git-ignored)
+- [ ] Where Pi-hole runs: its own device, or a VM on Proxmox (then local
+      names depend on the Proxmox host being up; hand out a fallback DNS)
 
 Set up:
 
-- [ ] Router: DHCP range per the IP plan; reservations for anything that
-      isn't statically configured
-- [ ] Router DHCP hands out Pi-hole as the DNS server
-- [ ] Pi-hole: static IP, start on boot, upstream DNS, local records (an A
-      record for the ingress, CNAMEs for each app)
-- [ ] Remote access, if chosen
+- [x] Second router in AP mode with DHCP; first router's DHCP off
+- [ ] DHCP hands out Pi-hole as the DNS server
+- [ ] Move the domain's DNS to a provider with an API (nameservers only;
+      the registrar can stay)
+- [ ] DNS API token scoped to editing that zone; stored per section 2
+- [ ] Pi-hole: static IP, start on boot, upstream DNS, local records for
+      `lab.<domain>` (an A record for the ingress, CNAMEs for each app)
+- [ ] Tailscale: a subnet router on a lab node advertising the LAN; split
+      DNS for `lab.<domain>` to Pi-hole
 - [ ] Verify name resolution: laptop, phone (Android Private DNS off or
-      automatic); nodes and pods once they exist
-- [ ] Record the network in `MANIFEST.md`; document the plan in `docs/`
+      automatic), at home and over Tailscale; nodes and pods once they
+      exist
+- [ ] Record the network in `MANIFEST.md` without addresses; document the
+      plan in `docs/`
 
 ## 2. Decisions before rebuilding
 
@@ -76,7 +84,8 @@ Set up:
 ## 5. In-VM configuration (cloud-init / Ansible)
 
 - [ ] Pi-hole install, if it runs on Proxmox; records per section 1
-- [ ] Vaultwarden VM: Docker, compose file, Caddyfile
+- [ ] Vaultwarden VM: Docker, compose file, Caddyfile; Caddy built with
+      the DNS provider's plugin, for the wildcard cert through DNS-01
 - [ ] k3s server install; agents join with token
 - [ ] qemu-guest-agent on all VMs
 
@@ -84,6 +93,8 @@ Set up:
 
 - [ ] helmfile (or tofu helm provider) with pinned chart versions
 - [ ] CoreDNS: forward local domain to Pi-hole (`coredns-custom`)
+- [ ] cert-manager: wildcard cert for `*.lab.<domain>` through DNS-01,
+      used by Traefik's ingresses
 - [ ] kube-prometheus-stack (Grafana + Prometheus)
 - [ ] Forgejo (SQLite, SSH on 2222, webhook ALLOWED_HOST_LIST)
 - [ ] Mirror or move this repo to the rebuilt Forgejo (needs the item above)
