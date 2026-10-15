@@ -17,7 +17,7 @@ can be rebuilt quickly and repeatably.
 | `tofu/` | OpenTofu code for VMs, cloud-init and releases |
 | `docs/` | Docs and blog, published to GitHub Pages |
 | `site/`, `Makefile` | Docs build: `make site` |
-| `scripts/` | Helper scripts, e.g. `scrub-history.sh` |
+| `scripts/` | Helper scripts; see `scripts/MANIFEST.md` |
 | `.github/` | CI: build and deploy the docs |
 | `todo.md` | Tasks and rebuild progress |
 | `MANIFEST.md` | Inventory of hosts, services and versions |

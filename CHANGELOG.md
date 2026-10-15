@@ -19,6 +19,8 @@ For a readable summary of each release, see
   backup.
 - Tutorial `docs/blog/tutorials/scrub-history.md`, linked from the blog index
   and the secrets post.
+- `scripts/MANIFEST.md`: inventory of scripts, usage, and conventions for
+  new ones.
 
 ## [0.0.1] - 2026-10-15 - Groundwork
 
