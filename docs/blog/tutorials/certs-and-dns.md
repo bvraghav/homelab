@@ -196,6 +196,8 @@ Phones accept routes by default. Linux clients need
 
 ## 7. Caddy on the Vaultwarden VM
 
+In this lab, [rebuild step 8](vaultwarden.md) does this from code.
+
 Caddy only does DNS-01 with a plugin for the DNS provider, so it needs a
 custom build. A `Dockerfile` next to the compose file:
 

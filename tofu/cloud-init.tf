@@ -7,9 +7,11 @@ locals {
   ssh_key = trimspace(file(pathexpand(var.ssh_public_key_file)))
 
   # Each VM's roles: their packages, write_files and runcmd are appended
-  # to the base's, in order. A VM without roles gets the base only.
+  # to the base's, in order, and their other cloud-init keys (extra) are
+  # added. A VM without roles gets the base only.
   vm_roles = {
-    pihole = [local.pihole_cloud_init, local.tailscale_cloud_init]
+    pihole      = [local.pihole_cloud_init, local.tailscale_cloud_init]
+    vaultwarden = [local.vaultwarden_cloud_init]
   }
 
   roles = {
@@ -17,11 +19,12 @@ locals {
       packages    = flatten([for p in parts : p.packages])
       write_files = flatten([for p in parts : p.write_files])
       runcmd      = flatten([for p in parts : p.runcmd])
+      extra       = merge([for p in parts : try(p.extra, {})]...)
     }
   }
 
   user_data = {
-    for name, vm in local.vms : name => {
+    for name, vm in local.vms : name => merge(try(local.roles[name].extra, {}), {
       hostname         = name
       fqdn             = "${name}.${local.domain}"
       manage_etc_hosts = true
@@ -46,7 +49,7 @@ locals {
       packages        = concat(["qemu-guest-agent"], try(local.roles[name].packages, []))
       write_files     = try(local.roles[name].write_files, [])
       runcmd          = concat(["systemctl enable --now qemu-guest-agent"], try(local.roles[name].runcmd, []))
-    }
+    })
   }
 }
 

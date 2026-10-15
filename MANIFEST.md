@@ -19,7 +19,7 @@ and are expected to change in the rebuild.
 |------|---------------|-----------------|------|------|-------|-------------------------|
 | —    | proxmox       | `<ip>`          | 6    | 15 GB | 240 GB SSD | hypervisor: Proxmox VE 9.2.2, kernel 7.0.2-6-pve |
 | 101  | pihole        | `<ip>`          | 1    | 512 MB | 8 GB | local DNS               |
-| 102  | vaultwarden   | `<ip>`          | 1    | 1 GB | 8 GB + 4 GB data | Docker: Vaultwarden, Caddy |
+| 102  | vaultwarden   | `<ip>`          | 1    | 2 GB | 8 GB + 4 GB data | Docker: Vaultwarden, Caddy |
 | 201  | k3s-server    | `<ip>`          | 2    | 4 GB | 32 GB | k3s control plane       |
 | 202  | k3s-agent1    | `<ip>`          | 2    | 3 GB | 32 GB | k3s agent               |
 | 203  | k3s-agent2    | `<ip>`          | 2    | 3 GB | 32 GB | k3s agent               |
@@ -41,8 +41,8 @@ OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
 |--------------|---------------------------|-------------|-------------------------------------|---------|
 | Pi-hole      | `http://pihole.lab.<domain>/admin` | pihole | `pihole/pihole`            | 2026.09.0 |
 | Tailscale subnet router | `lab-router` in the tailnet | pihole | `tailscale` (Debian package) | 1.104.1 |
-| Vaultwarden  | `https://vault.212bn`     | vaultwarden | `vaultwarden/server`                |         |
-| Caddy        | —                         | vaultwarden | `caddy:2`                           |         |
+| Vaultwarden  | `https://vault.lab.<domain>` | vaultwarden | `vaultwarden/server`             | 1.37.4  |
+| Caddy        | wildcard `*.lab.<domain>`, DNS-01 | vaultwarden | `caddy` + `caddy-dns/cloudflare`, built on the VM | 2.11.7, v0.2.4 |
 | k3s          | `https://192.168.10.61:6443` | k3s VMs  | —                                   | v1.36.5+k3s1 |
 | Prometheus + Grafana | `http://grafana.212bn` | k3s    | `prometheus-community/kube-prometheus-stack` |  |
 | Forgejo      | `http://forgejo.212bn`, SSH `:2222` | k3s | `oci://code.forgejo.org/forgejo-helm/forgejo` | 17.3.0 |
@@ -71,8 +71,9 @@ OpenTofu (`tofu/vms.tf`) from Debian 13 cloud image
 |--------------------------------|-----------------------------------|
 | Proxmox root password, 2FA recovery | Vaultwarden + offline copy   |
 | Vaultwarden master password, 2FA recovery | offline only            |
-| Vaultwarden `ADMIN_TOKEN`      |                                   |
-| Caddy local CA (`root.key`)    | vaultwarden VM `caddy-data/`      |
+| Cloudflare DNS token, for Caddy | pushed to the vaultwarden VM, `/etc/homelab/cloudflare.env` |
+| restic password, R2 key        | pushed to the vaultwarden VM, `/etc/homelab/restic.env` |
+| Caddy's certificate and ACME account | vaultwarden VM `/srv/vaultwarden/caddy/`; reissued if lost |
 | k3s node token                 | k3s-server `/var/lib/rancher/k3s/server/node-token` |
 | kubeconfig                     | laptop `~/.kube/config`           |
 | Forgejo admin                  | k8s secret `forgejo/forgejo-admin` |
@@ -96,7 +97,7 @@ with `restic`, encrypted.
 
 | What                | How                                   | Schedule | Retention        | Last restore test |
 |---------------------|---------------------------------------|----------|------------------|-------------------|
-| Vaultwarden         | SQLite `.backup`, attachments, keys   | daily    | 7 d, 4 w, 3 m    |                   |
+| Vaultwarden         | SQLite `.backup`, attachments, keys; restored by itself on a rebuild | daily 02:30 | 7 d, 4 w, 3 m | |
 | k3s                 | datastore snapshot                    | daily    | 7 d, 4 w, 3 m    |                   |
 | Forgejo             | `forgejo dump`                        | daily    | 7 d, 4 w, 3 m    |                   |
 | Vaultwarden export  | encrypted JSON, off-site              | manual   |                  |                   |

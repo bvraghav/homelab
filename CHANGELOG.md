@@ -28,6 +28,13 @@ For a readable summary of each release, see
   with an auth key from `secrets/tailscale.sops.yaml`, read from a file,
   never an argument.
 - Post: *Rebuild step 7: Tailscale*.
+- `tofu/vaultwarden.tf`: Vaultwarden 1.37.4 on its VM, behind Caddy 2.11.7
+  built with `caddy-dns/cloudflare` v0.2.4, for a wildcard certificate
+  through DNS-01. Data on the VM's second disk, backed up nightly to R2
+  with restic (7 daily, 4 weekly, 3 monthly), and restored by itself onto
+  a rebuilt VM; if R2 can't be read, Vaultwarden doesn't start. Sign-ups
+  only with `vaultwarden_signups_allowed`; no admin page.
+- Post: *Rebuild step 8: Vaultwarden*.
 
 - `tofu/`: OpenTofu for rebuild step 5. A pinned Debian 13 cloud image,
   five VMs (Pi-hole, Vaultwarden with a data disk, a k3s server and two
@@ -47,6 +54,11 @@ For a readable summary of each release, see
 
 ### Changed
 
+- `tofu/cloud-init.tf`: a role can add other cloud-init keys, such as
+  `fs_setup` and `mounts`. The Vaultwarden VM has 2 GB, to build Caddy.
+- `push-secrets.sh`: restarts services once all files are pushed, and
+  also the VM's own `<vm>.service`; pushes `cloudflare` and `restic` to
+  the Vaultwarden VM.
 - `tofu/cloud-init.tf`: a VM can have several roles; the Pi-hole VM has
   Pi-hole and Tailscale. `push-secrets.sh` pushes both its secrets.
 - `tofu/cloud-init.tf`: cloud-init is built as data, a base plus each

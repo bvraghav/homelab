@@ -186,6 +186,7 @@ warning.
 ## See also
 
 - [Rebuild step 6: Pi-hole](pihole.md)
+- [Rebuild step 8: Vaultwarden](vaultwarden.md)
 - [Certificates and DNS for the homelab](certs-and-dns.md)
 - [`push-secrets.sh`](../../../scripts/push-secrets.md)
 - [Back to the blog](../MANIFEST.md)
