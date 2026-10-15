@@ -8,7 +8,6 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [x] Create repo skeleton (README, LICENCE, .gitignore, MANIFEST, todo)
 - [x] Fill in identity placeholders in `LICENCE.md`
 - [x] Push repo to a remote: GitHub `bvraghav/homelab`
-- [ ] Mirror or move the repo to Forgejo after the rebuild
 - [x] Write up the manual test run in `docs/blog/`
 - [x] Publish `docs/` to GitHub Pages (workflow + Makefile)
 - [x] Enable Pages (Source: GitHub Actions)
@@ -56,6 +55,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [ ] CoreDNS: forward local domain to Pi-hole (`coredns-custom`)
 - [ ] kube-prometheus-stack (Grafana + Prometheus)
 - [ ] Forgejo (SQLite, SSH on 2222, webhook ALLOWED_HOST_LIST)
+- [ ] Mirror or move this repo to the rebuilt Forgejo (needs the item above)
 - [ ] Woodpecker (Forgejo OAuth, kubernetes backend)
 - [ ] Secrets via SOPS, no `--from-literal` in shell
 
