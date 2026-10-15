@@ -59,6 +59,13 @@ Set up:
 ## 2. Decisions before rebuilding
 
 - [ ] Secrets: SOPS + age now; OpenBao + External Secrets later?
+- [x] Who builds what: OpenTofu creates the VMs; cloud-init configures
+      them, up to "k3s is running"; helmfile installs everything inside
+      k3s. Vaultwarden stays on its own VM (Docker, no Helm), so it works
+      when the cluster doesn't
+- [ ] Secrets into VMs: through cloud-init (plain text on Proxmox's
+      snippets storage and in tofu state), or pushed over SSH after the
+      first boot. Decide before the first VM in tofu
 
 ## 3. Proxmox host (manual, documented)
 
@@ -67,7 +74,8 @@ Set up:
 - [ ] Install Proxmox VE; record version in MANIFEST
 - [ ] 2FA for `root@pam`; create `admin@pve`
 - [ ] SSH keys only for root (`PermitRootLogin prohibit-password`)
-- [ ] API token for OpenTofu (dedicated user + role)
+- [ ] API token for OpenTofu (dedicated user + role):
+      `scripts/proxmox-tofu-token.sh`
 - [ ] Backup storage and backup job
 
 ## 4. OpenTofu: infrastructure
@@ -77,16 +85,23 @@ Set up:
 - [ ] Debian 13 cloud image download + template
 - [ ] Cloud-init: user, SSH key, static IP, nameserver, search domain
 - [ ] VM: Pi-hole, if it runs on Proxmox (see section 1)
-- [ ] VM: Vaultwarden (from template, not ISO)
+- [ ] VM: Vaultwarden (from template, not ISO), with its data on a
+      separate disk, so the VM can be recreated without losing the vault
 - [ ] VMs: k3s server + 2 agents (unique hostnames!)
-- [ ] Import or recreate existing VMs
+- [ ] k3s join token generated up front and kept in SOPS, so agents never
+      read it off the server
 
-## 5. In-VM configuration (cloud-init / Ansible)
+## 5. In-VM configuration (cloud-init)
+
+cloud-init runs only on a VM's first boot; changing it means recreating
+the VM.
+
 
 - [ ] Pi-hole install, if it runs on Proxmox; records per section 1
 - [ ] Vaultwarden VM: Docker, compose file, Caddyfile; Caddy built with
       the DNS provider's plugin, for the wildcard cert through DNS-01
-- [ ] k3s server install; agents join with token
+- [ ] k3s server install, pinned version (`INSTALL_K3S_VERSION`); agents
+      join with the token from SOPS
 - [ ] qemu-guest-agent on all VMs
 
 ## 6. k3s workloads

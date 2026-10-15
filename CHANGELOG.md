@@ -40,6 +40,11 @@ For a readable summary of each release, see
   no port forwards), and one LAN with DHCP on the second router in AP
   mode. New tasks for the DNS provider, its API token, the Tailscale
   subnet router and split DNS, Caddy's DNS plugin and cert-manager.
+  Also decided: OpenTofu builds the VMs, cloud-init configures them up to
+  a running k3s, helmfile installs what runs in it, and Vaultwarden stays
+  on its own VM. New tasks: how secrets reach the VMs, Vaultwarden's
+  separate data disk, a k3s join token generated up front in SOPS, and a
+  pinned k3s version; importing the test-run VMs is dropped.
 
 ## [0.1.0] - 2026-10-15 - Release Train
 
