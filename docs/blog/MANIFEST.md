@@ -90,9 +90,11 @@ md-preview docs/blog          # live preview of the blog, with a file tree
 make serve                    # build all of docs/ and serve it at localhost:8000
 ```
 
-GitHub Actions builds the site on every push to `develop` and publishes it
-to GitHub Pages from `master`, with a `sitemap.xml` dated from each post's
-last git commit.
+GitHub Actions builds the site on every push to `develop` or `master`, and
+publishes it to GitHub Pages for every version tag, with a `sitemap.xml`
+dated from each post's last git commit. Every page's footer shows the
+version it was built from: the tag for a release, or the `VERSION` file
+plus `-dev` in between.
 
 ## Adding a post
 

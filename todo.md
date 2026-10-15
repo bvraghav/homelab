@@ -11,6 +11,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 - [x] Write up the manual test run in `docs/blog/`
 - [x] Publish `docs/` to GitHub Pages (workflow + Makefile)
 - [ ] Enable Pages (Source: GitHub Actions) once the remote exists
+- [ ] Allow version tags to deploy: github-pages environment, tag rule `*.*.*`
 - [ ] Clean secrets out of shell history (`grep from-literal ~/.zsh_history`)
 
 ## 1. Decisions before rebuilding
